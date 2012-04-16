@@ -42,7 +42,7 @@ NCURSES_CONF_OPT = \
 	--enable-const \
 	--enable-overwrite \
 	--enable-broken_linker \
-	--disable-static
+	--without-normal
 
 ifneq ($(BR2_ENABLE_DEBUG),y)
 NCURSES_CONF_OPT += --without-debug

@@ -1,0 +1,18 @@
+BuildRoot History for F&S board armStoneA8
+------------------------------------------
+
+V1.0 (based on buildroot-2012.02)
+---------------------------------
+- Add own busybox configuration (build static, add telnetd, add
+  ubi-tools, use mdev, ...)
+- Fix ncurses configuration --disable-static -> --without-normal
+- Add configs/armstonea8_std_defconfig with standard configuration
+  (directfb, modular X11 server, matchbox window manager, busybox,
+  iproute2, ...)
+- Add configs/armstonea8_min_defconfig with minimal configuration
+  (only busybox and iproute2)
+- Add target/boards/f+s/armStoneA8 with board specific scripts
+- Add /sbin/hmdicfg and startup file /etc/init.d/S17hdmicfg to target
+- Add x11 startup file /etc/init.d/S35x11 to target
+- Use own /etc/inittab file to support mdev
+- Add /etc/mdev.conf

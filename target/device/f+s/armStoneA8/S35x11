@@ -2,12 +2,13 @@
 # Start X server and matchbox window manager
 #
 pid_file=/var/run/X11.pid
+log_file=/var/log/startx.log
 
 case "$1" in
   start)
 	echo "Starting X and matchbox WM..."
 	export DISPLAY=:0
-	/usr/bin/startx /usr/bin/matchbox-session  &
+	/usr/bin/startx /usr/bin/matchbox-session > $log_file 2> $log_file &
 	;;
   stop|restart|reload)
 	echo "Can't stop X server! No info about PID."

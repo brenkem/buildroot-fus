@@ -1,16 +1,31 @@
 BuildRoot History for F&S board armStoneA8
 ------------------------------------------
 
-V1.0 (based on buildroot-2012.02)
----------------------------------
+BuildRoot armStoneA8 V1.1 (22.05.2012, based on buildroot-2012.02)
+------------------------------------------------------------------
+
+- Redirect output of /etc/init.d/S35x11 to a file
+- [STD] Add a few X programs: xcalc, xeyes, xclock
+- [STD] Add graphic viewer feh (for X)
+- [STD] Add xinput and xinput_calibrator to support touch in X
+- Add httpd to busybox configuration
+- Configure for new toolchain (fs-toolchain-4.6.3-armv6-vfp)
+- Move F&S default configuration for busybox from package/busybox to
+  target/device/f+s/armStoneA8
+
+
+
+BuildRoot armStoneA8 V1.0 (16.04.2012, based on buildroot-2012.02)
+------------------------------------------------------------------
+
 - Add own busybox configuration (build static, add telnetd, add
   ubi-tools, use mdev, ...)
 - Fix ncurses configuration --disable-static -> --without-normal
 - Add configs/armstonea8_std_defconfig with standard configuration
   (directfb, modular X11 server, matchbox window manager, busybox,
-  iproute2, ...)
+  iproute2, ...) [STD]
 - Add configs/armstonea8_min_defconfig with minimal configuration
-  (only busybox and iproute2)
+  (only busybox and iproute2) [MIN]
 - Add target/boards/f+s/armStoneA8 with board specific scripts
 - Add /sbin/hmdicfg and startup file /etc/init.d/S17hdmicfg to target
 - Add x11 startup file /etc/init.d/S35x11 to target

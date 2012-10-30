@@ -1,11 +1,11 @@
 #!/bin/sh
 
 TARGET="$1"
-LOCAL=target/device/f+s/PicoCOM4
+LOCAL=board/f+s/common
 CP="/bin/cp -f"
 
 tput smso
-echo ">>>   Doing final PicoCOM4 setup for standard configuration"
+echo ">>>   Doing final F+S (common) setup for minimal configuraton"
 tput rmso
 
 # Copy the modified inittab file with mdev support
@@ -13,6 +13,3 @@ ${CP} ${LOCAL}/inittab ${TARGET}/etc
 
 # Copy the enhanced mdev configuration file
 ${CP} ${LOCAL}/mdev.conf ${TARGET}/etc
-
-# Copy the x11 start script
-${CP} ${LOCAL}/S35x11 ${TARGET}/etc/init.d

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+TARGET="$1"
+COMMON=board/f+s/common
+BOARD=board/f+s/NetDCU14
+CP="/bin/cp -f"
+
+tput smso
+echo ">>>   Doing final F+S NetDCU14 setup for minimal configuration"
+tput rmso
+
+# Call common F+S setup for standard configuration
+sh ./${COMMON}/final_script_min ${TARGET} ${BOARD}

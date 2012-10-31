@@ -18,7 +18,7 @@ LIBINTL_TARGET_BINARY:=usr/lib/libintl.so
 endif
 
 $(DL_DIR)/$(GETTEXT_SOURCE):
-	 $(call DOWNLOAD,$(GETTEXT_SITE),$(GETTEXT_SOURCE))
+	 $(call DOWNLOAD,$(GETTEXT_SITE)/$(GETTEXT_SOURCE))
 
 gettext-source: $(DL_DIR)/$(GETTEXT_SOURCE)
 
@@ -112,6 +112,9 @@ $(STAGING_DIR)/$(GETTEXT_TARGET_BINARY): $(GETTEXT_DIR)/$(GETTEXT_BINARY)
 	rm -f $(addprefix $(STAGING_DIR)/usr/bin/, \
 		autopoint envsubst gettext.sh gettextize msg* ?gettext)
 	touch -c $@
+
+gettext-legal-info:
+	@$(call legal-warning-pkg,gettext,legal-info not yet implemented)
 
 gettext: host-pkg-config $(if $(BR2_PACKAGE_LIBICONV),libiconv) $(STAGING_DIR)/$(GETTEXT_TARGET_BINARY)
 

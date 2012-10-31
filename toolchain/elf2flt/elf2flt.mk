@@ -21,20 +21,17 @@ $(ELF2FLT_DIR)/.configured: $(ELF2FLT_DIR)/.patched
 	(cd $(ELF2FLT_DIR); rm -rf config.cache; \
 		LDFLAGS=-lz \
 		$(ELF2FLT_DIR)/configure $(QUIET) \
-		--with-bfd-include-dir=$(BINUTILS_DIR1)/bfd/ \
-		--with-binutils-include-dir=$(BINUTILS_DIR)/include/ \
-		--target=$(REAL_GNU_TARGET_NAME) \
-		--with-libbfd=$(BINUTILS_DIR1)/bfd/libbfd.a \
-		--with-libiberty=$(BINUTILS_DIR1)/libiberty/libiberty.a \
-		--prefix=$(STAGING_DIR)/usr)
+		--with-bfd-include-dir=$(HOST_BINUTILS_DIR)/bfd/ \
+		--with-binutils-include-dir=$(HOST_BINUTILS_DIR)/include/ \
+		--target=$(GNU_TARGET_NAME) \
+		--with-libbfd=$(HOST_BINUTILS_DIR)/bfd/libbfd.a \
+		--with-libiberty=$(HOST_BINUTILS_DIR)/libiberty/libiberty.a \
+		--prefix=$(HOST_DIR)/usr)
 	touch $@
 
 $(ELF2FLT_DIR)/$(ELF2FLT_BINARY): $(ELF2FLT_DIR)/.configured
 	$(MAKE) -C $(ELF2FLT_DIR) all
 	$(MAKE) -C $(ELF2FLT_DIR) install
-	ln -snf $(REAL_GNU_TARGET_NAME)-elf2flt $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-elf2flt
-	ln -snf $(REAL_GNU_TARGET_NAME)-flthdr  $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-flthdr
-	ln -snf $(REAL_GNU_TARGET_NAME)-ld.real $(STAGING_DIR)/bin/$(GNU_TARGET_NAME)-ld.real
 
 elf2flt: uclibc_target uclibc-configured binutils gcc $(ELF2FLT_DIR)/$(ELF2FLT_BINARY)
 

@@ -10,7 +10,7 @@ TTCP_SOURCE=ttcp$(TTCP_VERSION).c
 TTCP_DIR=$(BUILD_DIR)/ttcp$(TTCP_VERSION)
 
 $(DL_DIR)/$(TTCP_SOURCE):
-	 $(call DOWNLOAD,$(TTCP_SOURCE_URL),$(TTCP_SOURCE))
+	 $(call DOWNLOAD,$(TTCP_SOURCE_URL)/$(TTCP_SOURCE))
 
 $(TTCP_DIR)/.unpacked: $(DL_DIR)/$(TTCP_SOURCE)
 	-mkdir $(TTCP_DIR)
@@ -26,6 +26,9 @@ $(TTCP_DIR)/ttcp: $(TTCP_DIR)/.configured
 
 $(TARGET_DIR)/usr/bin/ttcp: $(TTCP_DIR)/ttcp
 	cp -af $(TTCP_DIR)/ttcp $(TARGET_DIR)/usr/bin/
+
+ttcp-legal-info:
+	@$(call legal-warning-pkg,ttcp,legal-info not yet implemented)
 
 ttcp: $(TARGET_DIR)/usr/bin/ttcp
 

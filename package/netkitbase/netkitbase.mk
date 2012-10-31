@@ -12,7 +12,7 @@ NETKITBASE_BINARY:=inetd/inetd
 NETKITBASE_TARGET_BINARY:=usr/sbin/inetd
 
 $(DL_DIR)/$(NETKITBASE_SOURCE):
-	 $(call DOWNLOAD,$(NETKITBASE_SITE),$(NETKITBASE_SOURCE))
+	 $(call DOWNLOAD,$(NETKITBASE_SITE)/$(NETKITBASE_SOURCE))
 
 netkitbase-source: $(DL_DIR)/$(NETKITBASE_SOURCE)
 
@@ -46,6 +46,9 @@ $(TARGET_DIR)/$(NETKITBASE_TARGET_BINARY): $(NETKITBASE_DIR)/$(NETKITBASE_BINARY
 		$(SED) "s/^\([a-z]\)/#\1/;" $(TARGET_DIR)/etc/inetd.conf; \
 	fi
 	touch -c $(TARGET_DIR)/$(NETKITBASE_TARGET_BINARY)
+
+netkitbase-legal-info:
+	@$(call legal-warning-pkg,netkitbase,legal-info not yet implemented)
 
 netkitbase: $(TARGET_DIR)/$(NETKITBASE_TARGET_BINARY)
 

@@ -8,6 +8,7 @@ TRANSMISSION_SITE = http://download.transmissionbt.com/files/
 TRANSMISSION_SOURCE = transmission-$(TRANSMISSION_VERSION).tar.bz2
 TRANSMISSION_DEPENDENCIES = \
 	host-pkg-config \
+	host-intltool \
 	libcurl \
 	libevent \
 	openssl \
@@ -55,4 +56,4 @@ else
 	TRANSMISSION_CONF_OPT += --disable-gtk
 endif
 
-$(eval $(call AUTOTARGETS))
+$(eval $(autotools-package))

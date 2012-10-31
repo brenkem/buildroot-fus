@@ -12,7 +12,7 @@ NETKITTELNET_BINARY:=telnetd/telnetd
 NETKITTELNET_TARGET_BINARY:=usr/sbin/telnetd
 
 $(DL_DIR)/$(NETKITTELNET_SOURCE):
-	 $(call DOWNLOAD,$(NETKITTELNET_SITE),$(NETKITTELNET_SOURCE))
+	 $(call DOWNLOAD,$(NETKITTELNET_SITE)/$(NETKITTELNET_SOURCE))
 
 netkittelnet-source: $(DL_DIR)/$(NETKITTELNET_SOURCE)
 
@@ -47,6 +47,9 @@ $(TARGET_DIR)/$(NETKITTELNET_TARGET_BINARY): $(NETKITTELNET_DIR)/$(NETKITTELNET_
 	#$(MAKE) DESTDIR=$(TARGET_DIR) CC="$(TARGET_CC)" -C $(NETKITTELNET_DIR) install
 	#rm -rf $(TARGET_DIR)/share/locale $(TARGET_DIR)/usr/info \
 	# $(TARGET_DIR)/usr/man $(TARGET_DIR)/usr/share/doc
+
+netkittelnet-legal-info:
+	@$(call legal-warning-pkg,netkittelnet,legal-info not yet implemented)
 
 netkittelnet: netkitbase $(TARGET_DIR)/$(NETKITTELNET_TARGET_BINARY)
 

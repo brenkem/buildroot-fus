@@ -5,14 +5,16 @@
 #############################################################
 
 NETSNMP_VERSION = 5.7.1
-NETSNMP_SITE = http://$(BR2_SOURCEFORGE_MIRROR).dl.sourceforge.net/sourceforge/net-snmp
+NETSNMP_SITE = http://downloads.sourceforge.net/project/net-snmp/net-snmp/$(NETSNMP_VERSION)
 NETSNMP_SOURCE = net-snmp-$(NETSNMP_VERSION).tar.gz
+NETSNMP_LICENSE = Various BSD-like
+NETSNMP_LICENSE_FILES = COPYING
 NETSNMP_INSTALL_STAGING = YES
 NETSNMP_CONF_ENV = ac_cv_NETSNMP_CAN_USE_SYSCTL=yes
 NETSNMP_CONF_OPT = --with-persistent-directory=/var/lib/snmp --disable-static \
 		--with-defaults --enable-mini-agent --without-rpm \
 		--with-logfile=none --without-kmem-usage $(DISABLE_IPV6) \
-		--enable-as-needed --disable-debugging --without-perl-modules \
+		--enable-as-needed --without-perl-modules \
 		--disable-embedded-perl --disable-perl-cc-checks \
 		--disable-scripts --with-default-snmp-version="1" \
 		--enable-silent-libtool --enable-mfd-rewrites \
@@ -21,6 +23,7 @@ NETSNMP_CONF_OPT = --with-persistent-directory=/var/lib/snmp --disable-static \
 		--with-mib-modules="host ucd-snmp/dlmod" \
 		--with-out-mib-modules="disman/event disman/schedule utilities" \
 		--with-out-transports="Unix"
+NETSNMP_MAKE = $(MAKE1)
 NETSNMP_BLOAT_MIBS = BRIDGE DISMAN-EVENT DISMAN-SCHEDULE DISMAN-SCRIPT EtherLike RFC-1215 RFC1155-SMI RFC1213 SCTP SMUX
 
 ifeq ($(BR2_ENDIAN),"BIG")
@@ -55,6 +58,10 @@ define NETSNMP_REMOVE_MIBS_IPV6
 endef
 endif
 
+ifneq ($(BR2_PACKAGE_NETSNMP_ENABLE_DEBUGGING),y)
+	NETSNMP_CONF_OPT += --disable-debugging
+endif
+
 define NETSNMP_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) \
 		DESTDIR=$(TARGET_DIR) install
@@ -83,4 +90,4 @@ endef
 
 NETSNMP_POST_INSTALL_STAGING_HOOKS += NETSNMP_STAGING_NETSNMP_CONFIG_FIXUP
 
-$(eval $(call AUTOTARGETS))
+$(eval $(autotools-package))

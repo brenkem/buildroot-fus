@@ -8,7 +8,12 @@
 # If not, we do like other packages
 BINUTILS_VERSION = $(call qstrip,$(BR2_BINUTILS_VERSION))
 ifeq ($(BINUTILS_VERSION),)
+ifeq ($(BR2_avr32),y)
+# avr32 uses a special version
+BINUTILS_VERSION = 2.18-avr32-1.0.1
+else
 BINUTILS_VERSION = 2.21
+endif
 endif
 
 BINUTILS_SOURCE = binutils-$(BINUTILS_VERSION).tar.bz2
@@ -22,8 +27,8 @@ BINUTILS_DEPENDENCIES = $(if $(BR2_NEEDS_GETTEXT_IF_LOCALE),gettext libintl)
 
 # We need to specify host & target to avoid breaking ARM EABI
 BINUTILS_CONF_OPT = --disable-multilib --disable-werror \
-		--host=$(REAL_GNU_TARGET_NAME) \
-		--target=$(REAL_GNU_TARGET_NAME) \
+		--host=$(GNU_TARGET_NAME) \
+		--target=$(GNU_TARGET_NAME) \
 		--enable-shared \
 		$(BINUTILS_EXTRA_CONFIG_OPTIONS)
 
@@ -35,9 +40,9 @@ endif
 # "host" binutils should actually be "cross"
 # We just keep the convention of "host utility" for now
 HOST_BINUTILS_CONF_OPT = --disable-multilib --disable-werror \
-			--target=$(REAL_GNU_TARGET_NAME) \
+			--target=$(GNU_TARGET_NAME) \
 			--disable-shared --enable-static \
-			$(BR2_CONFIGURE_STAGING_SYSROOT) \
+			--with-sysroot=$(STAGING_DIR) \
 			$(BINUTILS_EXTRA_CONFIG_OPTIONS)
 
 HOST_BINUTILS_DEPENDENCIES =
@@ -56,5 +61,5 @@ define BINUTILS_INSTALL_TARGET_CMDS
 endef
 endif
 
-$(eval $(call AUTOTARGETS))
-$(eval $(call AUTOTARGETS,host))
+$(eval $(autotools-package))
+$(eval $(host-autotools-package))

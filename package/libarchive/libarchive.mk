@@ -3,11 +3,10 @@
 # libarchive (reusable C library for archive formats)
 #
 #############################################################
-LIBARCHIVE_VERSION = 2.8.4
+LIBARCHIVE_VERSION = 2.8.5
 LIBARCHIVE_SITE = http://libarchive.googlecode.com/files/
 LIBARCHIVE_SOURCE = libarchive-$(LIBARCHIVE_VERSION).tar.gz
 LIBARCHIVE_INSTALL_STAGING = YES
-LIBARCHIVE_INSTALL_TARGET = YES
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 LIBARCHIVE_DEPENDENCIES = zlib
@@ -24,4 +23,4 @@ else
 LIBARCHIVE_CONF_OPT += --without-xml2
 endif
 
-$(eval $(call AUTOTARGETS))
+$(eval $(autotools-package))

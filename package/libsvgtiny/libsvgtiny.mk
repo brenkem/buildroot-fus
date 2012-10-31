@@ -6,9 +6,7 @@
 
 LIBSVGTINY_SITE = svn://svn.netsurf-browser.org/trunk/libsvgtiny
 LIBSVGTINY_VERSION = 12121
-
 LIBSVGTINY_INSTALL_STAGING = YES
-LIBSVGTINY_INSTALL_TARGET = YES
 LIBSVGTINY_DEPENDENCIES = libxml2 host-gperf host-pkg-config
 
 define LIBSVGTINY_BUILD_CMDS
@@ -39,4 +37,4 @@ define LIBSVGTINY_CLEAN_CMDS
 	$(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D) clean
 endef
 
-$(eval $(call GENTARGETS))
+$(eval $(generic-package))

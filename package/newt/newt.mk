@@ -11,7 +11,7 @@ NEWT_VERSION=0.51.0
 NEWT_CFLAGS=-Os -g -fPIC
 
 $(DL_DIR)/$(NEWT_SOURCE):
-	$(call DOWNLOAD,$(NEWT_SITE),$(NEWT_SOURCE))
+	$(call DOWNLOAD,$(NEWT_SITE)/$(NEWT_SOURCE))
 
 $(NEWT_DIR)/.source: $(DL_DIR)/$(NEWT_SOURCE)
 	$(NEWT_CAT) $(DL_DIR)/$(NEWT_SOURCE) | tar -C $(BUILD_DIR) $(TAR_OPTIONS) -
@@ -57,6 +57,9 @@ $(TARGET_DIR)/usr/lib/libnewt.so.$(NEWT_VERSION): $(STAGING_DIR)/usr/lib/libnewt
 	cp -a $(STAGING_DIR)/usr/lib/libnewt.so* $(TARGET_DIR)/usr/lib/
 	-$(STRIPCMD) $(STRIP_STRIP_UNNEEDED) $(TARGET_DIR)/usr/lib/libnewt.so*
 	touch -c $@
+
+newt-legal-info:
+	@$(call legal-warning-pkg,newt,legal-info not yet implemented)
 
 newt: slang $(TARGET_DIR)/usr/lib/libnewt.so.$(NEWT_VERSION)
 

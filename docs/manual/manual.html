@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>The Buildroot user manual</title><link rel="stylesheet" href="docbook-xsl.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.75.2" /></head><body><div xml:lang="en" class="book" title="The Buildroot user manual" lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="idp186512"></a>The Buildroot user manual</h1></div></div><hr /></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="preface"><a href="#idp187808"></a></span></dt><dt><span class="chapter"><a href="#_about_buildroot">1. About Buildroot</a></span></dt><dt><span class="chapter"><a href="#_getting_buildroot">2. Getting Buildroot</a></span></dt><dt><span class="chapter"><a href="#_using_buildroot">3. Using Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_configuration_and_general_usage">3.1. Configuration and general usage</a></span></dt><dt><span class="section"><a href="#_offline_builds">3.2. Offline builds</a></span></dt><dt><span class="section"><a href="#_building_out_of_tree">3.3. Building out-of-tree</a></span></dt><dt><span class="section"><a href="#_environment_variables">3.4. Environment variables</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_customization">4. Customization</a></span></dt><dd><dl><dt><span class="section"><a href="#_customizing_the_generated_target_filesystem">4.1. Customizing the generated target filesystem</a></span></dt><dt><span class="section"><a href="#_customizing_the_busybox_configuration">4.2. Customizing the Busybox configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_uclibc_configuration">4.3. Customizing the uClibc configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_linux_kernel_configuration">4.4. Customizing the Linux kernel configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_toolchain">4.5. Customizing the toolchain</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_understanding_how_to_rebuild_packages">5. Understanding how to rebuild packages</a></span></dt><dt><span class="chapter"><a href="#_how_buildroot_works">6. How Buildroot works</a></span></dt><dt><span class="chapter"><a href="#_using_the_generated_toolchain_outside_buildroot">7. Using the generated toolchain outside Buildroot</a></span></dt><dt><span class="chapter"><a href="#_using_an_external_toolchain">8. Using an external toolchain</a></span></dt><dt><span class="chapter"><a href="#_using_literal_ccache_literal_in_buildroot">9. Using <code class="literal">ccache</code> in Buildroot</a></span></dt><dt><span class="chapter"><a href="#_location_of_downloaded_packages">10. Location of downloaded packages</a></span></dt><dt><span class="chapter"><a href="#_adding_new_packages_to_buildroot">11. Adding new packages to Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_package_directory">11.1. Package directory</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_packages_with_specific_build_systems">11.2. Infrastructure for packages with specific build systems</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_autotools_based_packages">11.3. Infrastructure for autotools-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_cmake_based_packages">11.4. Infrastructure for CMake-based packages</a></span></dt><dt><span class="section"><a href="#handwritten-tutorial">11.5. Manual Makefile</a></span></dt><dt><span class="section"><a href="#_gettext_integration_and_interaction_with_packages">11.6. Gettext integration and interaction with packages</a></span></dt><dt><span class="section"><a href="#_conclusion">11.7. Conclusion</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_appendix">12. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#makedev-syntax">12.1. Makedev syntax documentation</a></span></dt></dl></dd></dl></div><div class="preface"><div class="titlepage"><div><div><h2 class="title"><a id="idp187808"></a></h2></div></div></div><p>Buildroot usage and documentation by Thomas Petazzoni. Contributions
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>The Buildroot user manual</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.76.1" /></head><body><div xml:lang="en" class="book" title="The Buildroot user manual" lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="idp102496"></a>The Buildroot user manual</h1></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="preface"><a href="#idp104864"></a></span></dt><dt><span class="chapter"><a href="#_about_buildroot">1. About Buildroot</a></span></dt><dt><span class="chapter"><a href="#_getting_buildroot">2. Getting Buildroot</a></span></dt><dt><span class="chapter"><a href="#_using_buildroot">3. Using Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_configuration_and_general_usage">3.1. Configuration and general usage</a></span></dt><dt><span class="section"><a href="#_offline_builds">3.2. Offline builds</a></span></dt><dt><span class="section"><a href="#_building_out_of_tree">3.3. Building out-of-tree</a></span></dt><dt><span class="section"><a href="#_environment_variables">3.4. Environment variables</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_customization">4. Customization</a></span></dt><dd><dl><dt><span class="section"><a href="#_customizing_the_generated_target_filesystem">4.1. Customizing the generated target filesystem</a></span></dt><dt><span class="section"><a href="#_customizing_the_busybox_configuration">4.2. Customizing the Busybox configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_uclibc_configuration">4.3. Customizing the uClibc configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_linux_kernel_configuration">4.4. Customizing the Linux kernel configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_toolchain">4.5. Customizing the toolchain</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_understanding_how_to_rebuild_packages">5. Understanding how to rebuild packages</a></span></dt><dt><span class="chapter"><a href="#_how_buildroot_works">6. How Buildroot works</a></span></dt><dt><span class="chapter"><a href="#_using_the_generated_toolchain_outside_buildroot">7. Using the generated toolchain outside Buildroot</a></span></dt><dt><span class="chapter"><a href="#_using_an_external_toolchain">8. Using an external toolchain</a></span></dt><dt><span class="chapter"><a href="#_using_literal_ccache_literal_in_buildroot">9. Using <code class="literal">ccache</code> in Buildroot</a></span></dt><dt><span class="chapter"><a href="#_location_of_downloaded_packages">10. Location of downloaded packages</a></span></dt><dt><span class="chapter"><a href="#_adding_new_packages_to_buildroot">11. Adding new packages to Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_package_directory">11.1. Package directory</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_packages_with_specific_build_systems">11.2. Infrastructure for packages with specific build systems</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_autotools_based_packages">11.3. Infrastructure for autotools-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_cmake_based_packages">11.4. Infrastructure for CMake-based packages</a></span></dt><dt><span class="section"><a href="#handwritten-tutorial">11.5. Manual Makefile</a></span></dt><dt><span class="section"><a href="#_gettext_integration_and_interaction_with_packages">11.6. Gettext integration and interaction with packages</a></span></dt><dt><span class="section"><a href="#_conclusion">11.7. Conclusion</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_appendix">12. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#makedev-syntax">12.1. Makedev syntax documentation</a></span></dt></dl></dd></dl></div><div class="preface"><div class="titlepage"><div><div><h2 class="title"><a id="idp104864"></a></h2></div></div></div><p>Buildroot usage and documentation by Thomas Petazzoni. Contributions
 from Karsten Kruse, Ned Ludd, Martin Herren and others.</p><div class="informalfigure"><div class="mediaobject"><img src="logo.png" alt="logo.png" /></div></div></div><div class="chapter" title="Chapter 1. About Buildroot"><div class="titlepage"><div><div><h2 class="title"><a id="_about_buildroot"></a>Chapter 1. About Buildroot</h2></div></div></div><p>Buildroot is a set of Makefiles and patches that allows you to easily
 generate a cross-compilation toolchain, a root filesystem and a Linux
 kernel image for your target. Buildroot can be used for one, two or
@@ -64,7 +64,7 @@ described on the "Accessing Git" page
 (<a class="ulink" href="http://buildroot.net/git.html" target="_top">http://buildroot.net/git.html</a>) of the Buildroot website
 (<a class="ulink" href="http://buildroot.net" target="_top">http://buildroot.net</a>).  For the impatient, here’s a quick recipe:</p><pre class="screen"> $ git clone git://git.buildroot.net/buildroot</pre></div><div class="chapter" title="Chapter 3. Using Buildroot"><div class="titlepage"><div><div><h2 class="title"><a id="_using_buildroot"></a>Chapter 3. Using Buildroot</h2></div></div></div><div class="section" title="3.1. Configuration and general usage"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_configuration_and_general_usage"></a>3.1. Configuration and general usage</h2></div></div></div><p>Buildroot has a nice configuration tool similar to the one you can
 find in the <a class="ulink" href="http://www.kernel.org/" target="_top">Linux kernel</a> or in
-<a class="ulink" href="http://www.busybox.org/" target="_top">Busybox</a>. Note that you can (and should) build
+<a class="ulink" href="http://www.busybox.net/" target="_top">Busybox</a>. Note that you can (and should) build
 everything as a normal user. There is no need to be root to configure
 and use Buildroot. The first step is to run the configuration
 assistant:</p><pre class="screen"> $ make menuconfig</pre><p>to run the curses-based configurator, or</p><pre class="screen"> $ make xconfig</pre><p>or</p><pre class="screen"> $ make gconfig</pre><p>to run the Qt or GTK-based configurators.</p><p>All of these "make" commands will need to build a configuration
@@ -233,7 +233,7 @@ everything.</p><p>If you want to use an existing config file for Linux, then see
 <a class="xref" href="#env-vars">Section 3.4, “Environment variables”</a>.</p></div><div class="section" title="4.5. Customizing the toolchain"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_customizing_the_toolchain"></a>4.5. Customizing the toolchain</h2></div></div></div><p><a id="toolchain-custom"></a>There are three distinct types of toolchain backend supported in Buildroot,
 available under the menu <code class="literal">Toolchain</code>, invoking <code class="literal">make menuconfig</code>.</p><div class="section" title="4.5.1. Using the external toolchain backend"><div class="titlepage"><div><div><h3 class="title"><a id="_using_the_external_toolchain_backend"></a>4.5.1. Using the external toolchain backend</h3></div></div></div><p>There is no way of tuning an external toolchain since Buildroot does not
 generate it.</p><p>It also requires to set the Buildroot settings according to the toolchain ones
-(see <a class="xref" href="#external-toolchain">Chapter 8, <i>Using an external toolchain</i></a>).</p></div><div class="section" title="4.5.2. Using the internal Buildroot toolchain backend"><div class="titlepage"><div><div><h3 class="title"><a id="_using_the_internal_buildroot_toolchain_backend"></a>4.5.2. Using the internal Buildroot toolchain backend</h3></div></div></div><p>The internal Buildroot toolchain backend <span class="strong"><strong>only</strong></span> allows to generate
+(see <a class="xref" href="#external-toolchain">Chapter 8, <em>Using an external toolchain</em></a>).</p></div><div class="section" title="4.5.2. Using the internal Buildroot toolchain backend"><div class="titlepage"><div><div><h3 class="title"><a id="_using_the_internal_buildroot_toolchain_backend"></a>4.5.2. Using the internal Buildroot toolchain backend</h3></div></div></div><p>The internal Buildroot toolchain backend <span class="strong"><strong>only</strong></span> allows to generate
 <span class="strong"><strong><a class="ulink" href="http://www.uclibc.org/" target="_top">uClibc</a>-based toolchains</strong></span>.</p><p>However, it allows to tune major settings, such as:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
 Linux header version
 </li><li class="listitem">
@@ -256,7 +256,9 @@ of which package installs what files in the <code class="literal">output/staging
 <code class="literal">output/target</code> directories. However, implementing clean package
 removal is on the TODO-list of Buildroot developers.</p><p>The easiest way to rebuild a single package from scratch is to remove
 its build directory in <code class="literal">output/build</code>. Buildroot will then re-extract,
-re-configure, re-compile and re-install this package from scratch.</p><p>However, if you don’t want to rebuild the package completely from
+re-configure, re-compile and re-install this package from scratch.</p><p>For convenience, most packages support the special make targets
+&lt;package&gt;-reconfigure and &lt;package&gt;-rebuild to repeat the configure
+and build steps.</p><p>However, if you don’t want to rebuild the package completely from
 scratch, a better understanding of the Buildroot internals is
 needed. Internally, to keep track of which steps have been done and
 which steps remain to be done, Buildroot maintains stamp files (empty
@@ -445,7 +447,7 @@ your software, for example <code class="literal">libfoo</code>.</p><p>Some packa
 <code class="literal">multimedia</code>, <code class="literal">java</code>, <code class="literal">x11r7</code>, and <code class="literal">games</code>. If your package fits in
 one of these categories, then create your package directory in these.</p><div class="section" title="11.1.1. Config.in file"><div class="titlepage"><div><div><h3 class="title"><a id="_literal_config_in_literal_file"></a>11.1.1. <code class="literal">Config.in</code> file</h3></div></div></div><p>Then, create a file named <code class="literal">Config.in</code>. This file will contain the
 option descriptions related to our <code class="literal">libfoo</code> software that will be used
-and displayed in the configuration tool. It should basically contain :</p><pre class="screen">config BR2_PACKAGE_LIBFOO
+and displayed in the configuration tool. It should basically contain:</p><pre class="screen">config BR2_PACKAGE_LIBFOO
         bool "libfoo"
         help
           This is a comment that explains what libfoo is.
@@ -493,7 +495,46 @@ Use a <code class="literal">depends on</code> type of dependency when the user r
           http://savannah.nongnu.org/projects/acl
 
 comment "acl requires a toolchain with LARGEFILE support"
-        depends on !BR2_LARGEFILE</pre><p>Note that such dependencies will make sure that the dependency option
+        depends on !BR2_LARGEFILE</pre><p>Note that these two dependency types are only transitive with the
+dependencies of the same kind.</p><p>This means, in the following example:</p><pre class="screen">config BR2_PACKAGE_A
+        bool "Package A"
+
+config BR2_PACKAGE_B
+        bool "Package B"
+        depends on BR2_PACKAGE_A
+
+config BR2_PACKAGE_C
+        bool "Package C"
+        depends on BR2_PACKAGE_B
+
+config BR2_PACKAGE_D
+        bool "Package D"
+        select BR2_PACKAGE_B
+
+config BR2_PACKAGE_E
+        bool "Package E"
+        select BR2_PACKAGE_D</pre><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+Selecting <code class="literal">Package C</code> will be visible if <code class="literal">Package B</code> has been
+  selected, which in turn is only visible if <code class="literal">Package A</code> has been
+  selected.
+</li><li class="listitem">
+Selecting <code class="literal">Package E</code> will select <code class="literal">Package D</code>, which will select
+  <code class="literal">Package B</code>, it will not check for the dependencies of <code class="literal">Package B</code>,
+  so it will not select <code class="literal">Package A</code>.
+</li><li class="listitem">
+Since <code class="literal">Package B</code> is selected but <code class="literal">Package A</code> is not, this violates
+  the dependency of <code class="literal">Package B</code> on <code class="literal">Package A</code>.  Therefore, in such a
+  situation, the transitive dependency has to be added explicitly:
+</li></ul></div><pre class="screen">config BR2_PACKAGE_D
+        bool "Package D"
+        select BR2_PACKAGE_B
+        depends on BR2_PACKAGE_A
+
+config BR2_PACKAGE_E
+        bool "Package E"
+        select BR2_PACKAGE_D
+        depends on BR2_PACKAGE_A</pre><p>Overall, for package library dependencies, <code class="literal">select</code> should be
+preferred.</p><p>Note that such dependencies will make sure that the dependency option
 is also enabled, but not necessarily built before your package. To do
 so, the dependency also needs to be expressed in the <code class="literal">.mk</code> file of the
 package.</p></div><div class="section" title="11.1.2. The .mk file"><div class="titlepage"><div><div><h3 class="title"><a id="_the_literal_mk_literal_file"></a>11.1.2. The <code class="literal">.mk</code> file</h3></div></div></div><p>Finally, here’s the hardest part. Create a file named <code class="literal">libfoo.mk</code>. It
@@ -1031,15 +1072,15 @@ existing manual makefiles and to help understand how they work.</strong></span><
 03: # libfoo
 04: #
 05: #############################################################
-06: LIBFOO_VERSION:=1.0
-07: LIBFOO_SOURCE:=libfoo-$(LIBFOO_VERSION).tar.gz
-08: LIBFOO_SITE:=http://www.foosoftware.org/downloads
-09: LIBFOO_DIR:=$(BUILD_DIR)/foo-$(FOO_VERSION)
-10: LIBFOO_BINARY:=foo
-11: LIBFOO_TARGET_BINARY:=usr/bin/foo
+06: LIBFOO_VERSION = 1.0
+07: LIBFOO_SOURCE = libfoo-$(LIBFOO_VERSION).tar.gz
+08: LIBFOO_SITE = http://www.foosoftware.org/downloads
+09: LIBFOO_DIR = $(BUILD_DIR)/foo-$(FOO_VERSION)
+10: LIBFOO_BINARY = foo
+11: LIBFOO_TARGET_BINARY = usr/bin/foo
 12:
 13: $(DL_DIR)/$(LIBFOO_SOURCE):
-14:     $(call DOWNLOAD,$(LIBFOO_SITE),$(LIBFOO_SOURCE))
+14:     $(call DOWNLOAD,$(LIBFOO_SITE)/$(LIBFOO_SOURCE))
 15:
 16: $(LIBFOO_DIR)/.source: $(DL_DIR)/$(LIBFOO_SOURCE)
 17:     $(ZCAT) $(DL_DIR)/$(LIBFOO_SOURCE) | tar -C $(BUILD_DIR) $(TAR_OPTIONS) -
@@ -1082,7 +1123,7 @@ existing manual makefiles and to help understand how they work.</strong></span><
 54: #
 55: #############################################################
 56: ifeq ($(BR2_PACKAGE_LIBFOO),y)
-57: TARGETS+=libfoo
+57: TARGETS += libfoo
 58: endif</pre><p>First of all, this Makefile example works for a package which
 comprises a single binary executable. For other software, such as
 libraries or more complex stuff with multiple binaries, it must be
@@ -1195,7 +1236,7 @@ forget to send a patch to Buildroot developers!</p></div></div><div class="chapt
 define changes to be made for permissions or which device files to
 create and how to create them, in order to avoid to call mkdnod every
 now and then.</p><p>This syntax is derived from the makedev utility, and a more complete
-documentation can be found in the <code class="literal">package/makedevs/README</code> file.</p><p>It takes the form of a line for each file, with the following layout:</p><div class="informaltable"><table cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>name</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>type</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>mode</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>uid</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>gid</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>major</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>minor</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>start</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>inc</p></td><td style="" align="left" valign="top"><p>count</p></td></tr></tbody></table></div><p>There is a few non-trivial blocks here:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+documentation can be found in the <code class="literal">package/makedevs/README</code> file.</p><p>It takes the form of a line for each file, with the following layout:</p><div class="informaltable"><table cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /><col class="col_4" /><col class="col_5" /><col class="col_6" /><col class="col_7" /><col class="col_8" /><col class="col_9" /><col class="col_10" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>name</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>type</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>mode</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>uid</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>gid</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>major</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>minor</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>start</p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>inc</p></td><td style="" align="left" valign="top"><p>count</p></td></tr></tbody></table></div><p>There is a few non-trivial blocks here:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
 <code class="literal">name</code> is the path to the file you want to create/modify
 </li><li class="listitem"><p class="simpara">
 <code class="literal">type</code> is the type of the file, being one of :

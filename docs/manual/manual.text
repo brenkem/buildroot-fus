@@ -17,6 +17,8 @@ Table of Contents
     3.2. Offline builds
     3.3. Building out-of-tree
     3.4. Environment variables
+    3.5. Complying with opensource licenses
+    3.6. Complying with the Buildroot license
 
 4. Customization
 
@@ -42,9 +44,14 @@ Table of Contents
     11.6. Gettext integration and interaction with packages
     11.7. Conclusion
 
-12. Appendix
+12. Frequently Asked Questions
 
-    12.1. Makedev syntax documentation
+    12.1. The boot hangs after Starting network…
+    12.2. module-init-tools fails to build with cannot find -lc
+
+13. Appendix
+
+    13.1. Makedev syntax documentation
 
 
 ---------------------------------------------------------------------
@@ -321,6 +328,117 @@ building helper-binaries on your host, then do
  $ make HOSTCXX=g++-4.3-HEAD HOSTCC=gcc-4.3-HEAD
 
 
+3.5. Complying with opensource licenses
+
+--------------
+
+All of the end products of Buildroot (toolchain, root filesystem,
+kernel, bootloaders) contain opensource software, released under
+various licenses.
+
+Using opensource software gives you the freedom to build rich
+embedded systems choosing from a wide range of packages, but also
+gives some obligations that you must know and honour. Some licenses
+require you to publish the license text in the documentation of your
+product. Other require you to redistribute the source code of the
+software to those that receive your product.
+
+The exact requirements of each license is documented in each package,
+and it is your (or your legal office’s) responsibility to comply with
+these requirements. To make this easier for you, Buildroot can
+collect for you some material you will probably need. To produce this
+material, after you configured Buildroot with make menuconfig, make
+xconfig or make gconfig, run:
+
+make legal-info
+
+Buildroot will collect legally-relevant material in your output
+directory, under the legal-info/ subdirectory. There you will find:
+
+  * A README file, that summarizes the produced material and contains
+    warnings about material that Buildroot could not produce.
+  * buildroot.config: this is the Buildroot configuration file that
+    is usually produced with make menuconfig, and which is necessary
+    to reproduce the build.
+  * The source code for all packages; this is saved in the sources/
+    subdirectory (except for proprietary packages, whose source code
+    is not saved); patches applied to some packages by Buildroot are
+    distributed with the Buildroot sources and are not duplicated in
+    the sources/ subdirectory.
+  * A manifest file listing the configured packages, their version,
+    license and related information. Some of these information might
+    be not defined in Buildroot; in this case they are clearly marked
+    as "unknown" or similar.
+  * A licenses/ subdirectory, which contains the license text of
+    packages. If the license file(s) are not defined in Buildroot,
+    the file is not produced and a warning in the README indicates
+    this.
+
+Please note that the aim of the legal-info feature of Buildroot is to
+produce all the material that is somehow relevant for legal
+compliance with the package licenses. Buildroot does not try to
+produce the exact material that you must somehow make public. It does
+surely produce some more material than is needed for a strict legal
+compliance. For example, it produces the source code for packages
+released under BSD-like licenses, that you might not want to
+redistribute in source form.
+
+Moreover, due to technical limitations, Buildroot does not produce
+some material that you will or may need, such as the toolchain source
+code and the Buildroot source code itself. When you run make
+legal-info, Buildroot produces warnings in the README file to inform
+you of relevant material that could not be saved.
+
+Here is a list of the licenses that are most widely used by packages
+in Buildroot, with the name used in the manifest file:
+
+  * GPLv2: GNU General Public License, version 2;
+  * GPLv2+: GNU General Public License, version 2 or (at your option)
+    any later version;
+  * GPLv3: GNU General Public License, version 3;
+  * GPLv3+: GNU General Public License, version 3 or (at your option)
+    any later version;
+  * GPL: GNU General Public License (any version);
+  * LGPLv2.1: GNU Lesser General Public License, version 2.1;
+  * LGPLv2.1+: GNU Lesser General Public License, version 2.1 or (at
+    your option) any later version;
+  * LGPLv3: GNU Lesser General Public License, version 3;
+  * LGPLv3+: GNU Lesser General Public License, version 3 or (at your
+    option) any later version;
+  * LGPL: GNU Lesser General Public License (any version);
+  * BSD-4c: Original BSD 4-clause license;
+  * BSD-3c: BSD 3-clause license;
+  * BSD-2c: BSD 2-clause license;
+  * PROPRIETARY: marks a non-opensource package; Buildroot does not
+    save any licensing info or source code for these packages.
+
+
+3.6. Complying with the Buildroot license
+
+--------------
+
+Buildroot itself is an opensource software, released under the GNU
+General Public License, version 2 or (at your option) any later
+version. However, being a build system, it is not normally part of
+the end product: if you develop the root filesystem, kernel,
+bootloader or toolchain for a device, the code of Buildroot is only
+present on the development machine, not in the device storage.
+
+Nevertheless, the general view of the Buildroot developers is that
+you should release the Buildroot source code along with the source
+code of other packages when releasing a product that contains
+GPL-licensed software. This is because the GNU GPL defines the "
+complete source code" for an executable work as "all the source code
+for all modules it contains, plus any associated interface definition
+files, plus the scripts used to control compilation and installation
+of the executable". Buildroot is part of the scripts used to control
+compilation and installation of the executable, and as such it is
+considered part of the material that must be redistributed.
+
+Keep in mind this is only the Buildroot developers' opinion, and you
+should consult your legal department or lawyer in case of any doubt.
+
+
 ---------------------------------------------------------------------
 
 Chapter 4. Customization
@@ -509,7 +627,8 @@ by the different packages, so some understanding of the particular
 package is needed.
 
 For packages relying on Buildroot packages infrastructures (see this
-section ??? for details), the following stamp files are relevant:
+section Chapter 11, Adding new packages to Buildroot for details),
+the following stamp files are relevant:
 
   * output/build/packagename-version/.stamp_configured. If removed,
     Buildroot will trigger the recompilation of the package from the
@@ -921,21 +1040,22 @@ different way, using different infrastructures:
     do not use the autotools as their build system. In the future,
     other specialized infrastructures might be written for other
     build systems. We cover them through in a tutorial
-    Section 11.2.1, “GENTARGETS Tutorial” and a reference
-    Section 11.2.2, “GENTARGETS Reference”.
+    Section 11.2.1, “generic-package Tutorial” and a reference
+    Section 11.2.2, “generic-package Reference”.
   * Makefiles for autotools-based software (autoconf, automake,
     etc.): We provide a dedicated infrastructure for such packages,
     since autotools is a very common build system. This
     infrastructure must be used for new packages that rely on the
     autotools as their build system. We cover them through a tutorial
-    Section 11.3.1, “AUTOTARGETS tutorial” and reference
-    Section 11.3.2, “AUTOTARGETS reference”.
+    Section 11.3.1, “autotools-package tutorial” and reference
+    Section 11.3.2, “autotools-package reference”.
   * Makefiles for cmake-based software: We provide a dedicated
     infrastructure for such packages, as CMake is a more and more
     commonly used build system and has a standardized behaviour. This
     infrastructure must be used for new packages that rely on CMake.
-    We cover them through a tutorial Section 11.4.1, “CMAKETARGETS
-    tutorial” and reference Section 11.4.2, “CMAKETARGETS reference”.
+    We cover them through a tutorial Section 11.4.1, “cmake-package
+    tutorial” and reference Section 11.4.2, “cmake-package reference”
+    .
   * Hand-written Makefiles: These are currently obsolete, and no new
     manual Makefiles should be added. However, since there are still
     many of them in the tree, we keep them documented in a tutorial
@@ -951,7 +1071,7 @@ whose build system is not one of the standard ones, such as autotools
 or CMake. This typically includes packages whose build system is
 based on hand-written Makefiles or shell scripts.
 
-11.2.1. GENTARGETS Tutorial
+11.2.1. generic-package Tutorial
 
 01: #############################################################
 02: #
@@ -987,7 +1107,7 @@ based on hand-written Makefiles or shell scripts.
 32:     /bin/foo  f  4755  0  0  -  -  -  -  -
 33: endef
 34:
-35: $(eval $(call GENTARGETS))
+35: $(eval $(generic-package))
 
 The Makefile begins on line 6 to 8 with metadata information: the
 version of the package (LIBFOO_VERSION), the name of the tarball
@@ -1021,24 +1141,21 @@ install the package in the target space.
 All these steps rely on the $(@D) variable, which contains the
 directory where the source code of the package has been extracted.
 
-Finally, on line 35, we call the GENTARGETS which generates,
+Finally, on line 35, we call the generic-package which generates,
 according to the variables defined previously, all the Makefile code
 necessary to make your package working.
 
-11.2.2. GENTARGETS Reference
+11.2.2. generic-package Reference
 
-The GENTARGETS macro takes one optional argument. This argument can
-be used to tell if the package is a target package (cross-compiled
-for the target) or a host package (natively compiled for the host).
-If unspecified, it is assumed that it is a target package. See below
-for details.
-
-For a given package, in a single .mk file, it is possible to call
-GENTARGETS twice, once to create the rules to generate a target
+There are two variants of the generic target. The generic-package
+macro is used for packages to be cross-compiled for the target. The
+host-generic-package macro is used for host packages, natively
+compiled for the host. It is possible to call both of them in a
+single .mk file: once to create the rules to generate a target
 package and once to create the rules to generate a host package:
 
-$(eval $(call GENTARGETS))
-$(eval $(call GENTARGETS,host))
+$(eval $(generic-package))
+$(eval $(host-generic-package))
 
 This might be useful if the compilation of the target package
 requires some tools to be installed on the host. If the package name
@@ -1047,16 +1164,17 @@ libfoo, while the name of the package for the host is host-libfoo.
 These names should be used in the DEPENDENCIES variables of other
 packages, if they depend on libfoo or host-libfoo.
 
-The call to the GENTARGETS macro must be at the end of the .mk file,
-after all variable definitions.
+The call to the generic-package and/or host-generic-package macro 
+must be at the end of the .mk file, after all variable definitions.
 
-For the target package, the GENTARGETS uses the variables defined by
-the .mk file and prefixed by the uppercased package name: LIBFOO_*.
-For the host package, it uses the HOST_LIBFOO_*. For some variables,
-if the HOST_LIBFOO_ prefixed variable doesn’t exist, the package
-infrastructure uses the corresponding variable prefixed by LIBFOO_.
-This is done for variables that are likely to have the same value for
-both the target and host packages. See below for details.
+For the target package, the generic-package uses the variables
+defined by the .mk file and prefixed by the uppercased package name:
+LIBFOO_*. host-generic-package uses the HOST_LIBFOO_* variables. For 
+some variables, if the HOST_LIBFOO_ prefixed variable doesn’t exist,
+the package infrastructure uses the corresponding variable prefixed
+by LIBFOO_. This is done for variables that are likely to have the
+same value for both the target and host packages. See below for
+details.
 
 The list of variables that can be set in a .mk file to give metadata
 information is (assuming the package name is libfoo) :
@@ -1065,16 +1183,14 @@ information is (assuming the package name is libfoo) :
     package. Note that if HOST_LIBFOO_VERSION doesn’t exist, it is
     assumed to be the same as LIBFOO_VERSION. It can also be a
     revision number, branch or tag for packages that are fetched
-    directly from their revision control system.
-    Examples:
-    LIBFOO_VERSION = 0.1.2
-    LIBFOO_VERSION = cb9d6aa9429e838f0e54faa3d455bcbab5eef057
-    LIBFOO_VERSION = stable
+    directly from their revision control system. Examples:
+    LIBFOO_VERSION = 0.1.2 LIBFOO_VERSION =
+    cb9d6aa9429e838f0e54faa3d455bcbab5eef057 LIBFOO_VERSION = stable
   * LIBFOO_SOURCE may contain the name of the tarball of the package.
     If HOST_LIBFOO_SOURCE is not specified, it defaults to
     LIBFOO_SOURCE. If none are specified, then the value is assumed
-    to be packagename-$(LIBFOO_VERSION).tar.gz.
-    Example: LIBFOO_SOURCE = foobar-$(LIBFOO_VERSION).tar.bz2
+    to be packagename-$(LIBFOO_VERSION).tar.gz. Example:
+    LIBFOO_SOURCE = foobar-$(LIBFOO_VERSION).tar.bz2
   * LIBFOO_PATCH may contain the name of a patch, that will be
     downloaded from the same location as the tarball indicated in
     LIBFOO_SOURCE. If HOST_LIBFOO_PATCH is not specified, it defaults
@@ -1083,39 +1199,62 @@ information is (assuming the package name is libfoo) :
     packagename-packageversion-description.patch present in the
     package directory inside Buildroot will be applied to the package
     after extraction.
-  * LIBFOO_SITE may contain the Internet location of the package. It
-    can either be the HTTP, FTP or SCP location of a tarball, or the
-    URL of a Git, Subversion, Mercurial or Bazaar repository (see
-    LIBFOO_SITE_METHOD below).
-    SCP URLs should be of the form scp://[user@]host:filepath. Note
-    that filepath is relative to the user’s home directory, so you
-    may want to prepend the path with a slash for absolute paths:
-    scp://[user@]host:/absolutepath.
-    If HOST_LIBFOO_SITE is not specified, it defaults to LIBFOO_SITE.
-    If none are specified, then the location is assumed to be http://
-    $$(BR2_SOURCEFORGE_MIRROR).dl.sourceforge.net/sourceforge/
-    packagename.
-    Examples:
-    LIBFOO_SITE=http://www.libfoosoftware.org/libfoo
-    LIBFOO_SITE=http://svn.xiph.org/trunk/Tremor/
-    LIBFOO_SITE=git://github.com/kergoth/tslib.git
-  * LIBFOO_SITE_METHOD may contain the method to fetch the package
-    source code. It can either be wget (for normal FTP/HTTP downloads
-    of tarballs), scp (for downloads over SSH with scp), svn, git, hg
-    or bzr. When not specified, it is guessed from the URL given in
-    LIBFOO_SITE: scp://, svn://, git:// and bzr:// URLs will use the
-    scp, svn, git and bzr methods respectively. All other URL-types
-    will use the wget method. So for example, in the case of a
-    package whose source code is available through a Subversion
-    repository on HTTP, one must specifiy LIBFOO_SITE_METHOD=svn.
-    Similarly, for Mercurial repositories, one must specify
-    LIBFOO_SITE_METHOD=hg. For svn, git, hg and bzr methods, what
-    Buildroot does is a checkout/clone of the repository which is
-    then tarballed and stored into the download cache. Next builds
-    will not checkout/clone again, but will use the tarball directly.
-    When HOST_LIBFOO_SITE_METHOD is not specified, it defaults to the
-    value of LIBFOO_SITE_METHOD. See package/multimedia/tremor/ for
-    an example.
+  * LIBFOO_SITE provides the location of the package, which can be a
+    URL or a local filesystem path. HTTP, FTP and SCP are supported
+    URL types for retrieving package tarballs. Git, Subversion,
+    Mercurial, and Bazaar are supported URL types for retrieving
+    packages directly from source code management systems. A
+    filesystem path may be used to specify either a tarball or a
+    directory containing the package source code. See
+    LIBFOO_SITE_METHOD below for more details on how retrieval works.
+    Note that SCP URLs should be of the form scp://[user@]
+    host:filepath, and that filepath is relative to the user’s home
+    directory, so you may want to prepend the path with a slash for
+    absolute paths: scp://[user@]host:/absolutepath. If
+    HOST_LIBFOO_SITE is not specified, it defaults to LIBFOO_SITE. If
+    none are specified, then the location is assumed to be http://$$
+    (BR2_SOURCEFORGE_MIRROR).dl.sourceforge.net/sourceforge/
+    packagename. Examples: LIBFOO_SITE=http://www.libfoosoftware.org/
+    libfoo LIBFOO_SITE=http://svn.xiph.org/trunk/Tremor/ LIBFOO_SITE=
+    git://github.com/kergoth/tslib.git LIBFOO_SITE=/opt/software/
+    libfoo.tar.gz LIBFOO_SITE=$(TOPDIR)/../src/libfoo/
+  * LIBFOO_SITE_METHOD determines the method used to fetch or copy
+    the package source code. In many cases, Buildroot guesses the
+    method from the contents of LIBFOO_SITE and setting
+    LIBFOO_SITE_METHOD is unnecessary. When HOST_LIBFOO_SITE_METHOD
+    is not specified, it defaults to the value of LIBFOO_SITE_METHOD.
+    The possible values of LIBFOO_SITE_METHOD are:
+
+      o wget for normal FTP/HTTP downloads of tarballs. Used by
+        default when LIBFOO_SITE begins with http://, https:// or
+        ftp://.
+      o scp for downloads of tarballs over SSH with scp. Used by
+        default when LIBFOO_SITE begins with scp://.
+      o svn for retrieving source code from a Subversion repository.
+        Used by default when LIBFOO_SITE begins with svn://. When a
+        http:// Subversion repository URL is specified in
+        LIBFOO_SITE, one must specify LIBFOO_SITE_METHOD=svn.
+        Buildroot performs a checkout which is preserved as a tarball
+        in the download cache; subsequent builds use the tarball
+        instead of performing another checkout.
+      o git for retrieving source code from a Git repository. Used by
+        default when LIBFOO_SITE begins with git://. The downloaded
+        source code is cached as with the svn method.
+      o hg for retrieving source code from a Mercurial repository.
+        One must specify LIBFOO_SITE_METHOD=hg when LIBFOO_SITE
+        contains a Mercurial repository URL. The downloaded source
+        code is cached as with the svn method.
+      o bzr for retrieving source code from a Bazaar repository. Used
+        by default when LIBFOO_SITE begins with bzr://. The
+        downloaded source code is cached as with the svn method.
+      o file for a local tarball. One should use this when
+        LIBFOO_SITE specifies a package tarball as a local filename.
+        Useful for software that isn’t available publicly or in
+        version control.
+      o local for a local source code directory. One should use this
+        when LIBFOO_SITE specifies a local directory path containing
+        the package source code. Buildroot copies the contents of the
+        source directory into the package’s build directory.
   * LIBFOO_DEPENDENCIES lists the dependencies (in terms of package
     name) that are required for the current target package to
     compile. These dependencies are guaranteed to be compiled and
@@ -1133,13 +1272,34 @@ information is (assuming the package name is libfoo) :
   * LIBFOO_DEVICES lists the device files to be created by Buildroot
     when using the static device table. The syntax to use is the
     makedevs one. You can find some documentation for this syntax in
-    the Section 12.1, “Makedev syntax documentation”. This variable
+    the Section 13.1, “Makedev syntax documentation”. This variable
     is optional.
   * LIBFOO_PERMISSIONS lists the changes of permissions to be done at
     the end of the build process. The syntax is once again the
     makedevs one. You can find some documentation for this syntax in
-    the Section 12.1, “Makedev syntax documentation”. This variable
+    the Section 13.1, “Makedev syntax documentation”. This variable
     is optional.
+  * LIBFOO_LICENSE defines the license (or licenses) under which the
+    package is released. This name will appear in the manifest file
+    produced by make legal-info. If the license is one of those
+    listed in Section 3.5, “Complying with opensource licenses”, use
+    the same string to make the manifest file uniform. Otherwise,
+    describe the license in a precise and concise way, avoiding
+    ambiguous names such as BSD which actually name a family of
+    licenses. If the root filesystem you generate contains
+    non-opensource packages, you can define their license as
+    PROPRIETARY: Buildroot will not save any licensing info or source
+    code for this package. This variable is optional. If it is not
+    defined, unknown will appear in the license field of the manifest
+    file for this package.
+  * LIBFOO_LICENSE_FILES is a space-separated list of files in the
+    package tarball that contain the license(s) under which the
+    package is released. make legal-info copies all of these files in
+    the legal-info directory. See Section 3.5, “Complying with
+    opensource licenses” for more information. This variable is
+    optional. If it is not defined, a warning will be produced to let
+    you know, and not saved will appear in the license files field of
+    the manifest file for this package.
 
 The recommended way to define these variables is to use the following
 syntax:
@@ -1179,6 +1339,12 @@ different steps of the build process.
     uninstall the package from the target directory $(TARGET_DIR)
   * LIBFOO_UNINSTALL_STAGING_CMDS, used to list the actions to
     uninstall the package from the staging directory $(STAGING_DIR).
+  * LIBFOO_INSTALL_INIT_SYSV and LIBFOO_INSTALL_INIT_SYSTEMD, used to
+    install init scripts either for the systemV-like init systems
+    (busybox, sysvinit, etc.) or for the systemd units. These
+    commands will be run only when the relevant init system is
+    installed (i.e. if systemd is selected as the init system in the
+    configuration, only LIBFOO_INSTALL_INIT_SYSTEMD will be run).
 
 The preferred way to define these variables is:
 
@@ -1235,7 +1401,7 @@ LIBFOO_POST_PATCH_HOOKS += LIBFOO_POST_PATCH_FIXUP
 
 --------------
 
-11.3.1. AUTOTARGETS tutorial
+11.3.1. autotools-package tutorial
 
 First, let’s see how to write a .mk file for an autotools-based
 package, with an example :
@@ -1253,7 +1419,7 @@ package, with an example :
 11: LIBFOO_CONF_OPT = --enable-shared
 12: LIBFOO_DEPENDENCIES = libglib2 host-pkg-config
 13:
-14: $(eval $(call AUTOTARGETS))
+14: $(eval $(autotools-package))
 
 On line 6, we declare the version of the package.
 
@@ -1286,22 +1452,20 @@ building the package.
 On line 12, we declare our dependencies, so that they are built
 before the build process of our package starts.
 
-Finally, on line line 14, we invoke the AUTOTARGETS macro that
+Finally, on line line 14, we invoke the autotools-package macro that
 generates all the Makefile rules that actually allows the package to
 be built.
 
-11.3.2. AUTOTARGETS reference
+11.3.2. autotools-package reference
 
 The main macro of the autotools package infrastructure is
-AUTOTARGETS. It has the same number of arguments and the same
-semantic as the GENTARGETS macro, which is the main macro of the
-generic package infrastructure. For autotools packages, the ability
-to have target and host packages is also available (and is actually
-widely used).
+autotools-package. It is similar to the generic-package macro. The
+ability to have target and host packages is also available, with the
+host-autotools-package macro.
 
 Just like the generic infrastructure, the autotools infrastructure
 works by defining a number of variables before calling the
-AUTOTARGETS macro.
+autotools-package macro.
 
 First, all the package metadata information variables that exist in
 the generic infrastructure also exist in the autotools
@@ -1382,7 +1546,7 @@ still possible to customize what is done in any particular step:
 
 --------------
 
-11.4.1. CMAKETARGETS tutorial
+11.4.1. cmake-package tutorial
 
 First, let’s see how to write a .mk file for a CMake-based package,
 with an example :
@@ -1400,7 +1564,7 @@ with an example :
 11: LIBFOO_CONF_OPT = -DBUILD_DEMOS=ON
 12: LIBFOO_DEPENDENCIES = libglib2 host-pkg-config
 13:
-14: $(eval $(call CMAKETARGETS))
+14: $(eval $(cmake-package))
 
 On line 6, we declare the version of the package.
 
@@ -1432,20 +1596,19 @@ is configuring the package.
 On line 12, we declare our dependencies, so that they are built
 before the build process of our package starts.
 
-Finally, on line line 14, we invoke the CMAKETARGETS macro that
+Finally, on line line 14, we invoke the cmake-package macro that
 generates all the Makefile rules that actually allows the package to
 be built.
 
-11.4.2. CMAKETARGETS reference
+11.4.2. cmake-package reference
 
-The main macro of the CMake package infrastructure is CMAKETARGETS.
-It has the same number of arguments and the same semantic as the
-GENTARGETS macro, which is the main macro of the generic package
-infrastructure. For CMake packages, the ability to have target and
-host packages is also available.
+The main macro of the CMake package infrastructure is cmake-package.
+It is similar to the generic-package macro. The ability to have
+target and host packages is also available, with the
+host-cmake-package macro.
 
 Just like the generic infrastructure, the CMake infrastructure works
-by defining a number of variables before calling the CMAKETARGETS
+by defining a number of variables before calling the cmake-package
 macro.
 
 First, all the package metadata information variables that exist in
@@ -1728,12 +1891,55 @@ forget to send a patch to Buildroot developers!
 
 ---------------------------------------------------------------------
 
-Chapter 12. Appendix
+Chapter 12. Frequently Asked Questions
 
 ---------------------------------------------------------------------
 
 
-12.1. Makedev syntax documentation
+12.1. The boot hangs after Starting network…
+
+--------------
+
+If the boot process seems to hand after the following messages
+(messages not necessarily exactly similar, depending on the list of
+packages selected):
+
+Freeing init memory: 3972K
+Initializing random number generator... done.
+Starting network...
+Starting dropbear sshd: generating rsa key... generating dsa key... OK
+
+then it means that your system is running, but didn’t start a shell
+on the serial console. In order to have the system start a shell on
+your serial console, you have to go in the Buildroot configuration,
+System configuration, and modify Port to run a getty (login prompt)
+on and Baudrate to use as appropriate. This will automatically tune
+the /etc/inittab file of the generated system so that a shell starts
+on the correct serial port.
+
+
+12.2. module-init-tools fails to build with cannot find -lc
+
+--------------
+
+If the build of module-init-tools for the host fails with:
+
+/usr/bin/ld: cannot find -lc
+
+then probably you are running a Fedora (or similar) distribution, and
+you should install the glibc-static package. This is because the
+module-init-tools build process wants to link statically against the
+C library.
+
+
+---------------------------------------------------------------------
+
+Chapter 13. Appendix
+
+---------------------------------------------------------------------
+
+
+13.1. Makedev syntax documentation
 
 --------------
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>The Buildroot user manual</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.76.1" /></head><body><div xml:lang="en" class="book" title="The Buildroot user manual" lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="idp102496"></a>The Buildroot user manual</h1></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="preface"><a href="#idp104864"></a></span></dt><dt><span class="chapter"><a href="#_about_buildroot">1. About Buildroot</a></span></dt><dt><span class="chapter"><a href="#_getting_buildroot">2. Getting Buildroot</a></span></dt><dt><span class="chapter"><a href="#_using_buildroot">3. Using Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_configuration_and_general_usage">3.1. Configuration and general usage</a></span></dt><dt><span class="section"><a href="#_offline_builds">3.2. Offline builds</a></span></dt><dt><span class="section"><a href="#_building_out_of_tree">3.3. Building out-of-tree</a></span></dt><dt><span class="section"><a href="#_environment_variables">3.4. Environment variables</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_customization">4. Customization</a></span></dt><dd><dl><dt><span class="section"><a href="#_customizing_the_generated_target_filesystem">4.1. Customizing the generated target filesystem</a></span></dt><dt><span class="section"><a href="#_customizing_the_busybox_configuration">4.2. Customizing the Busybox configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_uclibc_configuration">4.3. Customizing the uClibc configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_linux_kernel_configuration">4.4. Customizing the Linux kernel configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_toolchain">4.5. Customizing the toolchain</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_understanding_how_to_rebuild_packages">5. Understanding how to rebuild packages</a></span></dt><dt><span class="chapter"><a href="#_how_buildroot_works">6. How Buildroot works</a></span></dt><dt><span class="chapter"><a href="#_using_the_generated_toolchain_outside_buildroot">7. Using the generated toolchain outside Buildroot</a></span></dt><dt><span class="chapter"><a href="#_using_an_external_toolchain">8. Using an external toolchain</a></span></dt><dt><span class="chapter"><a href="#_using_literal_ccache_literal_in_buildroot">9. Using <code class="literal">ccache</code> in Buildroot</a></span></dt><dt><span class="chapter"><a href="#_location_of_downloaded_packages">10. Location of downloaded packages</a></span></dt><dt><span class="chapter"><a href="#_adding_new_packages_to_buildroot">11. Adding new packages to Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_package_directory">11.1. Package directory</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_packages_with_specific_build_systems">11.2. Infrastructure for packages with specific build systems</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_autotools_based_packages">11.3. Infrastructure for autotools-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_cmake_based_packages">11.4. Infrastructure for CMake-based packages</a></span></dt><dt><span class="section"><a href="#handwritten-tutorial">11.5. Manual Makefile</a></span></dt><dt><span class="section"><a href="#_gettext_integration_and_interaction_with_packages">11.6. Gettext integration and interaction with packages</a></span></dt><dt><span class="section"><a href="#_conclusion">11.7. Conclusion</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_appendix">12. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#makedev-syntax">12.1. Makedev syntax documentation</a></span></dt></dl></dd></dl></div><div class="preface"><div class="titlepage"><div><div><h2 class="title"><a id="idp104864"></a></h2></div></div></div><p>Buildroot usage and documentation by Thomas Petazzoni. Contributions
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>The Buildroot user manual</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.76.1" /></head><body><div xml:lang="en" class="book" title="The Buildroot user manual" lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="idp25199456"></a>The Buildroot user manual</h1></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl><dt><span class="preface"><a href="#idp25200704"></a></span></dt><dt><span class="chapter"><a href="#_about_buildroot">1. About Buildroot</a></span></dt><dt><span class="chapter"><a href="#_getting_buildroot">2. Getting Buildroot</a></span></dt><dt><span class="chapter"><a href="#_using_buildroot">3. Using Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_configuration_and_general_usage">3.1. Configuration and general usage</a></span></dt><dt><span class="section"><a href="#_offline_builds">3.2. Offline builds</a></span></dt><dt><span class="section"><a href="#_building_out_of_tree">3.3. Building out-of-tree</a></span></dt><dt><span class="section"><a href="#_environment_variables">3.4. Environment variables</a></span></dt><dt><span class="section"><a href="#_complying_with_opensource_licenses">3.5. Complying with opensource licenses</a></span></dt><dt><span class="section"><a href="#_complying_with_the_buildroot_license">3.6. Complying with the Buildroot license</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_customization">4. Customization</a></span></dt><dd><dl><dt><span class="section"><a href="#_customizing_the_generated_target_filesystem">4.1. Customizing the generated target filesystem</a></span></dt><dt><span class="section"><a href="#_customizing_the_busybox_configuration">4.2. Customizing the Busybox configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_uclibc_configuration">4.3. Customizing the uClibc configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_linux_kernel_configuration">4.4. Customizing the Linux kernel configuration</a></span></dt><dt><span class="section"><a href="#_customizing_the_toolchain">4.5. Customizing the toolchain</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_understanding_how_to_rebuild_packages">5. Understanding how to rebuild packages</a></span></dt><dt><span class="chapter"><a href="#_how_buildroot_works">6. How Buildroot works</a></span></dt><dt><span class="chapter"><a href="#_using_the_generated_toolchain_outside_buildroot">7. Using the generated toolchain outside Buildroot</a></span></dt><dt><span class="chapter"><a href="#_using_an_external_toolchain">8. Using an external toolchain</a></span></dt><dt><span class="chapter"><a href="#_using_literal_ccache_literal_in_buildroot">9. Using <code class="literal">ccache</code> in Buildroot</a></span></dt><dt><span class="chapter"><a href="#_location_of_downloaded_packages">10. Location of downloaded packages</a></span></dt><dt><span class="chapter"><a href="#_adding_new_packages_to_buildroot">11. Adding new packages to Buildroot</a></span></dt><dd><dl><dt><span class="section"><a href="#_package_directory">11.1. Package directory</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_packages_with_specific_build_systems">11.2. Infrastructure for packages with specific build systems</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_autotools_based_packages">11.3. Infrastructure for autotools-based packages</a></span></dt><dt><span class="section"><a href="#_infrastructure_for_cmake_based_packages">11.4. Infrastructure for CMake-based packages</a></span></dt><dt><span class="section"><a href="#handwritten-tutorial">11.5. Manual Makefile</a></span></dt><dt><span class="section"><a href="#_gettext_integration_and_interaction_with_packages">11.6. Gettext integration and interaction with packages</a></span></dt><dt><span class="section"><a href="#_conclusion">11.7. Conclusion</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_frequently_asked_questions">12. Frequently Asked Questions</a></span></dt><dd><dl><dt><span class="section"><a href="#_the_boot_hangs_after_emphasis_starting_network_8230_emphasis">12.1. The boot hangs after <span class="emphasis"><em>Starting network…</em></span></a></span></dt><dt><span class="section"><a href="#_module_init_tools_fails_to_build_with_emphasis_cannot_find_lc_emphasis">12.2. module-init-tools fails to build with <span class="emphasis"><em>cannot find -lc</em></span></a></span></dt></dl></dd><dt><span class="chapter"><a href="#_appendix">13. Appendix</a></span></dt><dd><dl><dt><span class="section"><a href="#makedev-syntax">13.1. Makedev syntax documentation</a></span></dt></dl></dd></dl></div><div class="preface"><div class="titlepage"><div><div><h2 class="title"><a id="idp25200704"></a></h2></div></div></div><p>Buildroot usage and documentation by Thomas Petazzoni. Contributions
 from Karsten Kruse, Ned Ludd, Martin Herren and others.</p><div class="informalfigure"><div class="mediaobject"><img src="logo.png" alt="logo.png" /></div></div></div><div class="chapter" title="Chapter 1. About Buildroot"><div class="titlepage"><div><div><h2 class="title"><a id="_about_buildroot"></a>Chapter 1. About Buildroot</h2></div></div></div><p>Buildroot is a set of Makefiles and patches that allows you to easily
 generate a cross-compilation toolchain, a root filesystem and a Linux
 kernel image for your target. Buildroot can be used for one, two or
@@ -157,7 +157,123 @@ to <code class="literal">make</code> or set in the environment:</p><div class="i
   Buildroot stores/retrieves downloaded files
 </li></ul></div><p>An example that uses config files located in the toplevel directory and
 in your $HOME:</p><pre class="screen"> $ make UCLIBC_CONFIG_FILE=uClibc.config BUSYBOX_CONFIG_FILE=$HOME/bb.config</pre><p>If you want to use a compiler other than the default <code class="literal">gcc</code>
-or <code class="literal">g</code>++ for building helper-binaries on your host, then do</p><pre class="screen"> $ make HOSTCXX=g++-4.3-HEAD HOSTCC=gcc-4.3-HEAD</pre></div></div><div class="chapter" title="Chapter 4. Customization"><div class="titlepage"><div><div><h2 class="title"><a id="_customization"></a>Chapter 4. Customization</h2></div></div></div><div class="section" title="4.1. Customizing the generated target filesystem"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_customizing_the_generated_target_filesystem"></a>4.1. Customizing the generated target filesystem</h2></div></div></div><p>There are a few ways to customize the resulting target filesystem:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+or <code class="literal">g</code>++ for building helper-binaries on your host, then do</p><pre class="screen"> $ make HOSTCXX=g++-4.3-HEAD HOSTCC=gcc-4.3-HEAD</pre></div><div class="section" title="3.5. Complying with opensource licenses"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_complying_with_opensource_licenses"></a>3.5. Complying with opensource licenses</h2></div></div></div><p><a id="legal-info"></a>All of the end products of Buildroot (toolchain, root filesystem, kernel,
+bootloaders) contain opensource software, released under various licenses.</p><p>Using opensource software gives you the freedom to build rich embedded
+systems choosing from a wide range of packages, but also gives some
+obligations that you must know and honour.
+Some licenses require you to publish the license text in the documentation of
+your product. Other require you to redistribute the source code of the
+software to those that receive your product.</p><p>The exact requirements of each license is documented in each package, and it is
+your (or your legal office’s) responsibility to comply with these requirements.
+To make this easier for you, Buildroot can collect for you some material you
+will probably need. To produce this material, after you configured Buildroot
+with <code class="literal">make menuconfig</code>, <code class="literal">make xconfig</code> or <code class="literal">make gconfig</code>, run:</p><pre class="screen">make legal-info</pre><p>Buildroot will collect legally-relevant material in your output directory,
+under the <code class="literal">legal-info/</code> subdirectory.
+There you will find:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+A <code class="literal">README</code> file, that summarizes the produced material and contains warnings
+  about material that Buildroot could not produce.
+</li><li class="listitem">
+<code class="literal">buildroot.config</code>: this is the Buildroot configuration file that is usually
+  produced with <code class="literal">make menuconfig</code>, and which is necessary to reproduce the
+  build.
+</li><li class="listitem">
+The source code for all packages; this is saved in the <code class="literal">sources/</code>
+  subdirectory (except for proprietary packages, whose source code is not
+  saved);
+  patches applied to some packages by Buildroot are distributed with the
+  Buildroot sources and are not duplicated in the <code class="literal">sources/</code> subdirectory.
+</li><li class="listitem">
+A manifest file listing the configured packages, their version, license and
+  related information.
+  Some of these information might be not defined in Buildroot; in this case
+  they are clearly marked as "unknown" or similar.
+</li><li class="listitem">
+A <code class="literal">licenses/</code> subdirectory, which contains the license text of packages.
+  If the license file(s) are not defined in Buildroot, the file is not produced
+  and a warning in the <code class="literal">README</code> indicates this.
+</li></ul></div><p>Please note that the aim of the <code class="literal">legal-info</code> feature of Buildroot is to
+produce all the material that is somehow relevant for legal compliance with the
+package licenses. Buildroot does not try to produce the exact material that
+you must somehow make public. It does surely produce some more material than is
+needed for a strict legal compliance. For example, it produces the source code
+for packages released under BSD-like licenses, that you might not want to
+redistribute in source form.</p><p>Moreover, due to technical limitations, Buildroot does not produce some
+material that you will or may need, such as the toolchain source code and the
+Buildroot source code itself.
+When you run <code class="literal">make legal-info</code>, Buildroot produces warnings in the <code class="literal">README</code>
+file to inform you of relevant material that could not be saved.</p><p>Here is a list of the licenses that are most widely used by packages in
+Buildroot, with the name used in the manifest file:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
+<code class="literal">GPLv2</code>:
+  <a class="ulink" href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html" target="_top">
+  GNU General Public License, version 2</a>;
+</li><li class="listitem">
+<code class="literal">GPLv2</code>+:
+  <a class="ulink" href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html" target="_top">
+  GNU General Public License, version 2</a>
+  or (at your option) any later version;
+</li><li class="listitem">
+<code class="literal">GPLv3</code>:
+  <a class="ulink" href="http://www.gnu.org/licenses/gpl.html" target="_top">
+  GNU General Public License, version 3</a>;
+</li><li class="listitem">
+<code class="literal">GPLv3</code>+:
+  <a class="ulink" href="http://www.gnu.org/licenses/gpl.html" target="_top">
+  GNU General Public License, version 3</a>
+  or (at your option) any later version;
+</li><li class="listitem">
+<code class="literal">GPL</code>:
+  <a class="ulink" href="http://www.gnu.org/licenses/gpl.html" target="_top">
+  GNU General Public License</a> (any version);
+</li><li class="listitem">
+<code class="literal">LGPLv2.1</code>:
+  <a class="ulink" href="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html" target="_top">
+  GNU Lesser General Public License, version 2.1</a>;
+</li><li class="listitem">
+<code class="literal">LGPLv2.1</code>+:
+  <a class="ulink" href="http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html" target="_top">
+  GNU Lesser General Public License, version 2.1</a>
+  or (at your option) any later version;
+</li><li class="listitem">
+<code class="literal">LGPLv3</code>:
+  <a class="ulink" href="http://www.gnu.org/licenses/lgpl.html" target="_top">
+  GNU Lesser General Public License, version 3</a>;
+</li><li class="listitem">
+<code class="literal">LGPLv3</code>+:
+  <a class="ulink" href="http://www.gnu.org/licenses/lgpl.html" target="_top">
+  GNU Lesser General Public License, version 3</a>
+  or (at your option) any later version;
+</li><li class="listitem">
+<code class="literal">LGPL</code>:
+  <a class="ulink" href="http://www.gnu.org/licenses/lgpl.html" target="_top">
+  GNU Lesser General Public License</a> (any version);
+</li><li class="listitem">
+<code class="literal">BSD-4c</code>: Original BSD 4-clause license;
+</li><li class="listitem">
+<code class="literal">BSD-3c</code>: BSD 3-clause license;
+</li><li class="listitem">
+<code class="literal">BSD-2c</code>: BSD 2-clause license;
+</li><li class="listitem">
+<code class="literal">PROPRIETARY</code>: marks a non-opensource package;
+  Buildroot does not save any licensing info or source code for these packages.
+</li></ul></div></div><div class="section" title="3.6. Complying with the Buildroot license"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_complying_with_the_buildroot_license"></a>3.6. Complying with the Buildroot license</h2></div></div></div><p>Buildroot itself is an opensource software, released under the
+<a class="ulink" href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html" target="_top">GNU General Public
+License, version 2</a> or (at your option) any later version.
+However, being a build system, it is not normally part of the end product:
+if you develop the root filesystem, kernel, bootloader or toolchain for a
+device, the code of Buildroot is only present on the development machine, not
+in the device storage.</p><p>Nevertheless, the general view of the Buildroot developers is that you should
+release the Buildroot source code along with the source code of other packages
+when releasing a product that contains GPL-licensed software.
+This is because the
+<a class="ulink" href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html" target="_top">GNU GPL</a>
+defines the "<span class="emphasis"><em>complete source code</em></span>" for an executable work as "<span class="emphasis"><em>all the
+source code for all modules it contains, plus any associated interface
+definition files, plus the scripts used to control compilation and installation
+of the executable</em></span>".
+Buildroot is part of the <span class="emphasis"><em>scripts used to control compilation and
+installation of the executable</em></span>, and as such it is considered part of the
+material that must be redistributed.</p><p>Keep in mind this is only the Buildroot developers' opinion, and you should
+consult your legal department or lawyer in case of any doubt.</p></div></div><div class="chapter" title="Chapter 4. Customization"><div class="titlepage"><div><div><h2 class="title"><a id="_customization"></a>Chapter 4. Customization</h2></div></div></div><div class="section" title="4.1. Customizing the generated target filesystem"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_customizing_the_generated_target_filesystem"></a>4.1. Customizing the generated target filesystem</h2></div></div></div><p>There are a few ways to customize the resulting target filesystem:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
 Customize the target filesystem directly and rebuild the image.  The
   target filesystem is available under <code class="literal">output/target/</code>.  You can
   simply make your changes here and run make afterwards - this will
@@ -266,8 +382,8 @@ files that just tell whether this or that action has been done). The
 problem is that these stamp files are not uniformly named and handled
 by the different packages, so some understanding of the particular
 package is needed.</p><p>For packages relying on Buildroot packages infrastructures (see
-<a class="link" href="#">this section</a>
-<a class="xref" href="#">???</a> for details), the following stamp
+<a class="link" href="#adding-packages">this section</a>
+<a class="xref" href="#adding-packages">Chapter 11, <em>Adding new packages to Buildroot</em></a> for details), the following stamp
 files are relevant:</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
 <code class="literal">output/build/packagename-version/.stamp_configured</code>. If removed,
   Buildroot will trigger the recompilation of the package from the
@@ -439,7 +555,7 @@ shared download location. This can be accessed by creating a symbolic
 link from the <code class="literal">dl</code> directory to the shared download location:</p><pre class="screen"> $ ln -s &lt;shared download location&gt; dl</pre><p>Another way of accessing a shared download location is to create the
 <code class="literal">BUILDROOT_DL_DIR</code> environment variable.  If this is set, then the
 value of DL_DIR in the project is overridden. The following line
-should be added to <code class="literal">&lt;~/.bashrc&gt;</code>.</p><pre class="screen"> $ export BUILDROOT_DL_DIR &lt;shared download location&gt;</pre></div><div class="chapter" title="Chapter 11. Adding new packages to Buildroot"><div class="titlepage"><div><div><h2 class="title"><a id="_adding_new_packages_to_buildroot"></a>Chapter 11. Adding new packages to Buildroot</h2></div></div></div><p>This section covers how new packages (userspace libraries or
+should be added to <code class="literal">&lt;~/.bashrc&gt;</code>.</p><pre class="screen"> $ export BUILDROOT_DL_DIR &lt;shared download location&gt;</pre></div><div class="chapter" title="Chapter 11. Adding new packages to Buildroot"><div class="titlepage"><div><div><h2 class="title"><a id="_adding_new_packages_to_buildroot"></a>Chapter 11. Adding new packages to Buildroot</h2></div></div></div><p><a id="adding-packages"></a>This section covers how new packages (userspace libraries or
 applications) can be integrated into Buildroot. It also shows how
 existing packages are integrated, which is needed for fixing issues or
 tuning their configuration.</p><div class="section" title="11.1. Package directory"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_package_directory"></a>11.1. Package directory</h2></div></div></div><p>First of all, create a directory under the <code class="literal">package</code> directory for
@@ -549,28 +665,28 @@ different way, using different infrastructures:</p><div class="itemizedlist"><ul
   infrastructure must be used for all packages that do not use the
   autotools as their build system. In the future, other specialized
   infrastructures might be written for other build systems.  We cover
-  them through in a <a class="link" href="#gentargets-tutorial" title="11.2.1. GENTARGETS Tutorial">tutorial</a>
-<a class="xref" href="#gentargets-tutorial" title="11.2.1. GENTARGETS Tutorial">Section 11.2.1, “<code class="literal">GENTARGETS</code> Tutorial”</a> and a
-  <a class="link" href="#gentargets-reference" title="11.2.2. GENTARGETS Reference">reference</a>
-<a class="xref" href="#gentargets-reference" title="11.2.2. GENTARGETS Reference">Section 11.2.2, “<code class="literal">GENTARGETS</code> Reference”</a>.
+  them through in a <a class="link" href="#generic-package-tutorial" title="11.2.1. generic-package Tutorial">tutorial</a>
+<a class="xref" href="#generic-package-tutorial" title="11.2.1. generic-package Tutorial">Section 11.2.1, “<code class="literal">generic-package</code> Tutorial”</a> and a
+  <a class="link" href="#generic-package-reference" title="11.2.2. generic-package Reference">reference</a>
+<a class="xref" href="#generic-package-reference" title="11.2.2. generic-package Reference">Section 11.2.2, “<code class="literal">generic-package</code> Reference”</a>.
 </li><li class="listitem">
 <span class="strong"><strong>Makefiles for autotools-based software</strong></span> (autoconf, automake, etc.):
   We provide a dedicated infrastructure for such packages, since
   autotools is a very common build system. This infrastructure <span class="emphasis"><em>must</em></span>
   be used for new packages that rely on the autotools as their build
-  system. We cover them through a <a class="link" href="#autotargets-tutorial" title="11.3.1. AUTOTARGETS tutorial">tutorial</a>
-<a class="xref" href="#autotargets-tutorial" title="11.3.1. AUTOTARGETS tutorial">Section 11.3.1, “<code class="literal">AUTOTARGETS</code> tutorial”</a>
-  and <a class="link" href="#autotargets-reference" title="11.3.2. AUTOTARGETS reference">reference</a>
-<a class="xref" href="#autotargets-reference" title="11.3.2. AUTOTARGETS reference">Section 11.3.2, “<code class="literal">AUTOTARGETS</code> reference”</a>.
+  system. We cover them through a <a class="link" href="#autotools-package-tutorial" title="11.3.1. autotools-package tutorial">tutorial</a>
+<a class="xref" href="#autotools-package-tutorial" title="11.3.1. autotools-package tutorial">Section 11.3.1, “<code class="literal">autotools-package</code> tutorial”</a>
+  and <a class="link" href="#autotools-package-reference" title="11.3.2. autotools-package reference">reference</a>
+<a class="xref" href="#autotools-package-reference" title="11.3.2. autotools-package reference">Section 11.3.2, “<code class="literal">autotools-package</code> reference”</a>.
 </li><li class="listitem">
 <span class="strong"><strong>Makefiles for cmake-based software</strong></span>: We provide a dedicated
    infrastructure for such packages, as CMake is a more and more
    commonly used build system and has a standardized behaviour. This
    infrastructure <span class="emphasis"><em>must</em></span> be used for new packages that rely on
-   CMake. We cover them through a <a class="link" href="#cmaketargets-tutorial" title="11.4.1. CMAKETARGETS tutorial">tutorial</a>
-<a class="xref" href="#cmaketargets-tutorial" title="11.4.1. CMAKETARGETS tutorial">Section 11.4.1, “<code class="literal">CMAKETARGETS</code> tutorial”</a>
-   and <a class="link" href="#cmaketargets-reference" title="11.4.2. CMAKETARGETS reference">reference</a>
-<a class="xref" href="#cmaketargets-reference" title="11.4.2. CMAKETARGETS reference">Section 11.4.2, “<code class="literal">CMAKETARGETS</code> reference”</a>.
+   CMake. We cover them through a <a class="link" href="#cmake-package-tutorial" title="11.4.1. cmake-package tutorial">tutorial</a>
+<a class="xref" href="#cmake-package-tutorial" title="11.4.1. cmake-package tutorial">Section 11.4.1, “<code class="literal">cmake-package</code> tutorial”</a>
+   and <a class="link" href="#cmake-package-reference" title="11.4.2. cmake-package reference">reference</a>
+<a class="xref" href="#cmake-package-reference" title="11.4.2. cmake-package reference">Section 11.4.2, “<code class="literal">cmake-package</code> reference”</a>.
 </li><li class="listitem">
 <span class="strong"><strong>Hand-written Makefiles:</strong></span> These are currently obsolete, and no new
   manual Makefiles should be added. However, since there are still
@@ -580,7 +696,7 @@ different way, using different infrastructures:</p><div class="itemizedlist"><ul
 </li></ul></div></div></div><div class="section" title="11.2. Infrastructure for packages with specific build systems"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_infrastructure_for_packages_with_specific_build_systems"></a>11.2. Infrastructure for packages with specific build systems</h2></div></div></div><p>By <span class="emphasis"><em>packages with specific build systems</em></span> we mean all the packages
 whose build system is not one of the standard ones, such as
 <span class="emphasis"><em>autotools</em></span> or <span class="emphasis"><em>CMake</em></span>. This typically includes packages whose build
-system is based on hand-written Makefiles or shell scripts.</p><div class="section" title="11.2.1. GENTARGETS Tutorial"><div class="titlepage"><div><div><h3 class="title"><a id="gentargets-tutorial"></a>11.2.1. <code class="literal">GENTARGETS</code> Tutorial</h3></div></div></div><pre class="screen">01: #############################################################
+system is based on hand-written Makefiles or shell scripts.</p><div class="section" title="11.2.1. generic-package Tutorial"><div class="titlepage"><div><div><h3 class="title"><a id="generic-package-tutorial"></a>11.2.1. <code class="literal">generic-package</code> Tutorial</h3></div></div></div><pre class="screen">01: #############################################################
 02: #
 03: # libfoo
 04: #
@@ -614,7 +730,7 @@ system is based on hand-written Makefiles or shell scripts.</p><div class="secti
 32:     /bin/foo  f  4755  0  0  -  -  -  -  -
 33: endef
 34:
-35: $(eval $(call GENTARGETS))</pre><p>The Makefile begins on line 6 to 8 with metadata information: the
+35: $(eval $(generic-package))</pre><p>The Makefile begins on line 6 to 8 with metadata information: the
 version of the package (<code class="literal">LIBFOO_VERSION</code>), the name of the
 tarball containing the package (<code class="literal">LIBFOO_SOURCE</code>) and the
 Internet location at which the tarball can be downloaded
@@ -638,25 +754,24 @@ steps should be performed to install the package in the staging space.
 <code class="literal">LIBFOO_INSTALL_TARGET_CMDS</code> tells what steps should be
 performed to install the package in the target space.</p><p>All these steps rely on the <code class="literal">$(@D)</code> variable, which
 contains the directory where the source code of the package has been
-extracted.</p><p>Finally, on line 35, we call the <code class="literal">GENTARGETS</code> which
+extracted.</p><p>Finally, on line 35, we call the <code class="literal">generic-package</code> which
 generates, according to the variables defined previously, all the
-Makefile code necessary to make your package working.</p></div><div class="section" title="11.2.2. GENTARGETS Reference"><div class="titlepage"><div><div><h3 class="title"><a id="gentargets-reference"></a>11.2.2. <code class="literal">GENTARGETS</code> Reference</h3></div></div></div><p>The <code class="literal">GENTARGETS</code> macro takes one optional argument. This argument can
-be used to tell if the package is a target package (cross-compiled for
-the target) or a host package (natively compiled for the host). If
-unspecified, it is assumed that it is a target package. See below for
-details.</p><p>For a given package, in a single <code class="literal">.mk</code> file, it is possible to call
-GENTARGETS twice, once to create the rules to generate a target
-package and once to create the rules to generate a host package:</p><pre class="screen">$(eval $(call GENTARGETS))
-$(eval $(call GENTARGETS,host))</pre><p>This might be useful if the compilation of the target package requires
+Makefile code necessary to make your package working.</p></div><div class="section" title="11.2.2. generic-package Reference"><div class="titlepage"><div><div><h3 class="title"><a id="generic-package-reference"></a>11.2.2. <code class="literal">generic-package</code> Reference</h3></div></div></div><p>There are two variants of the generic target. The <code class="literal">generic-package</code> macro is
+used for packages to be cross-compiled for the target.  The
+<code class="literal">host-generic-package</code> macro is used for host packages, natively compiled
+for the host.  It is possible to call both of them in a single <code class="literal">.mk</code>
+file: once to create the rules to generate a target
+package and once to create the rules to generate a host package:</p><pre class="screen">$(eval $(generic-package))
+$(eval $(host-generic-package))</pre><p>This might be useful if the compilation of the target package requires
 some tools to be installed on the host. If the package name is
 <code class="literal">libfoo</code>, then the name of the package for the target is also
 <code class="literal">libfoo</code>, while the name of the package for the host is
 <code class="literal">host-libfoo</code>. These names should be used in the DEPENDENCIES
 variables of other packages, if they depend on <code class="literal">libfoo</code> or
-<code class="literal">host-libfoo</code>.</p><p>The call to the <code class="literal">GENTARGETS</code> macro <span class="strong"><strong>must</strong></span> be at the end of the <code class="literal">.mk</code>
-file, after all variable definitions.</p><p>For the target package, the <code class="literal">GENTARGETS</code> uses the variables defined by
+<code class="literal">host-libfoo</code>.</p><p>The call to the <code class="literal">generic-package</code> and/or <code class="literal">host-generic-package</code> macro <span class="strong"><strong>must</strong></span> be
+at the end of the <code class="literal">.mk</code> file, after all variable definitions.</p><p>For the target package, the <code class="literal">generic-package</code> uses the variables defined by
 the .mk file and prefixed by the uppercased package name:
-<code class="literal">LIBFOO_*</code>. For the host package, it uses the <code class="literal">HOST_LIBFOO_*</code>. For
+<code class="literal">LIBFOO_*</code>. <code class="literal">host-generic-package</code> uses the <code class="literal">HOST_LIBFOO_*</code> variables. For
 <span class="emphasis"><em>some</em></span> variables, if the <code class="literal">HOST_LIBFOO_</code> prefixed variable doesn’t
 exist, the package infrastructure uses the corresponding variable
 prefixed by <code class="literal">LIBFOO_</code>. This is done for variables that are likely to
@@ -667,17 +782,17 @@ information is (assuming the package name is <code class="literal">libfoo</code>
   package. Note that if <code class="literal">HOST_LIBFOO_VERSION</code> doesn’t exist, it is
   assumed to be the same as <code class="literal">LIBFOO_VERSION</code>. It can also be a
   revision number, branch or tag for packages that are fetched
-  directly from their revision control system.<br/>
-  Examples:<br/>
-    <code class="literal">LIBFOO_VERSION = 0.1.2</code><br/>
-    <code class="literal">LIBFOO_VERSION = cb9d6aa9429e838f0e54faa3d455bcbab5eef057</code><br/>
+  directly from their revision control system.
+  Examples:
+    <code class="literal">LIBFOO_VERSION = 0.1.2</code>
+    <code class="literal">LIBFOO_VERSION = cb9d6aa9429e838f0e54faa3d455bcbab5eef057</code>
     <code class="literal">LIBFOO_VERSION = stable</code>
 </li><li class="listitem">
 <code class="literal">LIBFOO_SOURCE</code> may contain the name of the tarball of
   the package. If <code class="literal">HOST_LIBFOO_SOURCE</code> is not specified, it
   defaults to <code class="literal">LIBFOO_SOURCE</code>. If none are specified, then
   the value is assumed to be
-  <code class="literal">packagename-$(LIBFOO_VERSION).tar.gz</code>.<br/>
+  <code class="literal">packagename-$(LIBFOO_VERSION).tar.gz</code>.
   Example: <code class="literal">LIBFOO_SOURCE = foobar-$(LIBFOO_VERSION).tar.bz2</code>
 </li><li class="listitem">
 <code class="literal">LIBFOO_PATCH</code> may contain the name of a patch, that will be
@@ -689,41 +804,76 @@ information is (assuming the package name is <code class="literal">libfoo</code>
   package directory inside Buildroot will be applied to the package
   after extraction.
 </li><li class="listitem">
-<code class="literal">LIBFOO_SITE</code> may contain the Internet location of the package. It
-  can either be the HTTP, FTP or SCP location of a tarball, or the URL
-  of a Git, Subversion, Mercurial or Bazaar repository (see
-  <code class="literal">LIBFOO_SITE_METHOD</code> below).<br/>
-  SCP URLs should be of the form <code class="literal">scp://[user@]host:filepath</code>. Note
-  that filepath is relative to the user’s home directory, so you may want
-  to prepend the path with a slash for absolute paths:
-  <code class="literal">scp://[user@]host:/absolutepath</code>.<br/>
+<code class="literal">LIBFOO_SITE</code> provides the location of the package, which can be a
+  URL or a local filesystem path. HTTP, FTP and SCP are supported URL
+  types for retrieving package tarballs. Git, Subversion, Mercurial,
+  and Bazaar are supported URL types for retrieving packages directly
+  from source code management systems. A filesystem path may be used
+  to specify either a tarball or a directory containing the package
+  source code. See <code class="literal">LIBFOO_SITE_METHOD</code> below for more details on how
+  retrieval works.
+  Note that SCP URLs should be of the form
+  <code class="literal">scp://[user@]host:filepath</code>, and that filepath is relative to the
+  user’s home directory, so you may want to prepend the path with a
+  slash for absolute paths:
+  <code class="literal">scp://[user@]host:/absolutepath</code>.
   If <code class="literal">HOST_LIBFOO_SITE</code> is not specified, it defaults to
   <code class="literal">LIBFOO_SITE</code>. If none are specified, then the location is assumed
   to be
-  <code class="literal">http://$$(BR2_SOURCEFORGE_MIRROR).dl.sourceforge.net/sourceforge/packagename</code>.<br/>
-  Examples:<br/>
-    <code class="literal">LIBFOO_SITE=http://www.libfoosoftware.org/libfoo</code><br/>
-    <code class="literal">LIBFOO_SITE=http://svn.xiph.org/trunk/Tremor/</code><br/>
+  <code class="literal">http://$$(BR2_SOURCEFORGE_MIRROR).dl.sourceforge.net/sourceforge/packagename</code>.
+  Examples:
+    <code class="literal">LIBFOO_SITE=http://www.libfoosoftware.org/libfoo</code>
+    <code class="literal">LIBFOO_SITE=http://svn.xiph.org/trunk/Tremor/</code>
     <code class="literal">LIBFOO_SITE=git://github.com/kergoth/tslib.git</code>
+    <code class="literal">LIBFOO_SITE=/opt/software/libfoo.tar.gz</code>
+    <code class="literal">LIBFOO_SITE=$(TOPDIR)/../src/libfoo/</code>
+</li><li class="listitem"><p class="simpara">
+<code class="literal">LIBFOO_SITE_METHOD</code> determines the method used to fetch or copy the
+  package source code. In many cases, Buildroot guesses the method
+  from the contents of <code class="literal">LIBFOO_SITE</code> and setting <code class="literal">LIBFOO_SITE_METHOD</code>
+  is unnecessary. When <code class="literal">HOST_LIBFOO_SITE_METHOD</code> is not specified, it
+  defaults to the value of <code class="literal">LIBFOO_SITE_METHOD</code>.
+  The possible values of <code class="literal">LIBFOO_SITE_METHOD</code> are:
+</p><div class="itemizedlist"><ul class="itemizedlist" type="circle"><li class="listitem">
+<code class="literal">wget</code> for normal FTP/HTTP downloads of tarballs.  Used by
+     default when <code class="literal">LIBFOO_SITE</code> begins with <code class="literal">http://</code>, <code class="literal">https://</code> or
+     <code class="literal">ftp://</code>.
 </li><li class="listitem">
-<code class="literal">LIBFOO_SITE_METHOD</code> may contain the method to fetch the package
-  source code. It can either be <code class="literal">wget</code> (for normal FTP/HTTP downloads
-  of tarballs), <code class="literal">scp</code> (for downloads over SSH with scp), <code class="literal">svn</code>, <code class="literal">git</code>,
-  <code class="literal">hg</code> or <code class="literal">bzr</code>.  When not specified, it is guessed from the URL given
-  in <code class="literal">LIBFOO_SITE</code>: <code class="literal">scp://</code>, <code class="literal">svn://</code>, <code class="literal">git://</code> and
-  <code class="literal">bzr://</code> URLs will use the <code class="literal">scp</code>, <code class="literal">svn</code>, <code class="literal">git</code> and <code class="literal">bzr</code> methods
-  respectively. All other URL-types will use the <code class="literal">wget</code> method. So for
-  example, in the case of a package whose source code is available
-  through a Subversion repository on HTTP, one <span class="emphasis"><em>must</em></span> specifiy
-  <code class="literal">LIBFOO_SITE_METHOD=svn</code>. Similarly, for Mercurial repositories, one
-  <span class="emphasis"><em>must</em></span> specify <code class="literal">LIBFOO_SITE_METHOD=hg</code>. For <code class="literal">svn</code>, <code class="literal">git</code>, <code class="literal">hg</code> and
-  <code class="literal">bzr</code> methods, what Buildroot does is a checkout/clone of the repository
-  which is then tarballed and stored into the download cache. Next
-  builds will not checkout/clone again, but will use the tarball directly.
-  When <code class="literal">HOST_LIBFOO_SITE_METHOD</code> is not specified, it defaults to the value
-  of <code class="literal">LIBFOO_SITE_METHOD</code>. See <code class="literal">package/multimedia/tremor/</code> for an
-  example.
+<code class="literal">scp</code> for downloads of tarballs over SSH with scp.  Used by
+     default when <code class="literal">LIBFOO_SITE</code> begins with <code class="literal">scp://</code>.
 </li><li class="listitem">
+<code class="literal">svn</code> for retrieving source code from a Subversion repository.
+     Used by default when <code class="literal">LIBFOO_SITE</code> begins with <code class="literal">svn://</code>.  When a
+     <code class="literal">http://</code> Subversion repository URL is specified in
+     <code class="literal">LIBFOO_SITE</code>, one <span class="emphasis"><em>must</em></span> specify <code class="literal">LIBFOO_SITE_METHOD=svn</code>.
+     Buildroot performs a checkout which is preserved as a tarball in
+     the download cache; subsequent builds use the tarball instead of
+     performing another checkout.
+</li><li class="listitem">
+<code class="literal">git</code> for retrieving source code from a Git repository.  Used by
+     default when <code class="literal">LIBFOO_SITE</code> begins with <code class="literal">git://</code>. The downloaded
+     source code is cached as with the <code class="literal">svn</code>
+     method.
+</li><li class="listitem">
+<code class="literal">hg</code> for retrieving source code from a Mercurial repository. One
+     <span class="emphasis"><em>must</em></span> specify <code class="literal">LIBFOO_SITE_METHOD=hg</code> when <code class="literal">LIBFOO_SITE</code>
+     contains a Mercurial repository URL. The downloaded source code
+     is cached as with the <code class="literal">svn</code> method.
+</li><li class="listitem">
+<code class="literal">bzr</code> for retrieving source code from a Bazaar repository. Used
+     by default when <code class="literal">LIBFOO_SITE</code> begins with <code class="literal">bzr://</code>. The
+     downloaded source code is cached as with the <code class="literal">svn</code> method.
+</li><li class="listitem">
+<code class="literal">file</code> for a local tarball.  One should use this when
+     <code class="literal">LIBFOO_SITE</code> specifies a package tarball as a local filename.
+     Useful for software that isn’t available publicly or in version
+     control.
+</li><li class="listitem">
+<code class="literal">local</code> for a local source code directory.  One should use this
+     when <code class="literal">LIBFOO_SITE</code> specifies a local directory path containing
+     the package source code.  Buildroot copies the contents of the
+     source directory into the package’s build directory.
+</li></ul></div></li><li class="listitem">
 <code class="literal">LIBFOO_DEPENDENCIES</code> lists the dependencies (in terms of package
   name) that are required for the current target package to
   compile. These dependencies are guaranteed to be compiled and
@@ -744,12 +894,33 @@ information is (assuming the package name is <code class="literal">libfoo</code>
 <code class="literal">LIBFOO_DEVICES</code> lists the device files to be created by Buildroot
   when using the static device table. The syntax to use is the
   makedevs one. You can find some documentation for this syntax in the
-  <a class="xref" href="#makedev-syntax" title="12.1. Makedev syntax documentation">Section 12.1, “Makedev syntax documentation”</a>. This variable is optional.
+  <a class="xref" href="#makedev-syntax" title="13.1. Makedev syntax documentation">Section 13.1, “Makedev syntax documentation”</a>. This variable is optional.
 </li><li class="listitem">
 <code class="literal">LIBFOO_PERMISSIONS</code> lists the changes of permissions to be done at
   the end of the build process. The syntax is once again the makedevs one.
-  You can find some documentation for this syntax in the <a class="xref" href="#makedev-syntax" title="12.1. Makedev syntax documentation">Section 12.1, “Makedev syntax documentation”</a>.
+  You can find some documentation for this syntax in the <a class="xref" href="#makedev-syntax" title="13.1. Makedev syntax documentation">Section 13.1, “Makedev syntax documentation”</a>.
   This variable is optional.
+</li><li class="listitem">
+<code class="literal">LIBFOO_LICENSE</code> defines the license (or licenses) under which the package
+  is released.
+  This name will appear in the manifest file produced by <code class="literal">make legal-info</code>.
+  If the license is one of those listed in <a class="xref" href="#legal-info">Section 3.5, “Complying with opensource licenses”</a>,
+  use the same string to make the manifest file uniform.
+  Otherwise, describe the license in a precise and concise way, avoiding
+  ambiguous names such as <code class="literal">BSD</code> which actually name a family of licenses.
+  If the root filesystem you generate contains non-opensource packages, you
+  can define their license as <code class="literal">PROPRIETARY</code>: Buildroot will not save any
+  licensing info or source code for this package.
+  This variable is optional. If it is not defined, <code class="literal">unknown</code> will appear in
+  the <code class="literal">license</code> field of the manifest file for this package.
+</li><li class="listitem">
+<code class="literal">LIBFOO_LICENSE_FILES</code> is a space-separated list of files in the package
+  tarball that contain the license(s) under which the package is released.
+  <code class="literal">make legal-info</code> copies all of these files in the <code class="literal">legal-info</code> directory.
+  See <a class="xref" href="#legal-info">Section 3.5, “Complying with opensource licenses”</a> for more information.
+  This variable is optional. If it is not defined, a warning will be produced
+  to let you know, and <code class="literal">not saved</code> will appear in the <code class="literal">license files</code> field
+  of the manifest file for this package.
 </li></ul></div><p>The recommended way to define these variables is to use the following
 syntax:</p><pre class="screen">LIBFOO_VERSION = 2.32</pre><p>Now, the variables that define what should be performed at the
 different steps of the build process.</p><div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem">
@@ -790,6 +961,13 @@ different steps of the build process.</p><div class="itemizedlist"><ul class="it
 </li><li class="listitem">
 <code class="literal">LIBFOO_UNINSTALL_STAGING_CMDS</code>, used to list the actions to
   uninstall the package from the staging directory <code class="literal">$(STAGING_DIR)</code>.
+</li><li class="listitem">
+<code class="literal">LIBFOO_INSTALL_INIT_SYSV</code> and <code class="literal">LIBFOO_INSTALL_INIT_SYSTEMD</code>, used
+  to install init scripts either for the systemV-like init systems
+  (busybox, sysvinit, etc.) or for the systemd units. These commands
+  will be run only when the relevant init system is installed (i.e. if
+  systemd is selected as the init system in the configuration, only
+  <code class="literal">LIBFOO_INSTALL_INIT_SYSTEMD</code> will be run).
 </li></ul></div><p>The preferred way to define these variables is:</p><pre class="screen">define LIBFOO_CONFIGURE_CMDS
         action 1
         action 2
@@ -835,7 +1013,7 @@ registered at a given hook point. Here is an example:</p><pre class="screen">def
         action2
 endef
 
-LIBFOO_POST_PATCH_HOOKS += LIBFOO_POST_PATCH_FIXUP</pre></div></div><div class="section" title="11.3. Infrastructure for autotools-based packages"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_infrastructure_for_autotools_based_packages"></a>11.3. Infrastructure for autotools-based packages</h2></div></div></div><div class="section" title="11.3.1. AUTOTARGETS tutorial"><div class="titlepage"><div><div><h3 class="title"><a id="autotargets-tutorial"></a>11.3.1. <code class="literal">AUTOTARGETS</code> tutorial</h3></div></div></div><p>First, let’s see how to write a <code class="literal">.mk</code> file for an autotools-based
+LIBFOO_POST_PATCH_HOOKS += LIBFOO_POST_PATCH_FIXUP</pre></div></div><div class="section" title="11.3. Infrastructure for autotools-based packages"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_infrastructure_for_autotools_based_packages"></a>11.3. Infrastructure for autotools-based packages</h2></div></div></div><div class="section" title="11.3.1. autotools-package tutorial"><div class="titlepage"><div><div><h3 class="title"><a id="autotools-package-tutorial"></a>11.3.1. <code class="literal">autotools-package</code> tutorial</h3></div></div></div><p>First, let’s see how to write a <code class="literal">.mk</code> file for an autotools-based
 package, with an example :</p><pre class="screen">01: #############################################################
 02: #
 03: # libfoo
@@ -849,7 +1027,7 @@ package, with an example :</p><pre class="screen">01: ##########################
 11: LIBFOO_CONF_OPT = --enable-shared
 12: LIBFOO_DEPENDENCIES = libglib2 host-pkg-config
 13:
-14: $(eval $(call AUTOTARGETS))</pre><p>On line 6, we declare the version of the package.</p><p>On line 7 and 8, we declare the name of the tarball and the location
+14: $(eval $(autotools-package))</pre><p>On line 6, we declare the version of the package.</p><p>On line 7 and 8, we declare the name of the tarball and the location
 of the tarball on the Web. Buildroot will automatically download the
 tarball from this location.</p><p>On line 9, we tell Buildroot to install the package to the staging
 directory. The staging directory, located in <code class="literal">output/staging/</code>
@@ -868,16 +1046,14 @@ necessary. Also by default, packages are installed in this location
 using the <code class="literal">make install</code> command.</p><p>On line 11, we tell Buildroot to pass a custom configure option, that
 will be passed to the <code class="literal">./configure</code> script before configuring
 and building the package.</p><p>On line 12, we declare our dependencies, so that they are built
-before the build process of our package starts.</p><p>Finally, on line line 14, we invoke the <code class="literal">AUTOTARGETS</code>
+before the build process of our package starts.</p><p>Finally, on line line 14, we invoke the <code class="literal">autotools-package</code>
 macro that generates all the Makefile rules that actually allows the
-package to be built.</p></div><div class="section" title="11.3.2. AUTOTARGETS reference"><div class="titlepage"><div><div><h3 class="title"><a id="autotargets-reference"></a>11.3.2. <code class="literal">AUTOTARGETS</code> reference</h3></div></div></div><p>The main macro of the autotools package infrastructure is
-<code class="literal">AUTOTARGETS</code>. It has the same number of arguments and the
-same semantic as the <code class="literal">GENTARGETS</code> macro, which is the main
-macro of the generic package infrastructure. For autotools packages, the
-ability to have target and host packages is also available (and is
-actually widely used).</p><p>Just like the generic infrastructure, the autotools infrastructure
+package to be built.</p></div><div class="section" title="11.3.2. autotools-package reference"><div class="titlepage"><div><div><h3 class="title"><a id="autotools-package-reference"></a>11.3.2. <code class="literal">autotools-package</code> reference</h3></div></div></div><p>The main macro of the autotools package infrastructure is
+<code class="literal">autotools-package</code>. It is similar to the <code class="literal">generic-package</code> macro. The ability to
+have target and host packages is also available, with the
+<code class="literal">host-autotools-package</code> macro.</p><p>Just like the generic infrastructure, the autotools infrastructure
 works by defining a number of variables before calling the
-<code class="literal">AUTOTARGETS</code> macro.</p><p>First, all the package metadata information variables that exist in the
+<code class="literal">autotools-package</code> macro.</p><p>First, all the package metadata information variables that exist in the
 generic infrastructure also exist in the autotools infrastructure:
 <code class="literal">LIBFOO_VERSION</code>, <code class="literal">LIBFOO_SOURCE</code>,
 <code class="literal">LIBFOO_PATCH</code>, <code class="literal">LIBFOO_SITE</code>,
@@ -964,7 +1140,7 @@ By overriding one of the steps. For example, even if the autotools
   instead of the default autotools one. However, using this method
   should be restricted to very specific cases. Do not use it in the
   general case.
-</li></ul></div></div></div><div class="section" title="11.4. Infrastructure for CMake-based packages"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_infrastructure_for_cmake_based_packages"></a>11.4. Infrastructure for CMake-based packages</h2></div></div></div><div class="section" title="11.4.1. CMAKETARGETS tutorial"><div class="titlepage"><div><div><h3 class="title"><a id="cmaketargets-tutorial"></a>11.4.1. <code class="literal">CMAKETARGETS</code> tutorial</h3></div></div></div><p>First, let’s see how to write a <code class="literal">.mk</code> file for a CMake-based package,
+</li></ul></div></div></div><div class="section" title="11.4. Infrastructure for CMake-based packages"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_infrastructure_for_cmake_based_packages"></a>11.4. Infrastructure for CMake-based packages</h2></div></div></div><div class="section" title="11.4.1. cmake-package tutorial"><div class="titlepage"><div><div><h3 class="title"><a id="cmake-package-tutorial"></a>11.4.1. <code class="literal">cmake-package</code> tutorial</h3></div></div></div><p>First, let’s see how to write a <code class="literal">.mk</code> file for a CMake-based package,
 with an example :</p><pre class="screen">01: #############################################################
 02: #
 03: # libfoo
@@ -978,7 +1154,7 @@ with an example :</p><pre class="screen">01: ###################################
 11: LIBFOO_CONF_OPT = -DBUILD_DEMOS=ON
 12: LIBFOO_DEPENDENCIES = libglib2 host-pkg-config
 13:
-14: $(eval $(call CMAKETARGETS))</pre><p>On line 6, we declare the version of the package.</p><p>On line 7 and 8, we declare the name of the tarball and the location
+14: $(eval $(cmake-package))</pre><p>On line 6, we declare the version of the package.</p><p>On line 7 and 8, we declare the name of the tarball and the location
 of the tarball on the Web. Buildroot will automatically download the
 tarball from this location.</p><p>On line 9, we tell Buildroot to install the package to the staging
 directory. The staging directory, located in <code class="literal">output/staging/</code>
@@ -996,14 +1172,13 @@ installation is enabled, so in fact, this line is not strictly
 necessary. Also by default, packages are installed in this location
 using the <code class="literal">make install</code> command.</p><p>On line 11, we tell Buildroot to pass custom options to CMake when it is
 configuring the package.</p><p>On line 12, we declare our dependencies, so that they are built
-before the build process of our package starts.</p><p>Finally, on line line 14, we invoke the <code class="literal">CMAKETARGETS</code>
+before the build process of our package starts.</p><p>Finally, on line line 14, we invoke the <code class="literal">cmake-package</code>
 macro that generates all the Makefile rules that actually allows the
-package to be built.</p></div><div class="section" title="11.4.2. CMAKETARGETS reference"><div class="titlepage"><div><div><h3 class="title"><a id="cmaketargets-reference"></a>11.4.2. <code class="literal">CMAKETARGETS</code> reference</h3></div></div></div><p>The main macro of the CMake package infrastructure is
-<code class="literal">CMAKETARGETS</code>. It has the same number of arguments and the same
-semantic as the <code class="literal">GENTARGETS</code> macro, which is the main macro of the
-generic package infrastructure. For CMake packages, the ability to
-have target and host packages is also available.</p><p>Just like the generic infrastructure, the CMake infrastructure works
-by defining a number of variables before calling the <code class="literal">CMAKETARGETS</code>
+package to be built.</p></div><div class="section" title="11.4.2. cmake-package reference"><div class="titlepage"><div><div><h3 class="title"><a id="cmake-package-reference"></a>11.4.2. <code class="literal">cmake-package</code> reference</h3></div></div></div><p>The main macro of the CMake package infrastructure is
+<code class="literal">cmake-package</code>. It is similar to the <code class="literal">generic-package</code> macro. The ability to
+have target and host packages is also available, with the
+<code class="literal">host-cmake-package</code> macro.</p><p>Just like the generic infrastructure, the CMake infrastructure works
+by defining a number of variables before calling the <code class="literal">cmake-package</code>
 macro.</p><p>First, all the package metadata information variables that exist in
 the generic infrastructure also exist in the CMake infrastructure:
 <code class="literal">LIBFOO_VERSION</code>, <code class="literal">LIBFOO_SOURCE</code>, <code class="literal">LIBFOO_PATCH</code>, <code class="literal">LIBFOO_SITE</code>,
@@ -1232,7 +1407,21 @@ Use <code class="literal">$(if $(BR2_NEEDS_GETTEXT_IF_LOCALE),gettext)</code> in
 </li></ul></div></div><div class="section" title="11.7. Conclusion"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_conclusion"></a>11.7. Conclusion</h2></div></div></div><p>As you can see, adding a software package to Buildroot is simply a
 matter of writing a Makefile using an  existing example and modifying it
 according to the compilation process required by the package.</p><p>If you package software that might be useful for other people, don’t
-forget to send a patch to Buildroot developers!</p></div></div><div class="chapter" title="Chapter 12. Appendix"><div class="titlepage"><div><div><h2 class="title"><a id="_appendix"></a>Chapter 12. Appendix</h2></div></div></div><div class="section" title="12.1. Makedev syntax documentation"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="makedev-syntax"></a>12.1. Makedev syntax documentation</h2></div></div></div><p>The makedev syntax is used across several places in Buildroot to
+forget to send a patch to Buildroot developers!</p></div></div><div class="chapter" title="Chapter 12. Frequently Asked Questions"><div class="titlepage"><div><div><h2 class="title"><a id="_frequently_asked_questions"></a>Chapter 12. Frequently Asked Questions</h2></div></div></div><div class="section" title="12.1. The boot hangs after Starting network…"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_the_boot_hangs_after_emphasis_starting_network_8230_emphasis"></a>12.1. The boot hangs after <span class="emphasis"><em>Starting network…</em></span></h2></div></div></div><p>If the boot process seems to hand after the following messages
+(messages not necessarily exactly similar, depending on the list of
+packages selected):</p><pre class="screen">Freeing init memory: 3972K
+Initializing random number generator... done.
+Starting network...
+Starting dropbear sshd: generating rsa key... generating dsa key... OK</pre><p>then it means that your system is running, but didn’t start a shell on
+the serial console. In order to have the system start a shell on your
+serial console, you have to go in the Buildroot configuration, <code class="literal">System
+configuration</code>, and modify <code class="literal">Port to run a getty (login prompt) on</code> and
+<code class="literal">Baudrate to use</code> as appropriate. This will automatically tune the
+<code class="literal">/etc/inittab</code> file of the generated system so that a shell starts on
+the correct serial port.</p></div><div class="section" title="12.2. module-init-tools fails to build with cannot find -lc"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_module_init_tools_fails_to_build_with_emphasis_cannot_find_lc_emphasis"></a>12.2. module-init-tools fails to build with <span class="emphasis"><em>cannot find -lc</em></span></h2></div></div></div><p>If the build of <code class="literal">module-init-tools</code> for the host fails with:</p><pre class="screen">/usr/bin/ld: cannot find -lc</pre><p>then probably you are running a Fedora (or similar) distribution, and
+you should install the <code class="literal">glibc-static</code> package. This is because the
+<code class="literal">module-init-tools</code> build process wants to link statically against the
+C library.</p></div></div><div class="chapter" title="Chapter 13. Appendix"><div class="titlepage"><div><div><h2 class="title"><a id="_appendix"></a>Chapter 13. Appendix</h2></div></div></div><div class="section" title="13.1. Makedev syntax documentation"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="makedev-syntax"></a>13.1. Makedev syntax documentation</h2></div></div></div><p>The makedev syntax is used across several places in Buildroot to
 define changes to be made for permissions or which device files to
 create and how to create them, in order to avoid to call mkdnod every
 now and then.</p><p>This syntax is derived from the makedev utility, and a more complete

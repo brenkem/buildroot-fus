@@ -24,3 +24,7 @@ ${CP} ${LOCAL}/S35x11 ${TARGET}/etc/init.d
 # Copy the x11 configuration file
 mkdir -p ${TARGET}/etc/X11
 ${CP} ${LOCAL}/xorg.conf ${TARGET}/etc/X11
+
+# setup touch controller configuration
+mkdir -p ${TARGET}/etc/profile.d
+${CP} ${LOCAL}/tslib.sh ${TARGET}/etc/profile.d

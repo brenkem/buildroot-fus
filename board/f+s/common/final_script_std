@@ -10,7 +10,7 @@ echo ">>>   Doing final F+S (common) setup for standard configuration"
 tput rmso
 
 # Copy the modified inittab file with mdev support
-${CP} ${BOARD}/inittab ${TARGET}/etc
+${CP} ${LOCAL}/inittab ${TARGET}/etc
 
 # Copy the modified profile file with display and xauth exports
 ${CP} ${LOCAL}/profile ${TARGET}/etc

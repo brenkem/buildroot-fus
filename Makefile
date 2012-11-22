@@ -317,10 +317,10 @@ endif
 include package/*/*.mk
 
 include boot/common.mk
+TARGETS+=target-finalize
+
 include target/Makefile.in
 include linux/linux.mk
-
-TARGETS+=target-finalize
 
 ifeq ($(BR2_ENABLE_LOCALE_PURGE),y)
 TARGETS+=target-purgelocales

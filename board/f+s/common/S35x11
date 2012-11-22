@@ -11,18 +11,18 @@ case "$1" in
 	inputdev=default-event0
 	tslibdev=/dev/input/event0
 	for i in /sys/class/input/event*
-	do
-	   if [ "`cat $i/device/name`" = "Atmel maXTouch Touchscreen" ]
-	   then 
-            inputdev=atmel-`basename $i`
-	        tslibdev=/dev/input/`basename $i`
-		break
-	   fi
-        done 
-        echo "Configure input for: $inputdev " `cat $i/device/name`
-	echo "#!/bin/sh" >$tsconf_file
-	echo "export TSLIB_TSDEVICE=$tslibdev" >>$tsconf_file
-	echo "export TSLIB_CALIBFILE=/etc/pointercal-$inputdev" >>$tsconf_file
+    do
+        if [ "`cat $i/device/name`" = "Atmel maXTouch Touchscreen" ] || [ "`cat $i/device/name`" = "ft5x0x_ts" ]
+        then 
+            inputdev=cap-`basename $i`
+            tslibdev=/dev/input/`basename $i`
+            break
+        fi
+    done
+    echo "Configure input for: $inputdev " `cat $i/device/name`
+    echo "#!/bin/sh" >$tsconf_file
+    echo "export TSLIB_TSDEVICE=$tslibdev" >>$tsconf_file
+    echo "export TSLIB_CALIBFILE=/etc/pointercal-$inputdev" >>$tsconf_file
 	. $tsconf_file
 	/usr/bin/startx /usr/bin/matchbox-session > $log_file 2> $log_file -- -pointer $inputdev&
 #start-stop-daemon --start --pidfile $pid_file --make-pidfile --name dkstartx --startas /usr/bin/startx /usr/bin/matchbox-session > $log_file 2> $log_file -- -- -pointer $inputdev &

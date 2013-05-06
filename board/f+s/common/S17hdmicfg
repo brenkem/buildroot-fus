@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# Start hdmicfg....
+#
+pid_file=/var/run/hdmicfg.pid
+
+case "$1" in
+  start)
+	if [ -e ${pid_file} ] ; then
+	    echo "Already running"
+	    exit 0
+	fi
+	echo "Starting hdmicfg..."
+	# Use framebuffer for video0 at offset x, y, for indefinite time;
+	# use HDMI resolution 720p
+	/sbin/hdmicfg -p ${pid_file} -i /dev/fb0 -o /dev/video0 -x 0 -y 0 -t 0 720p@59.94 &
+	;;
+  stop)
+	if [ -e ${pid_file} ] ; then
+	    echo "Stopping hdmicfg..."
+	    /bin/kill -TERM `/bin/cat ${pid_file}`
+	    exit 0;
+	fi
+	echo "Not running"
+	exit 1
+	;;
+  restart|reload)
+	if [ -e ${pid_file} ] ; then
+	    echo "Restarting hdmicfg..."
+	    # Will only make sense when program uses a config file; USR1
+	    # will reload the file then. For now, this will only stop hdmicfg!
+	    /bin/kill -USR1 `/bin/cat ${pid_file}`
+	    exit 0;
+	fi
+	echo "Not running"
+	exit 1
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $?

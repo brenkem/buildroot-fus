@@ -1,0 +1,16 @@
+#!/bin/sh
+
+TARGET="$1"
+COMMON=board/f+s/common
+BOARD=board/f+s/armStoneA5
+CP="/bin/cp -f"
+
+tput smso
+echo ">>>   Doing final F+S armStoneA5 setup for standard configuration"
+tput rmso
+
+# Call common F+S setup for standard configuration
+sh ./${COMMON}/final_script_std ${TARGET} ${BOARD}
+
+# Call common F+S setup for HDMI configuration
+#sh ./${COMMON}/final_script_hdmi ${TARGET} ${BOARD}

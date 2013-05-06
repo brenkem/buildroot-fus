@@ -1,0 +1,30 @@
+#!/bin/sh
+
+TARGET="$1"
+BOARD="$2"
+LOCAL=board/f+s/common
+CP="/bin/cp -f"
+
+tput smso
+echo ">>>   Doing final F+S (common) setup for standard configuration"
+tput rmso
+
+# Copy the modified inittab file with mdev support
+${CP} ${BOARD}/inittab ${TARGET}/etc
+
+# Copy the modified profile file with display and xauth exports
+${CP} ${LOCAL}/profile ${TARGET}/etc
+
+# Copy the enhanced mdev configuration file
+${CP} ${LOCAL}/mdev.conf ${TARGET}/etc
+
+# Copy the x11 start script
+${CP} ${LOCAL}/S35x11 ${TARGET}/etc/init.d
+
+# Copy the x11 configuration file
+mkdir -p ${TARGET}/etc/X11
+${CP} ${LOCAL}/xorg.conf ${TARGET}/etc/X11
+
+# setup touch controller configuration
+mkdir -p ${TARGET}/etc/profile.d
+${CP} ${LOCAL}/tslib.sh ${TARGET}/etc/profile.d

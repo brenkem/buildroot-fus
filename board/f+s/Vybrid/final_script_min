@@ -2,11 +2,11 @@
 
 TARGET="$1"
 COMMON=board/f+s/common
-BOARD=board/f+s/armStoneA5
+BOARD=board/f+s/Vybrid
 CP="/bin/cp -f"
 
 tput smso
-echo ">>>   Doing final F+S armStoneA5 setup for minimal configuration"
+echo ">>>   Doing final F+S Vybrid setup for minimal configuration"
 tput rmso
 
 # Call common F+S setup for standard configuration

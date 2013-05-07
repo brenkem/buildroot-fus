@@ -35,4 +35,3 @@ ttymxc1::respawn:/sbin/getty -L ttymxc1 115200 vt100 # GENERIC_SERIAL
 null::shutdown:/etc/init.d/rcK
 null::shutdown:/bin/umount -a -r
 null::shutdown:/sbin/swapoff -a
-

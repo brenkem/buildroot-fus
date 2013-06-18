@@ -18,10 +18,13 @@ Table of Contents
 
 3. Working with Buildroot
 
-    3.1. make tips
-    3.2. Customization
-    3.3. Daily use
-    3.4. Hacking Buildroot
+    3.1. Details on Buildroot configuration
+    3.2. make tips
+    3.3. Customization
+    3.4. Storing the configuration
+    3.5. Daily use
+    3.6. Integration with Eclipse
+    3.7. Hacking Buildroot
 
 4. Frequently Asked Questions & Troubleshooting
 
@@ -30,16 +33,14 @@ Table of Contents
     4.3. Why is there no compiler on the target?
     4.4. Why are there no development files on the target?
     4.5. Why is there no documentation on the target?
-    4.6. Config.in: depends on vs select
-    4.7. Why are some packages not visible in the Buildroot config
+    4.6. Why are some packages not visible in the Buildroot config
         menu?
-    4.8. Why not use the target directory as a chroot directory?
+    4.7. Why not use the target directory as a chroot directory?
 
 5. Going further in Buildroot’s innards
 
-    5.1. Embedded system basics
-    5.2. How Buildroot works
-    5.3. Advanced usage
+    5.1. How Buildroot works
+    5.2. Advanced usage
 
 6. Developer Guidelines
 
@@ -47,7 +48,6 @@ Table of Contents
     6.2. Adding new packages to Buildroot
     6.3. Patching a package
     6.4. Download infrastructure
-    6.5. Creating your own board support
 
 7. Legal notice and licensing
 
@@ -98,11 +98,16 @@ Chapter 1. About Buildroot
 
 ---------------------------------------------------------------------
 
-Buildroot provides a full-featured environment for cross-development.
-Buildroot is able to generate a cross-compilation toolchain, a root
-filesystem, a Linux kernel image and a bootloader for your target.
-Buildroot can be used for any combination of these options,
-independently.
+Buildroot is a tool that simplifies and automates the process of
+building a complete Linux system for an embedded system, using
+cross-compilation.
+
+In order to achieve this, Buildroot is able to generate a
+cross-compilation toolchain, a root filesystem, a Linux kernel image
+and a bootloader for your target. Buildroot can be used for any
+combination of these options, independently (you can for example use
+an existing cross-compilation toolchain, and build only your root
+filesystem with Buildroot).
 
 Buildroot is useful mainly for people working with embedded systems.
 Embedded systems often use processors that are not the regular x86
@@ -197,11 +202,11 @@ for the libraries that may be packaged in 2 distinct packages.
       o ncurses5 to use the menuconfig interface
       o qt4 to use the xconfig interface
       o glib2, gtk2 and glade2 to use the gconfig interface
-  * Development libraries:
+  * Java-related packages, if the Java Classpath needs to be built
+    for the target system:
 
-      o zlib1
-      o netpbm10 (for fbtest)
-      o python-xcbgen (for Matchbox on Debian based system)
+      o The javac compiler
+      o The jar tool
   * Documentation generation tools:
 
       o asciidoc
@@ -327,7 +332,7 @@ These commands, make menuconfig|gconfig|xconfig and make, are the
 basic ones that allow to easily and quickly generate images fitting
 your needs, with all the supports and applications you enabled.
 
-More details about the "make" command usage are given in Section 3.1,
+More details about the "make" command usage are given in Section 3.2,
 “make tips”.
 
 
@@ -341,7 +346,401 @@ This section explains how you can customize Buildroot to fit your
 needs.
 
 
-3.1. make tips
+3.1. Details on Buildroot configuration
+
+--------------
+
+All the configuration options in make *config have a help text
+providing details about the option. However, a number of topics
+require additional details that cannot easily be covered in the help
+text and are there covered in the following sections.
+
+3.1.1. Cross-compilation toolchain
+
+A compilation toolchain is the set of tools that allows you to
+compile code for your system. It consists of a compiler (in our case,
+gcc), binary utils like assembler and linker (in our case, binutils)
+and a C standard library (for example GNU Libc, uClibc).
+
+The system installed on your development station certainly already
+has a compilation toolchain that you can use to compile an
+application that runs on your system. If you’re using a PC, your
+compilation toolchain runs on an x86 processor and generates code for
+an x86 processor. Under most Linux systems, the compilation toolchain
+uses the GNU libc (glibc) as the C standard library. This compilation
+toolchain is called the "host compilation toolchain". The machine on
+which it is running, and on which you’re working, is called the "host
+system" ^[3].
+
+The compilation toolchain is provided by your distribution, and
+Buildroot has nothing to do with it (other than using it to build a
+cross-compilation toolchain and other tools that are run on the
+development host).
+
+As said above, the compilation toolchain that comes with your system
+runs on and generates code for the processor in your host system. As
+your embedded system has a different processor, you need a
+cross-compilation toolchain - a compilation toolchain that runs on
+your host system but generates code for your target system (and
+target processor). For example, if your host system uses x86 and your
+target system uses ARM, the regular compilation toolchain on your
+host runs on x86 and generates code for x86, while the
+cross-compilation toolchain runs on x86 and generates code for ARM.
+
+Buildroot provides different solutions to build, or use existing
+cross-compilation toolchains:
+
+  * The internal toolchain backend, called Buildroot toolchain in the
+    configuration interface.
+  * The external toolchain backend, called External toolchain in the
+    configuration interface.
+  * The Crosstool-NG toolchain backend, called Crosstool-NG toolchain
+    in the configuration interface.
+
+The choice between these three solutions is done using the Toolchain
+Type option in the Toolchain menu. Once one solution has been chosen,
+a number of configuration options appear, they are detailed in the
+following sections.
+
+3.1.1.1. Internal toolchain backend
+
+The internal toolchain backend is the backend where Buildroot builds
+by itself a cross-compilation toolchain, before building the
+userspace applications and libraries for your target embedded system.
+
+This backend is the historical backend of Buildroot, and is limited
+to the usage of the uClibc C library (i.e, the glibc and eglibc C
+libraries are not supported by this backend, see the External
+toolchain backend and Crosstool-NG toolchain backend for solutions to
+use either glibc or eglibc).
+
+Once you have selected this backend, a number of options appear. The
+most important ones allow to:
+
+  * Change the version of the Linux kernel headers used to build the
+    toolchain. This item deserves a few explanations. In the process
+    of building a cross-compilation toolchain, the C library is being
+    built. This library provides the interface between userspace
+    applications and the Linux kernel. In order to know how to "talk"
+    to the Linux kernel, the C library needs to have access to the 
+    Linux kernel headers (i.e, the .h files from the kernel), which
+    define the interface between userspace and the kernel (system
+    calls, data structures, etc.). Since this interface is backward
+    compatible, the version of the Linux kernel headers used to build
+    your toolchain do not need to match exactly the version of the
+    Linux kernel you intend to run on your embedded system. They only
+    need to have a version equal or older to the version of the Linux
+    kernel you intend to run. If you use kernel headers that are more
+    recent than the Linux kernel you run on your embedded system,
+    then the C library might be using interfaces that are not
+    provided by your Linux kernel.
+  * Change the version and the configuration of the uClibc C library.
+    The default options are usually fine. However, if you really need
+    to specifically customize the configuration of your uClibc C
+    library, you can pass a specific configuration file here. Or
+    alternatively, you can run the make uclibc-menuconfig command to
+    get access to uClibc’s configuration interface. Note that all
+    packages in Buildroot are tested against the default uClibc
+    configuration bundled in Buildroot: if you deviate from this
+    configuration by removing features from uClibc, some packages may
+    no longer build.
+  * Change the version of the GCC compiler and binutils.
+  * Select a number of toolchain options: whether the toolchain
+    should have largefile support (i.e support for files larger than
+    2 GB on 32 bits systems), IPv6 support, RPC support (used mainly
+    for NFS), wide-char support, locale support (for
+    internationalization), C++ support, thread support. Depending on
+    which options you choose, the number of userspace applications
+    and libraries visible in Buildroot menus will change: many
+    applications and libraries require certain toolchain options to
+    be enabled. Most packages show a comment when a certain toolchain
+    option is required to be able to enable those packages.
+
+It is worth noting that whenever one of those options is modified,
+then the entire toolchain and system must be rebuilt. See
+Section 3.5.1, “Understanding when a full rebuild is necessary”.
+
+Advantages of this backend:
+
+  * Well integrated with Buildroot
+  * Fast, only builds what’s necessary
+
+Drawbacks of this backend:
+
+  * Rebuilding the toolchain is needed when doing make clean, which
+    takes time. If you’re trying to reduce your build time, consider
+    using the External toolchain backend.
+  * Limited to the uClibc C library.
+
+3.1.1.2. External toolchain backend
+
+The external toolchain backend allows to use existing pre-built
+cross-compilation toolchains. Buildroot knows about a number of
+well-known cross-compilation toolchains (from Linaro for ARM,
+Sourcery CodeBench for ARM, x86, x86-64, PowerPC, MIPS and SuperH,
+Blackfin toolchains from ADI, Xilinx toolchains for Microblaze, etc.)
+and is capable of downloading them automatically, or it can be
+pointed to a custom toolchain, either available for download or
+installed locally.
+
+Then, you have three solutions to use an external toolchain:
+
+  * Use a predefined external toolchain profile, and let Buildroot
+    download, extract and install the toolchain. Buildroot already
+    knows about a few CodeSourcery, Linaro, Blackfin and Xilinx
+    toolchains. Just select the toolchain profile in Toolchain from
+    the available ones. This is definitely the easiest solution.
+  * Use a predefined external toolchain profile, but instead of
+    having Buildroot download and extract the toolchain, you can tell
+    Buildroot where your toolchain is already installed on your
+    system. Just select the toolchain profile in Toolchain through
+    the available ones, unselect Download toolchain automatically,
+    and fill the Toolchain path text entry with the path to your
+    cross-compiling toolchain.
+  * Use a completely custom external toolchain. This is particularly
+    useful for toolchains generated using crosstool-NG. To do this,
+    select the Custom toolchain solution in the Toolchain list. You
+    need to fill the Toolchain path, Toolchain prefix and External
+    toolchain C library options. Then, you have to tell Buildroot
+    what your external toolchain supports. If your external toolchain
+    uses the glibc library, you only have to tell whether your
+    toolchain supports C+\+ or not and whether it has built-in RPC
+    support. If your external toolchain uses the uClibc library, then
+    you have to tell Buildroot if it supports largefile, IPv6, RPC,
+    wide-char, locale, program invocation, threads and C++. At the
+    beginning of the execution, Buildroot will tell you if the
+    selected options do not match the toolchain configuration.
+
+Our external toolchain support has been tested with toolchains from
+CodeSourcery and Linaro, toolchains generated by crosstool-NG, and
+toolchains generated by Buildroot itself. In general, all toolchains
+that support the sysroot feature should work. If not, do not hesitate
+to contact the developers.
+
+We do not support toolchains from the ELDK of Denx, for two reasons:
+
+  * The ELDK does not contain a pure toolchain (i.e just the
+    compiler, binutils, the C and C++ libraries), but a toolchain
+    that comes with a very large set of pre-compiled libraries and
+    programs. Therefore, Buildroot cannot import the sysroot of the
+    toolchain, as it would contain hundreds of megabytes of
+    pre-compiled libraries that are normally built by Buildroot.
+  * The ELDK toolchains have a completely non-standard custom
+    mechanism to handle multiple library variants. Instead of using
+    the standard GCC multilib mechanism, the ARM ELDK uses different
+    symbolic links to the compiler to differentiate between library
+    variants (for ARM soft-float and ARM VFP), and the PowerPC ELDK
+    compiler uses a CROSS_COMPILE environment variable. This
+    non-standard behaviour makes it difficult to support ELDK in
+    Buildroot.
+
+We also do not support using the distribution toolchain (i.e the gcc/
+binutils/C library installed by your distribution) as the toolchain
+to build software for the target. This is because your distribution
+toolchain is not a "pure" toolchain (i.e only with the C/C++
+library), so we cannot import it properly into the Buildroot build
+environment. So even if you are building a system for a x86 or x86_64
+target, you have to generate a cross-compilation toolchain with
+Buildroot or crosstool-NG.
+
+If you want to generate a custom toolchain for your project, that can
+be used as an external toolchain in Buildroot, our recommandation is
+definitely to build it with crosstool-NG. We recommend to build the
+toolchain separately from Buildroot, and then import it in Buildroot
+using the external toolchain backend.
+
+Advantages of this backend:
+
+  * Allows to use well-known and well-tested cross-compilation
+    toolchains.
+  * Avoids the build time of the cross-compilation toolchain, which
+    is often very significant in the overall build time of an
+    embedded Linux system.
+  * Not limited to uClibc: glibc and eglibc toolchains are supported.
+
+Drawbacks of this backend:
+
+  * If your pre-built external toolchain has a bug, may be hard to
+    get a fix from the toolchain vendor, unless you build your
+    external toolchain by yourself using Crosstool-NG.
+
+3.1.1.3. Crosstool-NG toolchain backend
+
+The Crosstool-NG toolchain backend integrates the Crosstool-NG
+project with Buildroot. Crosstool-NG is a highly-configurable,
+versatile and well-maintained tool to build cross-compilation
+toolchains.
+
+If you select the Crosstool-NG toolchain option in Toolchain Type,
+then you will be offered to:
+
+  * Choose which C library you want to use. Crosstool-NG supports the
+    three most important C libraries used in Linux systems: glibc,
+    eglibc and uClibc
+  * Choose a custom Crosstool-NG configuration file. Buildroot has
+    its own default configuration file (one per C library choice),
+    but you can provide your own. Another option is to run make
+    ctng-menuconfig to get access to the Crosstool-NG configuration
+    interface. However, note that all Buildroot packages have only
+    been tested with the default Crosstool-NG configurations.
+  * Choose a number of toolchain options (rather limited if glibc or
+    eglibc are used, or numerous if uClibc is used)
+
+When you will start the Buildroot build process, Buildroot will
+download and install the Crosstool-NG tool, build and install its
+required dependencies, and then run Crosstool-NG with the provided
+configuration.
+
+Advantages of this backend:
+
+  * Not limited to uClibc: glibc and eglibc are supported.
+  * Vast possibilities of toolchain configuration.
+
+Drawbacks of this backend:
+
+  * Crosstool-NG is not perfectly integrated with Buildroot. For
+    example, Crosstool-NG has its own download infrastructure, not
+    integrated with the one in Buildroot (for example a Buildroot
+    make source will not download all the source code tarballs needed
+    by Crosstool-NG).
+  * The toolchain is completely rebuilt from scratch if you do a make
+    clean.
+
+3.1.2. /dev management
+
+On a Linux system, the /dev directory contains special files, called 
+device files, that allow userspace applications to access the
+hardware devices managed by the Linux kernel. Without these device
+files, your userspace applications would not be able to use the
+hardware devices, even if they are properly recognized by the Linux
+kernel.
+
+Under System configuration, /dev management, Buildroot offers four
+different solutions to handle the /dev directory :
+
+  * The first solution is Static using device table. This is the old
+    classical way of handling device files in Linux. With this
+    method, the device files are persistently stored in the root
+    filesystem (i.e they persist accross reboots), and there is
+    nothing that will automatically create and remove those device
+    files when hardware devices are added or removed from the system.
+    Buildroot therefore creates a standard set of device files using
+    a device table, the default one being stored in system/
+    device_table_dev.txt in the Buildroot source code. This file is
+    processed when Buildroot generates the final root filesystem
+    image, and the device files are therefore not visible in the
+    output/target directory. The BR2_ROOTFS_STATIC_DEVICE_TABLE
+    option allows to change the default device table used by
+    Buildroot, or to add an additional device table, so that
+    additional device files are created by Buildroot during the
+    build. So, if you use this method, and a device file is missing
+    in your system, you can for example create a board/<yourcompany>/
+    <yourproject>/device_table_dev.txt file that contains the
+    description of your additional device files, and then you can set
+    BR2_ROOTFS_STATIC_DEVICE_TABLE to system/device_table_dev.txt
+    board/<yourcompany>/<yourproject>/device_table_dev.txt. For more
+    details about the format of the device table file, see
+    Section 11.1, “Makedev syntax documentation”.
+  * The second solution is Dynamic using devtmpfs only. devtmpfs is a
+    virtual filesystem inside the Linux kernel that has been
+    introduced in kernel 2.6.32 (if you use an older kernel, it is
+    not possible to use this option). When mounted in /dev, this
+    virtual filesystem will automatically make device files appear
+    and disappear as hardware devices are added and removed from the
+    system. This filesystem is not persistent accross reboots: it is
+    filled dynamically by the kernel. Using devtmpfs requires the
+    following kernel configuration options to be enabled:
+    CONFIG_DEVTMPFS and CONFIG_DEVTMPFS_MOUNT. When Buildroot is in
+    charge of building the Linux kernel for your embedded device, it
+    makes sure that those two options are enabled. However, if you
+    build your Linux kernel outside of Buildroot, then it is your
+    responsability to enable those two options (if you fail to do so,
+    your Buildroot system will not boot).
+  * The third solution is Dynamic using mdev. This method also relies
+    on the devtmpfs virtual filesystem detailed above (so the
+    requirement to have CONFIG_DEVTMPFS and CONFIG_DEVTMPFS_MOUNT
+    enabled in the kernel configuration still apply), but adds the
+    mdev userspace utility on top of it. mdev is a program part of
+    Busybox that the kernel will call every time a device is added or
+    removed. Thanks to the /etc/mdev.conf configuration file, mdev
+    can be configured to for example, set specific permissions or
+    ownership on a device file, call a script or application whenever
+    a device appears or disappear, etc. Basically, it allows 
+    userspace to react on device addition and removal events. mdev
+    can for example be used to automatically load kernel modules when
+    devices appear on the system. mdev is also important if you have
+    devices that require a firmware, as it will be responsible for
+    pushing the firmware contents to the kernel. mdev is a
+    lightweight implementation (with fewer features) of udev. For
+    more details about mdev and the syntax of its configuration file,
+    see http://git.busybox.net/busybox/tree/docs/mdev.txt.
+  * The fourth solution is Dynamic using udev. This method also
+    relies on the devtmpfs virtual filesystem detailed above, but
+    adds the udev userspace daemon on top of it. udev is a daemon
+    that runs in the background, and gets called by the kernel when a
+    device gets added or removed from the system. It is a more
+    heavyweight solution than mdev, but provides higher flexibility
+    and is sometimes mandatory for some system components (systemd
+    for example). udev is the mechanism used in most desktop Linux
+    distributions. For more details about udev, see http://
+    en.wikipedia.org/wiki/Udev.
+
+The Buildroot developers recommandation is to start with the Dynamic
+using devtmpfs only solution, until you have the need for userspace
+to be notified when devices are added/removed, or if firmwares are
+needed, in which case Dynamic using mdev is usually a good solution.
+
+3.1.3. init system
+
+The init program is the first userspace program started by the kernel
+(it carries the PID number 1), and is responsible for starting the
+userspace services and programs (for example: web server, graphical
+applications, other network servers, etc.).
+
+Buildroot allows to use three different types of init systems, which
+can be chosen from System configuration, Init system:
+
+  * The first solution is Busybox. Amongst many programs, Busybox has
+    an implementation of a basic init program, which is sufficient
+    for most embedded systems. Enabling the BR2_INIT_BUSYBOX will
+    ensure Busybox will build and install its init program. This is
+    the default solution in Buildroot. The Busybox init program will
+    read the /etc/inittab file at boot to know what to do. The syntax
+    of this file can be found in http://git.busybox.net/busybox/tree/
+    examples/inittab (note that Busybox inittab syntax is special: do
+    not use a random inittab documentation from the Internet to learn
+    about Busybox inittab). The default inittab in Buildroot is
+    stored in system/skeleton/etc/inittab. Apart from mounting a few
+    important filesystems, the main job the default inittab does is
+    to start the /etc/init.d/rcS shell script, and start a getty
+    program (which provides a login prompt).
+  * The second solution is systemV. This solution uses the old
+    traditional sysvinit program, packed in Buildroot in package/
+    sysvinit. This was the solution used in most desktop Linux
+    distributions, until they switched to more recent alternatives
+    such as Upstart or Systemd. sysvinit also works with an inittab
+    file (which has a slightly different syntax than the one from
+    Busybox). The default inittab installed with this init solution
+    is located in package/sysvinit/inittab.
+  * The third solution is systemd. systemd is the new generation init
+    system for Linux. It does far more than traditional init
+    programs: aggressive parallelization capabilities, uses socket
+    and D-Bus activation for starting services, offers on-demand
+    starting of daemons, keeps track of processes using Linux control
+    groups, supports snapshotting and restoring of the system state,
+    etc. systemd will be useful on relatively complex embedded
+    systems, for example the ones requiring D-Bus and services
+    communicating between each other. It is worth noting that systemd
+    brings a fairly big number of large dependencies: dbus, glib and
+    more. For more details about systemd, see http://
+    www.freedesktop.org/wiki/Software/systemd.
+
+The solution recommended by Buildroot developers is to use the 
+Busybox init as it is sufficient for most embedded systems. systemd
+can be used for more complex situations.
+
+
+3.2. make tips
 
 --------------
 
@@ -392,14 +791,14 @@ To delete all build products as well as the configuration:
 
 Note that if ccache is enabled, running make clean or distclean does
 not empty the compiler cache used by Buildroot. To delete it, refer
-to Section 5.3.3, “Using ccache in Buildroot”.
+to Section 5.2.2, “Using ccache in Buildroot”.
 
 
-3.2. Customization
+3.3. Customization
 
 --------------
 
-3.2.1. Customizing the generated target filesystem
+3.3.1. Customizing the generated target filesystem
 
 Besides changing one or another configuration through make *config,
 there are a few ways to customize the resulting target filesystem.
@@ -410,7 +809,36 @@ there are a few ways to customize the resulting target filesystem.
     rebuild the target filesystem image. This method allows you to do
     anything to the target filesystem, but if you decide to
     completely rebuild your toolchain and tools, these changes will
-    be lost. Changes do not survive the make clean command.
+    be lost. This solution is therefore only useful for quick tests
+    only: changes do not survive the make clean command. Once you
+    have validated your changes, you should make sure that they will
+    persist after a make clean by using one of the following methods.
+  * Create a filesystem overlay: a tree of files that are copied
+    directly over the target filesystem after it has been built. Set
+    BR2_ROOTFS_OVERLAY to the top of the tree. .git, .svn, .hg
+    directories, .empty files and files ending with ~ are excluded. 
+    Among these first 3 methods, this one should be preferred.
+  * In the Buildroot configuration, you can specify the paths to one
+    or more post-build scripts. These scripts are called in the given
+    order, after Buildroot builds all the selected software, but 
+    before the rootfs images are assembled. The
+    BR2_ROOTFS_POST_BUILD_SCRIPT allows you to specify the location
+    of your post-build scripts. This option can be found in the
+    System configuration menu. The destination root filesystem folder
+    is given as the first argument to these scripts, and these
+    scripts can then be used to remove or modify any file in your
+    target filesystem. You should, however, use this feature with
+    care. Whenever you find that a certain package generates wrong or
+    unneeded files, you should fix that package rather than work
+    around it with some post-build cleanup scripts. You may also use
+    these variables in your post-build script:
+
+      o BUILDROOT_CONFIG: the path to the Buildroot .config file
+      o HOST_DIR, STAGING_DIR, TARGET_DIR: see Section 6.2.4.2,
+        “generic-package Reference”
+      o BINARIES_DIR: the place where all binary files (aka images)
+        are stored
+      o BASE_DIR: the base output directory
   * Create your own target skeleton. You can start with the default
     skeleton available under system/skeleton and then customize it to
     suit your needs. The BR2_ROOTFS_SKELETON_CUSTOM and
@@ -418,28 +846,37 @@ there are a few ways to customize the resulting target filesystem.
     location of your custom skeleton. These options can be found in
     the System configuration menu. At build time, the contents of the
     skeleton are copied to output/target before any package
-    installation.
-  * In the Buildroot configuration, you can specify the path to a 
-    post-build script, that gets called after Buildroot builds all
-    the selected software, but before the rootfs packages are
-    assembled. The BR2_ROOTFS_POST_BUILD_SCRIPT will allow you to
-    specify the location of your post-build script. This option can
-    be found in the System configuration menu. The destination root
-    filesystem folder is given as the first argument to this script,
-    and this script can then be used to copy programs, static data or
-    any other needed file to your target filesystem. You should,
-    however, use this feature with care. Whenever you find that a
-    certain package generates wrong or unneeded files, you should fix
-    that package rather than work around it with a post-build cleanup
-    script. Among these first 3 methods, this one should be preferred
-    .
-  * A special package, customize, stored in package/customize can be
-    used. You can put all the files that you want to see in the final
-    target root filesystem in package/customize/source, and then
-    enable this special package in the configuration system. This
-    method is marked as deprecated.
+    installation. Note that this method is not recommended, as it
+    duplicates the entire skeleton, which prevents from taking
+    advantage of the fixes or improvements brought to the default
+    Buildroot skeleton. The recommended method is to use the 
+    post-build scripts mechanism described in the previous item.
 
-3.2.2. Customizing the Busybox configuration
+Note also that you can use the post-image scripts if you want to
+perform some specific actions after all filesystem images have been
+created (for example to automatically extract your root filesystem
+tarball in a location exported by your NFS server, or to create a
+special firmware image that bundles your root filesystem and kernel
+image, or any other custom action), you can specify a space-separated
+list of scripts in the BR2_ROOTFS_POST_IMAGE_SCRIPT configuration
+option. This option can be found in the System configuration menu as
+well.
+
+Each of those scripts will be called with the path to the images
+output directory as first and unique argument, and will be executed
+with the main Buildroot source directory as the current directory.
+Those scripts will be executed as the user that executes Buildroot,
+which should normally not be the root user. Therefore, any action
+requiring root permissions in one of these post-image scripts will
+require special handling (usage of fakeroot or sudo), which is left
+to the script developer.
+
+Just like for the post-build scripts mentioned above, you also have
+access to the following environment variables from your post-image
+scripts: BUILDROOT_CONFIG, HOST_DIR, STAGING_DIR, TARGET_DIR,
+BINARIES_DIR and BASE_DIR.
+
+3.3.2. Customizing the Busybox configuration
 
 Busybox is very configurable, and you may want to customize it. You
 can follow these simple steps to do so. This method isn’t optimal,
@@ -456,11 +893,11 @@ Otherwise, you can simply change the package/busybox/busybox-
 without using the configuration tool.
 
 If you want to use an existing config file for busybox, then see
-Section 3.3.5, “Environment variables”.
+Section 3.5.5, “Environment variables”.
 
-3.2.3. Customizing the uClibc configuration
+3.3.3. Customizing the uClibc configuration
 
-Just like BusyBox Section 3.2.2, “Customizing the Busybox
+Just like BusyBox Section 3.3.2, “Customizing the Busybox
 configuration”, uClibc offers a lot of configuration options. They
 allow you to select various functionalities depending on your needs
 and limitations.
@@ -483,34 +920,34 @@ Otherwise, you can simply change toolchain/uClibc/
 uClibc-VERSION.config, without running the configuration assistant.
 
 If you want to use an existing config file for uClibc, then see
-Section 3.3.5, “Environment variables”.
+Section 3.5.5, “Environment variables”.
 
-3.2.4. Customizing the Linux kernel configuration
+3.3.4. Customizing the Linux kernel configuration
 
 The Linux kernel configuration can be customized just like BusyBox
-Section 3.2.2, “Customizing the Busybox configuration” and uClibc
-Section 3.2.3, “Customizing the uClibc configuration” using make
+Section 3.3.2, “Customizing the Busybox configuration” and uClibc
+Section 3.3.3, “Customizing the uClibc configuration” using make
 linux-menuconfig. Make sure you have enabled the kernel build in make
 menuconfig first. Once done, run make to (re)build everything.
 
 If you want to use an existing config file for Linux, then see
-Section 3.3.5, “Environment variables”.
+Section 3.5.5, “Environment variables”.
 
-3.2.5. Customizing the toolchain
+3.3.5. Customizing the toolchain
 
 There are three distinct types of toolchain backend supported in
 Buildroot, available under the menu Toolchain, invoking make
 menuconfig.
 
-3.2.5.1. Using the external toolchain backend
+3.3.5.1. Using the external toolchain backend
 
 There is no way of tuning an external toolchain since Buildroot does
 not generate it.
 
 It also requires to set the Buildroot settings according to the
-toolchain ones (see Section 5.3.2, “Using an external toolchain”).
+toolchain ones (see Section 3.1.1.2, “External toolchain backend”).
 
-3.2.5.2. Using the internal Buildroot toolchain backend
+3.3.5.2. Using the internal Buildroot toolchain backend
 
 The internal Buildroot toolchain backend only allows to generate 
 uClibc-based toolchains.
@@ -518,14 +955,14 @@ uClibc-based toolchains.
 However, it allows to tune major settings, such as:
 
   * Linux headers version;
-  * uClibc configuration (see uClibc Section 3.2.3, “Customizing the
+  * uClibc configuration (see uClibc Section 3.3.3, “Customizing the
     uClibc configuration”);
   * Binutils, GCC, Gdb and toolchain options.
 
 These settings are available after selecting the Buildroot toolchain
 type in the menu Toolchain.
 
-3.2.5.3. Using the Crosstool-NG backend
+3.3.5.3. Using the Crosstool-NG backend
 
 The crosstool-NG toolchain backend enables a rather limited set of
 settings under the Buildroot Toolchain menu:
@@ -537,11 +974,167 @@ Then, the toolchain can be fine-tuned by invoking make
 ctng-menuconfig.
 
 
-3.3. Daily use
+3.4. Storing the configuration
 
 --------------
 
-3.3.1. Understanding when a full rebuild is necessary
+When you have a buildroot configuration that you are satisfied with
+and you want to share it with others, put it under revision control
+or move on to a different buildroot project, you need to store the
+configuration so it can be rebuilt later. The configuration that
+needs to be stored consists of the buildroot configuration, the
+configuration files for packages that you use (kernel, busybox,
+uClibc, …), and your rootfs modifications.
+
+3.4.1. Basics for storing the configuration
+
+3.4.1.1. Buildroot configuration
+
+For storing the buildroot configuration itself, buildroot offers the
+following command: make savedefconfig.
+
+This strips the buildroot configuration down by removing
+configuration options that are at their default value. The result is
+stored in a file called defconfig. If you want to save it in another
+place, change the BR2_DEFCONFIG option, or call make with make
+savedefconfig BR2_DEFCONFIG=<path-to-defconfig>. The usual place is
+configs/<boardname>_defconfig. The configuration can then be rebuilt
+by running make <boardname>_defconfig.
+
+Alternatively, you can copy the file to any other place and rebuild
+with make defconfig BR2_DEFCONFIG=<path-to-defconfig-file>.
+
+3.4.1.2. Other package configuration
+
+The configuration files for busybox, the linux kernel, barebox,
+uClibc and crosstool-NG should be stored as well if changed. For each
+of these, a buildroot configuration option exists to point to an
+input configuration file, e.g. BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE.
+To save their configuration, set those configuration options to a
+path outside your output directory, e.g. board/<manufacturer>/
+<boardname>/linux.config. Then, copy the configuration files to that
+path.
+
+Make sure that you create a configuration file before changing the
+BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE etc. options. Otherwise,
+buildroot will try to access this config file, which doesn’t exist
+yet, and will fail. You can create the configuration file by running
+make linux-menuconfig etc.
+
+Buildroot provides a few helper targets to make the saving of
+configuration files easier.
+
+  * make linux-update-defconfig saves the linux configuration to the
+    path specified by BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE. It
+    simplifies the config file by removing default values. However,
+    this only works with kernels starting from 2.6.33. For earlier
+    kernels, use make linux-update-config.
+  * make busybox-update-config saves the busybox configuration to the
+    path specified by BR2_PACKAGE_BUSYBOX_CONFIG.
+  * make uclibc-update-config saves the uClibc configuration to the
+    path specified by BR2_UCLIBC_CONFIG.
+  * make barebox-update-defconfig saves the barebox configuration to
+    the path specified by BR2_TARGET_BAREBOX_CUSTOM_CONFIG_FILE.
+  * For crosstool-NG and at91bootstrap3, no helper exists so you have
+    to copy the config file manually to BR2_TOOLCHAIN_CTNG_CONFIG,
+    resp. BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_CONFIG_FILE.
+
+3.4.2. Creating your own board support
+
+Creating your own board support in Buildroot allows users of a
+particular hardware platform to easily build a system that is known
+to work.
+
+To do so, you need to create a normal Buildroot configuration that
+builds a basic system for the hardware: toolchain, kernel,
+bootloader, filesystem and a simple Busybox-only userspace. No
+specific package should be selected: the configuration should be as
+minimal as possible, and should only build a working basic Busybox
+system for the target platform. You can of course use more
+complicated configurations for your internal projects, but the
+Buildroot project will only integrate basic board configurations.
+This is because package selections are highly application-specific.
+
+Once you have a known working configuration, run make savedefconfig.
+This will generate a minimal defconfig file at the root of the
+Buildroot source tree. Move this file into the configs/ directory,
+and rename it <boardname>_defconfig.
+
+It is recommended to use as much as possible upstream versions of the
+Linux kernel and bootloaders, and to use as much as possible default
+kernel and bootloader configurations. If they are incorrect for your
+board, or no default exists, we encourage you to send fixes to the
+corresponding upstream projects.
+
+However, in the mean time, you may want to store kernel or bootloader
+configuration or patches specific to your target platform. To do so,
+create a directory board/<manufacturer> and a subdirectory board/
+<manufacturer>/<boardname>. You can then store your patches and
+configurations in these directories, and reference them from the main
+Buildroot configuration.
+
+3.4.3. Step-by-step instructions for storing configuration
+
+To store the configuration for a specific product, device or
+application, it is advisable to use the same conventions as for the
+board support: put the buildroot defconfig in the configs directory,
+and any other files in a subdirectory of the boards directory. This
+section gives step-by-step instructions about how to do that. Of
+course, you can skip the steps that are not relevant for your use
+case.
+
+ 1. make menuconfig to configure toolchain, packages and kernel.
+ 2. make linux-menuconfig to update the kernel config, similar for
+    other configuration.
+ 3. mkdir -p board/<manufacturer>/<boardname>
+ 4. Set the following options to board/<manufacturer>/<boardname>/
+    <package>.config (as far as they are relevant):
+
+      * BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE
+      * BR2_PACKAGE_BUSYBOX_CONFIG
+      * BR2_TOOLCHAIN_CTNG_CONFIG
+      * BR2_UCLIBC_CONFIG
+      * BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_CONFIG_FILE
+      * BR2_TARGET_BAREBOX_CUSTOM_CONFIG_FILE
+ 5. Write the configuration files:
+
+      * make linux-update-defconfig
+      * make busybox-update-config
+      * cp <output>/build/build-toolchain/.config board/
+        <manufacturer>/<boardname>/ctng.config
+      * make uclibc-update-config
+      * cp <output>/build/at91bootstrap3-*/.config board/
+        <manufacturer>/<boardname>/at91bootstrap3.config
+      * make barebox-update-defconfig
+ 6. Create board/<manufacturer>/<boardname>/fs-overlay/ and fill it
+    with additional files you need on your rootfs, e.g. board/
+    <manufacturer>/<boardname>/fs-overlay/etc/inittab. Set
+    BR2_ROOTFS_OVERLAY to board/<manufacturer>/<boardname>/
+    fs-overlay.
+ 7. Create a post-build script board/<manufacturer>/<boardname>/
+    post-build.sh. Set BR2_ROOTFS_POST_BUILD_SCRIPT to board/
+    <manufacturer>/<boardname>/post-build.sh
+ 8. If additional setuid permissions have to be set or device nodes
+    have to be created, create board/<manufacturer>/<boardname>/
+    device_table.txt and add that path to BR2_ROOTFS_DEVICE_TABLE.
+ 9. make savedefconfig to save the buildroot configuration.
+10. cp defconfig configs/<boardname>_defconfig
+11. To add patches to the linux build, set BR2_LINUX_KERNEL_PATCH to
+    board/<manufacturer>/<boardname>/patches/linux/ and add your
+    patches in that directory. Each patch should be called linux-
+    <num>-<description>.patch. Similar for U-Boot, barebox,
+    at91bootstrap and at91bootstrap3.
+12. If you need modifications to other packages, or if you need to
+    add packages, do that directly in the packages/ directory,
+    following the instructions in Section 6.2, “Adding new packages
+    to Buildroot”.
+
+
+3.5. Daily use
+
+--------------
+
+3.5.1. Understanding when a full rebuild is necessary
 
 A full rebuild is achieved by running:
 
@@ -569,7 +1162,7 @@ In other cases, it is up to you to decide if you should run a full
 rebuild, but you should know what is impacted and understand what you
 are doing anyway.
 
-3.3.2. Understanding how to rebuild packages
+3.5.2. Understanding how to rebuild packages
 
 One of the most common questions asked by Buildroot users is how to
 rebuild a given package or how to remove a package without rebuilding
@@ -607,9 +1200,9 @@ Note: toolchain packages use custom makefiles. Their stamp files are
 named differently.
 
 Further details about package special make targets are explained in
-Section 5.3.5, “Package-specific make targets”.
+Section 5.2.4, “Package-specific make targets”.
 
-3.3.3. Offline builds
+3.5.3. Offline builds
 
 If you intend to do an offline build and just want to download all
 sources that you previously selected in the configurator (menuconfig,
@@ -620,7 +1213,7 @@ xconfig or gconfig), then issue:
 You can now disconnect or copy the content of your dl directory to
 the build-host.
 
-3.3.4. Building out-of-tree
+3.5.4. Building out-of-tree
 
 As default, everything built by Buildroot is stored in the directory
 output in the Buildroot tree.
@@ -648,7 +1241,7 @@ and -C .., simply run (in the output directory):
 
  $ make <target>
 
-3.3.5. Environment variables
+3.5.5. Environment variables
 
 Buildroot also honors some environment variables, when they are
 passed to make or set in the environment:
@@ -683,7 +1276,38 @@ building helper-binaries on your host, then do
  $ make HOSTCXX=g++-4.3-HEAD HOSTCC=gcc-4.3-HEAD
 
 
-3.4. Hacking Buildroot
+3.6. Integration with Eclipse
+
+--------------
+
+While a part of the embedded Linux developers like classical text
+editors like Vim or Emacs, and command-line based interfaces, a
+number of other embedded Linux developers like richer graphical
+interfaces to do their development work. Eclipse being one of the
+most popular Integrated Development Environment, Buildroot integrates
+with Eclipse in order to ease the development work of Eclipse users.
+
+Our integration with Eclipse simplifies the compilation, remote
+execution and remote debugging of applications and libraries that are
+built on top of a Buildroot system. It does not integrate the
+Buildroot configuration and build processes themselves with Eclipse.
+Therefore, the typical usage model of our Eclipse integration would
+be:
+
+  * Configure your Buildroot system with make menuconfig, make
+    xconfig or any other configuration interface provided with
+    Buildroot.
+  * Build your Buildroot system by running make.
+  * Start Eclipse to develop, execute and debug your own custom
+    applications and libraries, that will rely on the libraries built
+    and installed by Buildroot.
+
+The Buildroot Eclipse integration installation process and usage is
+described in detail at https://github.com/mbats/
+eclipse-buildroot-bundle/wiki.
+
+
+3.7. Hacking Buildroot
 
 --------------
 
@@ -692,8 +1316,15 @@ interested in hacking it to add:
 
   * new packages: refer to the Developer guide Section 6.2, “Adding
     new packages to Buildroot”
-  * new board support: refer to the Developer guide Section 6.5,
-    “Creating your own board support”
+  * new board support: refer to the Developer guide Section 3.4.2,
+    “Creating your own board support”.
+
+
+--------------
+
+^[3] This terminology differs from what is used by GNU configure,
+where the host is the machine on which the application will run
+(which is usually the same as target)
 
 
 ---------------------------------------------------------------------
@@ -791,19 +1422,7 @@ distribution (see: Section 4.3, “Why is there no compiler on the
 target?”).
 
 
-4.6. Config.in: depends on vs select
-
---------------
-
-When adding a new package to Buildroot, you will most likely have to
-deal with expressing the dependencies of this package.
-
-In the Config.in file, dependencies may be expressed following two
-semantics. See choosing between depends and select Section 6.2.2.1,
-“Choosing depends on or select”.
-
-
-4.7. Why are some packages not visible in the Buildroot config menu?
+4.6. Why are some packages not visible in the Buildroot config menu?
 
 --------------
 
@@ -812,18 +1431,18 @@ config menu, this most likely means that some of the package’s
 dependencies are not met.
 
 To know more about the dependencies of a package, search for the
-package symbol in the config menu (see Section 3.1, “make tips”).
+package symbol in the config menu (see Section 3.2, “make tips”).
 
 Then, you may have to recursively enable several options (which
 correspond to the unmet dependencies) to finally be able to select
 the package.
 
 If the package is not visible due to some unmet toolchain options,
-then you should certainly run a full rebuild (see Section 3.1, “make
+then you should certainly run a full rebuild (see Section 3.2, “make
 tips” for more explanations).
 
 
-4.8. Why not use the target directory as a chroot directory?
+4.7. Why not use the target directory as a chroot directory?
 
 --------------
 
@@ -849,107 +1468,7 @@ Chapter 5. Going further in Buildroot’s innards
 ---------------------------------------------------------------------
 
 
-5.1. Embedded system basics
-
---------------
-
-When developing an embedded system, there are a number of choices to
-address:
-
-  * the cross-toolchain: target architecture/C library/…
-  * the bootloader
-  * kernel options
-  * the device management
-  * the init system
-  * the package selection (busybox vs. "real" programs, …)
-  * …
-
-Some of these may be influenced by the target hardware.
-
-Some of the choices may also add some constraints when you develop
-the final application for which your target is designed (e.g. some
-functions may be provided by some C libraries and missing in some
-others, …). So, these choices should be carefully made.
-
-Buildroot allows you to set most of these options to fit your needs.
-
-Moreover, Buildroot provides an infrastructure for reproducing the
-build process of your kernel, cross-toolchain, and embedded root
-filesystem. Being able to reproduce the build process will be useful
-when a component needs to be patched or updated or when another
-person is supposed to take over the project.
-
-5.1.1. Cross-compilation & cross-toolchain
-
-A compilation toolchain is the set of tools that allows you to
-compile code for your system. It consists of a compiler (in our case,
-gcc), binary utils like assembler and linker (in our case, binutils)
-and a C standard library (for example GNU Libc, uClibc or dietlibc).
-
-The system installed on your development station certainly already
-has a compilation toolchain that you can use to compile an
-application that runs on your system. If you’re using a PC, your
-compilation toolchain runs on an x86 processor and generates code for
-an x86 processor. Under most Linux systems, the compilation toolchain
-uses the GNU libc (glibc) as the C standard library. This compilation
-toolchain is called the "host compilation toolchain". The machine on
-which it is running, and on which you’re working, is called the "host
-system" ^[3].
-
-The compilation toolchain is provided by your distribution, and
-Buildroot has nothing to do with it (other than using it to build a
-cross-compilation toolchain and other tools that are run on the
-development host).
-
-As said above, the compilation toolchain that comes with your system
-runs on and generates code for the processor in your host system. As
-your embedded system has a different processor, you need a
-cross-compilation toolchain - a compilation toolchain that runs on
-your host system but generates code for your target system (and
-target processor). For example, if your host system uses x86 and your
-target system uses ARM, the regular compilation toolchain on your
-host runs on x86 and generates code for x86, while the
-cross-compilation toolchain runs on x86 and generates code for ARM.
-
-Even if your embedded system uses an x86 processor, you might be
-interested in Buildroot for two reasons:
-
-  * The compilation toolchain on your host certainly uses the GNU
-    Libc which is a complete but huge C standard library. Instead of
-    using GNU Libc on your target system, you can use uClibc which is
-    a tiny C standard library. If you want to use this C library,
-    then you need a compilation toolchain to generate binaries linked
-    with it. Buildroot can do that for you.
-  * Buildroot automates the building of a root filesystem with all
-    needed tools like busybox. That makes it much easier than doing
-    it by hand.
-
-You might wonder why such a tool is needed when you can compile gcc,
-binutils, uClibc and all the other tools by hand. Of course doing so
-is possible, but dealing with all of the configure options and
-problems of every gcc or binutils version is very time-consuming and
-uninteresting. Buildroot automates this process through the use of
-Makefiles and has a collection of patches for each gcc and binutils
-version to make them work on most architectures.
-
-Buildroot offers a number of options and settings that can be tuned
-when defining the cross-toolchain (refer to Section 3.2.5,
-“Customizing the toolchain”).
-
-5.1.2. Bootloader
-
-TODO
-
-5.1.3. Device management
-
-TODO
-
-5.1.4. Init system
-
-TODO
-
-
-5.2. How Buildroot works
+5.1. How Buildroot works
 
 --------------
 
@@ -1009,11 +1528,11 @@ configuration is done):
     depending on the configuration.
 
 
-5.3. Advanced usage
+5.2. Advanced usage
 
 --------------
 
-5.3.1. Using the generated toolchain outside Buildroot
+5.2.1. Using the generated toolchain outside Buildroot
 
 You may want to compile, for your target, your own programs or other
 software that are not packaged in Buildroot. In order to do this you
@@ -1033,84 +1552,7 @@ directory other than output/host by using the Build options → Host
 dir option. This could be useful if the toolchain must be shared with
 other users.
 
-5.3.2. Using an external toolchain
-
-Using an already existing toolchain is useful for different reasons:
-
-  * you already have a toolchain that is known to work for your
-    specific CPU
-  * you want to speed up the Buildroot build process by skipping the
-    long toolchain build part
-  * the toolchain generation feature of Buildroot is not sufficiently
-    flexible for you (for example if you need to generate a system
-    with glibc instead of uClibc)
-
-Buildroot supports using existing toolchains through a mechanism
-called external toolchain. The external toolchain mechanism is
-enabled in the Toolchain menu, by selecting External toolchain in
-Toolchain type.
-
-Then, you have three solutions to use an external toolchain:
-
-  * Use a predefined external toolchain profile, and let Buildroot
-    download, extract and install the toolchain. Buildroot already
-    knows about a few CodeSourcery, Linaro, Blackfin and Xilinx
-    toolchains. Just select the toolchain profile in Toolchain from
-    the available ones. This is definitely the easiest solution.
-  * Use a predefined external toolchain profile, but instead of
-    having Buildroot download and extract the toolchain, you can tell
-    Buildroot where your toolchain is already installed on your
-    system. Just select the toolchain profile in Toolchain through
-    the available ones, unselect Download toolchain automatically,
-    and fill the Toolchain path text entry with the path to your
-    cross-compiling toolchain.
-  * Use a completely custom external toolchain. This is particularly
-    useful for toolchains generated using crosstool-NG. To do this,
-    select the Custom toolchain solution in the Toolchain list. You
-    need to fill the Toolchain path, Toolchain prefix and External
-    toolchain C library options. Then, you have to tell Buildroot
-    what your external toolchain supports. If your external toolchain
-    uses the glibc library, you only have to tell whether your
-    toolchain supports C+\+ or not and whether it has built-in RPC
-    support. If your external toolchain uses the uClibc library, then
-    you have to tell Buildroot if it supports largefile, IPv6, RPC,
-    wide-char, locale, program invocation, threads and C++. At the
-    beginning of the execution, Buildroot will tell you if the
-    selected options do not match the toolchain configuration.
-
-Our external toolchain support has been tested with toolchains from
-CodeSourcery and Linaro, toolchains generated by crosstool-NG, and
-toolchains generated by Buildroot itself. In general, all toolchains
-that support the sysroot feature should work. If not, do not hesitate
-to contact the developers.
-
-We do not support toolchains from the ELDK of Denx, for two reasons:
-
-  * The ELDK does not contain a pure toolchain (i.e just the
-    compiler, binutils, the C and C++ libraries), but a toolchain
-    that comes with a very large set of pre-compiled libraries and
-    programs. Therefore, Buildroot cannot import the sysroot of the
-    toolchain, as it would contain hundreds of megabytes of
-    pre-compiled libraries that are normally built by Buildroot.
-  * The ELDK toolchains have a completely non-standard custom
-    mechanism to handle multiple library variants. Instead of using
-    the standard GCC multilib mechanism, the ARM ELDK uses different
-    symbolic links to the compiler to differentiate between library
-    variants (for ARM soft-float and ARM VFP), and the PowerPC ELDK
-    compiler uses a CROSS_COMPILE environment variable. This
-    non-standard behaviour makes it difficult to support ELDK in
-    Buildroot.
-
-We also do not support using the distribution toolchain (i.e the gcc/
-binutils/C library installed by your distribution) as the toolchain
-to build software for the target. This is because your distribution
-toolchain is not a "pure" toolchain (i.e only with the C/C++
-library), so we cannot import it properly into the Buildroot build
-environment. So even if you are building a system for a x86 or x86_64
-target, you have to generate a cross-compilation toolchain with
-Buildroot or crosstool-NG.
-
-5.3.3. Using ccache in Buildroot
+5.2.2. Using ccache in Buildroot
 
 ccache is a compiler cache. It stores the object files resulting from
 each compilation process, and is able to skip future compilation of
@@ -1131,25 +1573,20 @@ this directory.
 You can get statistics on the cache (its size, number of hits,
 misses, etc.) by running make ccache-stats.
 
-5.3.4. Location of downloaded packages
+5.2.3. Location of downloaded packages
 
 The various tarballs that are downloaded by Buildroot are all stored
-in DL_DIR, which by default is the dl directory. If you want to keep
-a complete version of Buildroot which is known to be working with the
-associated tarballs, you can make a copy of this directory. This will
-allow you to regenerate the toolchain and the target filesystem with
-exactly the same versions.
+in BR2_DL_DIR, which by default is the dl directory. If you want to
+keep a complete version of Buildroot which is known to be working
+with the associated tarballs, you can make a copy of this directory.
+This will allow you to regenerate the toolchain and the target
+filesystem with exactly the same versions.
 
 If you maintain several Buildroot trees, it might be better to have a
-shared download location. This can be accessed by creating a symbolic
-link from the dl directory to the shared download location:
-
- $ ln -s <shared download location> dl
-
-Another way of accessing a shared download location is to create the
-BUILDROOT_DL_DIR environment variable. If this is set, then the value
-of DL_DIR in the project is overridden. The following line should be
-added to <~/.bashrc>.
+shared download location. This can be achieved by pointing the
+BUILDROOT_DL_DIR environment variable to a directory. If this is set,
+then the value of BR2_DL_DIR in the Buildroot configuration is
+overridden. The following line should be added to <~/.bashrc>.
 
  $ export BUILDROOT_DL_DIR <shared download location>
 
@@ -1157,7 +1594,7 @@ The download location can also be set in the .config file, with the
 BR2_DL_DIR option. This value is overridden by the BUILDROOT_DL_DIR
 environment variable.
 
-5.3.5. Package-specific make targets
+5.2.4. Package-specific make targets
 
 Running make <package> builds and installs that particular package
 and its dependencies.
@@ -1230,13 +1667,6 @@ Additionally, there are some other useful make targets:
 |            |OVERRIDE_SRCDIR feature or when you modified a |
 |            |file directly in the build directory           |
 +------------------------------------------------------------+
-
---------------
-
-^[3] This terminology differs from what is used by GNU configure,
-where the host is the machine on which the application will run
-(which is usually the same as target)
-
 
 ---------------------------------------------------------------------
 
@@ -1562,74 +1992,125 @@ based on hand-written Makefiles or shell scripts.
 03: # libfoo
 04: #
 05: #############################################################
-06: LIBFOO_VERSION = 1.0
-07: LIBFOO_SOURCE = libfoo-$(LIBFOO_VERSION).tar.gz
-08: LIBFOO_SITE = http://www.foosoftware.org/download
-09: LIBFOO_LICENSE = GPLv3+
-10: LIBFOO_LICENSE_FILES = COPYING
-11: LIBFOO_INSTALL_STAGING = YES
-12: LIBFOO_DEPENDENCIES = host-libaaa libbbb
-13:
-14: define LIBFOO_BUILD_CMDS
-15:     $(MAKE) CC="$(TARGET_CC)" LD="$(TARGET_LD)" -C $(@D) all
-16: endef
-17:
-18: define LIBFOO_INSTALL_STAGING_CMDS
-19:     $(INSTALL) -D -m 0755 $(@D)/libfoo.a $(STAGING_DIR)/usr/lib/libfoo.a
-20:     $(INSTALL) -D -m 0644 $(@D)/foo.h $(STAGING_DIR)/usr/include/foo.h
-21:     $(INSTALL) -D -m 0755 $(@D)/libfoo.so* $(STAGING_DIR)/usr/lib
-22: endef
-23:
-24: define LIBFOO_INSTALL_TARGET_CMDS
-25:     $(INSTALL) -D -m 0755 $(@D)/libfoo.so* $(TARGET_DIR)/usr/lib
-26:     $(INSTALL) -d -m 0755 $(TARGET_DIR)/etc/foo.d
-27: endef
-28:
-29: define LIBFOO_DEVICES
-30:     /dev/foo  c  666  0  0  42  0  -  -  -
-31: endef
-32:
-33: define LIBFOO_PERMISSIONS
-34:     /bin/foo  f  4755  0  0  -  -  -  -  -
-35: endef
-36:
-37: $(eval $(generic-package))
+06:
+07: LIBFOO_VERSION = 1.0
+08: LIBFOO_SOURCE = libfoo-$(LIBFOO_VERSION).tar.gz
+09: LIBFOO_SITE = http://www.foosoftware.org/download
+10: LIBFOO_LICENSE = GPLv3+
+11: LIBFOO_LICENSE_FILES = COPYING
+12: LIBFOO_INSTALL_STAGING = YES
+13: LIBFOO_CONFIG_SCRIPTS = libfoo-config
+14: LIBFOO_DEPENDENCIES = host-libaaa libbbb
+15:
+16: define LIBFOO_BUILD_CMDS
+17:     $(MAKE) CC="$(TARGET_CC)" LD="$(TARGET_LD)" -C $(@D) all
+18: endef
+19:
+20: define LIBFOO_INSTALL_STAGING_CMDS
+21:     $(INSTALL) -D -m 0755 $(@D)/libfoo.a $(STAGING_DIR)/usr/lib/libfoo.a
+22:     $(INSTALL) -D -m 0644 $(@D)/foo.h $(STAGING_DIR)/usr/include/foo.h
+23:     $(INSTALL) -D -m 0755 $(@D)/libfoo.so* $(STAGING_DIR)/usr/lib
+24: endef
+25:
+26: define LIBFOO_INSTALL_TARGET_CMDS
+27:     $(INSTALL) -D -m 0755 $(@D)/libfoo.so* $(TARGET_DIR)/usr/lib
+28:     $(INSTALL) -d -m 0755 $(TARGET_DIR)/etc/foo.d
+29: endef
+30:
+31: define LIBFOO_DEVICES
+32:     /dev/foo  c  666  0  0  42  0  -  -  -
+33: endef
+34:
+35: define LIBFOO_PERMISSIONS
+36:     /bin/foo  f  4755  0  0  -  -  -  -  -
+37: endef
+38:
+39: $(eval $(generic-package))
 
-The Makefile begins on line 6 to 8 with metadata information: the
+The Makefile begins on line 7 to 11 with metadata information: the
 version of the package (LIBFOO_VERSION), the name of the tarball
-containing the package (LIBFOO_SOURCE) and the Internet location at
-which the tarball can be downloaded (LIBFOO_SITE). All variables must
-start with the same prefix, LIBFOO_ in this case. This prefix is
-always the uppercased version of the package name (see below to
-understand where the package name is defined).
+containing the package (LIBFOO_SOURCE) the Internet location at which
+the tarball can be downloaded from (LIBFOO_SITE), the license
+(LIBFOO_LICENSE) and file with the license text
+(LIBFOO_LICENSE_FILES). All variables must start with the same
+prefix, LIBFOO_ in this case. This prefix is always the uppercased
+version of the package name (see below to understand where the
+package name is defined).
 
-On line 9, we specify that this package wants to install something to
-the staging space. This is often needed for libraries, since they
+On line 12, we specify that this package wants to install something
+to the staging space. This is often needed for libraries, since they
 must install header files and other development files in the staging
 space. This will ensure that the commands listed in the
 LIBFOO_INSTALL_STAGING_CMDS variable will be executed.
 
-On line 10, we specify the list of dependencies this package relies
+On line 13, we specify that there is some fixing to be done to some
+of the libfoo-config files that were installed during
+LIBFOO_INSTALL_STAGING_CMDS phase. These *-config files are
+executable shell script files that are located in $(STAGING_DIR)/usr/
+bin directory and are executed by other 3rd party packages to find
+out the location and the linking flags of this particular package.
+
+The problem is that all these *-config files by default give wrong,
+host system linking flags that are unsuitable for cross-compiling.
+
+For example: -I/usr/include instead of -I$(STAGING_DIR)/usr/include
+or: -L/usr/lib instead of -L$(STAGING_DIR)/usr/lib
+
+So some sed magic is done to these scripts to make them give correct
+flags. The argument to be given to LIBFOO_CONFIG_SCRIPTS is the file
+name(s) of the shell script(s) needing fixing. All these names are
+relative to $(STAGING_DIR)/usr/bin and if needed multiple names can
+be given.
+
+In addition, the scripts listed in LIBFOO_CONFIG_SCRIPTS are removed
+from $(TARGET_DIR)/usr/bin, since they are not needed on the target.
+
+Example 1:
+
+Package divine installs shell script $(STAGING_DIR)/usr/bin/
+divine-config.
+
+So it’s fixup would be:
+
+DIVINE_CONFIG_SCRIPTS = divine-config
+
+Example 2:
+
+Package imagemagick installs the following scripts: $(STAGING_DIR)/
+usr/bin/{Magick,Magick++,MagickCore,MagickWand,Wand}-config
+
+So it’s fixup would be:
+
+IMAGEMAGICK_CONFIG_SCRIPTS = \ Magick-config Magick++-config \
+MagickCore-config MagickWand-config Wand-config
+
+On line 14, we specify the list of dependencies this package relies
 on. These dependencies are listed in terms of lower-case package
 names, which can be packages for the target (without the host-
 prefix) or packages for the host (with the host-) prefix). Buildroot
 will ensure that all these packages are built and installed before
 the current package starts its configuration.
 
-The rest of the Makefile defines what should be done at the different
-steps of the package configuration, compilation and installation.
-LIBFOO_BUILD_CMDS tells what steps should be performed to build the
-package. LIBFOO_INSTALL_STAGING_CMDS tells what steps should be
-performed to install the package in the staging space.
+The rest of the Makefile, lines 16..29, defines what should be done
+at the different steps of the package configuration, compilation and
+installation. LIBFOO_BUILD_CMDS tells what steps should be performed
+to build the package. LIBFOO_INSTALL_STAGING_CMDS tells what steps
+should be performed to install the package in the staging space.
 LIBFOO_INSTALL_TARGET_CMDS tells what steps should be performed to
 install the package in the target space.
 
 All these steps rely on the $(@D) variable, which contains the
 directory where the source code of the package has been extracted.
 
-Finally, on line 35, we call the generic-package which generates,
-according to the variables defined previously, all the Makefile code
-necessary to make your package working.
+On line 31..33, we define a device-node file used by this package
+(LIBFOO_DEVICES).
+
+On line 35..37, we define the permissions to set to specific files
+installed by this package (LIBFOO_PERMISSIONS).
+
+Finally, on line 39, we call the generic-package function, which
+generates, according to the variables defined previously, all the
+Makefile code necessary to make your package working.
 
 6.2.4.2. generic-package Reference
 
@@ -1677,14 +2158,17 @@ information is (assuming the package name is libfoo) :
     LIBFOO_SOURCE. If none are specified, then the value is assumed
     to be packagename-$(LIBFOO_VERSION).tar.gz. Example:
     LIBFOO_SOURCE = foobar-$(LIBFOO_VERSION).tar.bz2
-  * LIBFOO_PATCH may contain the name of a patch, that will be
-    downloaded from the same location as the tarball indicated in
-    LIBFOO_SOURCE. If HOST_LIBFOO_PATCH is not specified, it defaults
-    to LIBFOO_PATCH. Note that patches that are included in Buildroot
-    itself use a different mechanism: all files of the form
+  * LIBFOO_PATCH may contain a space-separated list of patch file
+    names, that will be downloaded from the same location as the
+    tarball indicated in LIBFOO_SOURCE, and then applied to the
+    package source code. If HOST_LIBFOO_PATCH is not specified, it
+    defaults to LIBFOO_PATCH. Note that patches that are included in
+    Buildroot itself use a different mechanism: all files of the form
     <packagename>-*.patch present in the package directory inside
     Buildroot will be applied to the package after extraction (see
-    patching a package Section 6.3, “Patching a package”).
+    patching a package Section 6.3, “Patching a package”). Finally,
+    patches listed in the LIBFOO_PATCH variable are applied before
+    the patches stored in the Buildroot package directory.
   * LIBFOO_SITE provides the location of the package, which can be a
     URL or a local filesystem path. HTTP, FTP and SCP are supported
     URL types for retrieving package tarballs. Git, Subversion,
@@ -1753,6 +2237,12 @@ information is (assuming the package name is libfoo) :
     to YES, then the commands in the LIBFOO_INSTALL_TARGET_CMDS
     variables are executed to install the package into the target
     directory.
+  * LIBFOO_CONFIG_SCRIPTS lists the names of the files in $
+    (STAGING_DIR)/usr/bin that need some special fixing to make them
+    cross-compiling friendly. Multiple file names separated by space
+    can be given and all are relative to $(STAGING_DIR)/usr/bin. The
+    files listed in LIBFOO_CONFIG_SCRIPTS are also removed from $
+    (TARGET_DIR)/usr/bin since they are not needed on the target.
   * LIBFOO_DEVICES lists the device files to be created by Buildroot
     when using the static device table. The syntax to use is the
     makedevs one. You can find some documentation for this syntax in
@@ -1896,23 +2386,24 @@ package, with an example :
 03: # libfoo
 04: #
 05: #############################################################
-06: LIBFOO_VERSION = 1.0
-07: LIBFOO_SOURCE = libfoo-$(LIBFOO_VERSION).tar.gz
-08: LIBFOO_SITE = http://www.foosoftware.org/download
-09: LIBFOO_INSTALL_STAGING = YES
-10: LIBFOO_INSTALL_TARGET = NO
-11: LIBFOO_CONF_OPT = --disable-shared
-12: LIBFOO_DEPENDENCIES = libglib2 host-pkgconf
-13:
-14: $(eval $(autotools-package))
+06:
+07: LIBFOO_VERSION = 1.0
+08: LIBFOO_SOURCE = libfoo-$(LIBFOO_VERSION).tar.gz
+09: LIBFOO_SITE = http://www.foosoftware.org/download
+10: LIBFOO_INSTALL_STAGING = YES
+11: LIBFOO_INSTALL_TARGET = NO
+12: LIBFOO_CONF_OPT = --disable-shared
+13: LIBFOO_DEPENDENCIES = libglib2 host-pkgconf
+14:
+15: $(eval $(autotools-package))
 
-On line 6, we declare the version of the package.
+On line 7, we declare the version of the package.
 
-On line 7 and 8, we declare the name of the tarball and the location
+On line 8 and 9, we declare the name of the tarball and the location
 of the tarball on the Web. Buildroot will automatically download the
 tarball from this location.
 
-On line 9, we tell Buildroot to install the package to the staging
+On line 10, we tell Buildroot to install the package to the staging
 directory. The staging directory, located in output/staging/ is the
 directory where all the packages are installed, including their
 development files, etc. By default, packages are not installed to the
@@ -1922,7 +2413,7 @@ compile other libraries or applications depending on them. Also by
 default, when staging installation is enabled, packages are installed
 in this location using the make install command.
 
-On line 10, we tell Buildroot to not install the package to the
+On line 11, we tell Buildroot to not install the package to the
 target directory. This directory contains what will become the root
 filesystem running on the target. For purely static libraries, it is
 not necessary to install them in the target directory because they
@@ -1931,14 +2422,14 @@ enabled; setting this variable to NO is almost never needed. Also by
 default, packages are installed in this location using the make
 install command.
 
-On line 11, we tell Buildroot to pass a custom configure option, that
+On line 12, we tell Buildroot to pass a custom configure option, that
 will be passed to the ./configure script before configuring and
 building the package.
 
-On line 12, we declare our dependencies, so that they are built
+On line 13, we declare our dependencies, so that they are built
 before the build process of our package starts.
 
-Finally, on line line 14, we invoke the autotools-package macro that
+Finally, on line line 15, we invoke the autotools-package macro that
 generates all the Makefile rules that actually allows the package to
 be built.
 
@@ -2039,23 +2530,24 @@ with an example :
 03: # libfoo
 04: #
 05: #############################################################
-06: LIBFOO_VERSION = 1.0
-07: LIBFOO_SOURCE = libfoo-$(LIBFOO_VERSION).tar.gz
-08: LIBFOO_SITE = http://www.foosoftware.org/download
-09: LIBFOO_INSTALL_STAGING = YES
-10: LIBFOO_INSTALL_TARGET = NO
-11: LIBFOO_CONF_OPT = -DBUILD_DEMOS=ON
-12: LIBFOO_DEPENDENCIES = libglib2 host-pkgconf
-13:
-14: $(eval $(cmake-package))
+06:
+07: LIBFOO_VERSION = 1.0
+08: LIBFOO_SOURCE = libfoo-$(LIBFOO_VERSION).tar.gz
+09: LIBFOO_SITE = http://www.foosoftware.org/download
+10: LIBFOO_INSTALL_STAGING = YES
+11: LIBFOO_INSTALL_TARGET = NO
+12: LIBFOO_CONF_OPT = -DBUILD_DEMOS=ON
+13: LIBFOO_DEPENDENCIES = libglib2 host-pkgconf
+14:
+15: $(eval $(cmake-package))
 
-On line 6, we declare the version of the package.
+On line 7, we declare the version of the package.
 
-On line 7 and 8, we declare the name of the tarball and the location
+On line 8 and 9, we declare the name of the tarball and the location
 of the tarball on the Web. Buildroot will automatically download the
 tarball from this location.
 
-On line 9, we tell Buildroot to install the package to the staging
+On line 10, we tell Buildroot to install the package to the staging
 directory. The staging directory, located in output/staging/ is the
 directory where all the packages are installed, including their
 development files, etc. By default, packages are not installed to the
@@ -2065,7 +2557,7 @@ compile other libraries or applications depending on them. Also by
 default, when staging installation is enabled, packages are installed
 in this location using the make install command.
 
-On line 10, we tell Buildroot to not install the package to the
+On line 11, we tell Buildroot to not install the package to the
 target directory. This directory contains what will become the root
 filesystem running on the target. For purely static libraries, it is
 not necessary to install them in the target directory because they
@@ -2074,13 +2566,13 @@ enabled; setting this variable to NO is almost never needed. Also by
 default, packages are installed in this location using the make
 install command.
 
-On line 11, we tell Buildroot to pass custom options to CMake when it
+On line 12, we tell Buildroot to pass custom options to CMake when it
 is configuring the package.
 
-On line 12, we declare our dependencies, so that they are built
+On line 13, we declare our dependencies, so that they are built
 before the build process of our package starts.
 
-Finally, on line line 14, we invoke the cmake-package macro that
+Finally, on line line 15, we invoke the cmake-package macro that
 generates all the Makefile rules that actually allows the package to
 be built.
 
@@ -2283,11 +2775,19 @@ Most patches are provided within Buildroot, in the package directory;
 these typically aim to fix cross-compilation, libc support, or other
 such issues.
 
-These patch files should be named <packagename>-*.patch.
+These patch files should be named <packagename>-<number>-
+<description>.patch.
 
 A series file, as used by quilt, may also be added in the package
 directory. In that case, the series file defines the patch
 application order.
+
+Notes
+
+  * The patch files coming with Buildroot should not contain any
+    package version reference in their filename.
+  * The field <number> in the patch file name refers to the apply
+    order.
 
 6.3.2. How patches are applied
 
@@ -2301,10 +2801,12 @@ application order.
 
       * If a series file exists in the package directory, then
         patches are applied according to the series file;
-      * Otherwise, patch files matching <packagename>-*.patch or
-        <packagename>-*.patch.<arch> (where <arch> is the
-        architecture name) are applied following the ls command
-        order.
+      * Otherwise, patch files matching <packagename>-*.patch are
+        applied in alphabetical order. So, to ensure they are applied
+        in the right order, it is hightly recommended to named the
+        patch files like this: <packagename>-<number>-
+        <description>.patch, where <number> refers to the apply order
+        .
  5. Run the <packagename>_POST_PATCH_HOOKS commands if defined.
 
 If something goes wrong in the steps 3 or 4, then the build fails.
@@ -2374,44 +2876,6 @@ that may have been necessary.
 --------------
 
 TODO
-
-
-6.5. Creating your own board support
-
---------------
-
-Creating your own board support in Buildroot allows users of a
-particular hardware platform to easily build a system that is known
-to work.
-
-To do so, you need to create a normal Buildroot configuration that
-builds a basic system for the hardware: toolchain, kernel,
-bootloader, filesystem and a simple Busybox-only userspace. No
-specific package should be selected: the configuration should be as
-minimal as possible, and should only build a working basic Busybox
-system for the target platform. You can of course use more
-complicated configurations for your internal projects, but the
-Buildroot project will only integrate basic board configurations.
-This is because package selections are highly application-specific.
-
-Once you have a known working configuration, run make savedefconfig.
-This will generate a minimal defconfig file at the root of the
-Buildroot source tree. Move this file into the configs/ directory,
-and rename it BOARDNAME_defconfig.
-
-It is recommended to use upstream versions of the Linux kernel and
-bootloaders where possible, and also to use default kernel and
-bootloader configurations if possible. If the defaults are incorrect
-for your board, or no default exists, we encourage you to send fixes
-to the corresponding upstream projects.
-
-However, in the mean time, you may want to store kernel or bootloader
-configuration or patches specific to your target platform. To do so,
-create a directory board/MANUFACTURER and a subdirectory board/
-MANUFACTURER/BOARDNAME (after replacing, of course, MANUFACTURER and
-BOARDNAME with the appropriate values, in lower case letters). You
-can then store your patches and configurations in these directories,
-and reference them from the main Buildroot configuration.
 
 
 ---------------------------------------------------------------------

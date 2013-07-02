@@ -4,4 +4,5 @@ config BR2_PACKAGE_MQX
          Add userspace tools for the MQX realtime operating system and
 	 Multi Core Communciation (MCC)
 
+source "package/mqx/mqxboot/Config.in"
 source "package/mqx/libmcc/Config.in"

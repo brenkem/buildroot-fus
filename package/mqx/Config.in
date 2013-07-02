@@ -5,4 +5,5 @@ config BR2_PACKAGE_MQX
 	 Multi Core Communciation (MCC)
 
 source "package/mqx/mqxboot/Config.in"
+source "package/mqx/mcc-pingpong/Config.in"
 source "package/mqx/libmcc/Config.in"

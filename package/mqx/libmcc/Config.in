@@ -1,0 +1,5 @@
+config BR2_PACKAGE_LIBMCC
+	bool "libmcc"
+	depends on BR2_PACKAGE_MQX
+	help
+	  Add Multi Core Communication (MCC) library

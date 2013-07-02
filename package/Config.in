@@ -745,6 +745,7 @@ endmenu
 menu "Real-Time"
 source "package/xenomai/Config.in"
 source "package/rtai/Config.in"
+source "package/mqx/Config.in"
 endmenu
 
 menu "Shell and utilities"

@@ -1,0 +1,12 @@
+diff -rupN gst-fsl-plugins-3.0.5_orig/src/misc/v4l_sink/src/mfw_gst_v4l.c gst-fsl-plugins-3.0.5/src/misc/v4l_sink/src/mfw_gst_v4l.c
+--- gst-fsl-plugins-3.0.5_orig/src/misc/v4l_sink/src/mfw_gst_v4l.c	2013-07-02 09:38:53.722783536 +0200
++++ gst-fsl-plugins-3.0.5/src/misc/v4l_sink/src/mfw_gst_v4l.c	2013-07-02 10:15:45.646084933 +0200
+@@ -813,7 +813,7 @@ mfw_gst_v4l2_set_rotation (MFW_GST_V4LSI
+   gboolean retval;
+ 
+   /* Set the rotation */
+-  ctrl.id = V4L2_CID_ROTATE;
++  ctrl.id = V4L2_CID_BASE + 34;
+   ctrl.value = v4l_info->rotate;
+   v4l_info->prevRotate = v4l_info->rotate;
+   if (ioctl (v4l_info->v4l_id, VIDIOC_S_CTRL, &ctrl) < 0) {

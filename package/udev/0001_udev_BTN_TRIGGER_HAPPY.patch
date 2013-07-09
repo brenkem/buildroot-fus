@@ -1,0 +1,14 @@
+--- udev-182/src/udev-builtin-input_id.c	2012-01-29 01:15:46.961827007 +0100
++++ udev-182-good/src/udev-builtin-input_id.c	2013-07-09 16:42:39.275189081 +0200
+@@ -30,6 +30,11 @@
+ 
+ #include "udev.h"
+ 
++#ifndef BTN_TRIGGER_HAPPY
++#define BTN_TRIGGER_HAPPY 0x2c0
++#endif
++
++
+ /* we must use this kernel-compatible implementation */
+ #define BITS_PER_LONG (sizeof(unsigned long) * 8)
+ #define NBITS(x) ((((x)-1)/BITS_PER_LONG)+1)

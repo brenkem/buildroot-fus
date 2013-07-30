@@ -28,3 +28,10 @@ ${CP} ${LOCAL}/xorg.conf ${TARGET}/etc/X11
 # setup touch controller configuration
 mkdir -p ${TARGET}/etc/profile.d
 ${CP} ${LOCAL}/tslib.sh ${TARGET}/etc/profile.d
+
+# Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
+if [ -h "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];
+then
+    ld=`readlink ${TARGET}/lib/ld-linux-armhf.so.3`
+    ln -s "${ld}" ${TARGET}/lib/ld-linux.so.3
+fi

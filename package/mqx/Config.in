@@ -1,0 +1,9 @@
+config BR2_PACKAGE_MQX
+       bool "MQX and MCC Userspace"
+       help
+         Add userspace tools for the MQX realtime operating system and
+	 Multi Core Communciation (MCC)
+
+source "package/mqx/mqxboot/Config.in"
+source "package/mqx/mcc-pingpong/Config.in"
+source "package/mqx/libmcc/Config.in"

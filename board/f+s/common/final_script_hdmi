@@ -12,4 +12,3 @@ tput rmso
 # Copy the hdmicfg script and startup script
 ${CP} ${LOCAL}/hdmicfg ${TARGET}/sbin
 ${CP} ${LOCAL}/S17hdmicfg ${TARGET}/etc/init.d
-

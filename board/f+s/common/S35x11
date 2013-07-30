@@ -13,7 +13,7 @@ case "$1" in
 	for i in /sys/class/input/event*
     do
         if [ "`cat $i/device/name`" = "Atmel maXTouch Touchscreen" ] || [ "`cat $i/device/name`" = "ft5x0x_ts" ]
-        then 
+        then
             inputdev=cap-`basename $i`
             tslibdev=/dev/input/`basename $i`
             break
@@ -38,4 +38,3 @@ case "$1" in
   *)
 	echo $"Usage: $0 {start|stop|restart}"
 esac
-

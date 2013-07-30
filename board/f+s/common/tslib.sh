@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/sh
 
 tsconf_file=/var/run/tslib.conf
 

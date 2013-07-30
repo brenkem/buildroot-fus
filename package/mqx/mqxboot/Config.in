@@ -1,0 +1,6 @@
+config BR2_PACKAGE_MQXBOOT
+	bool "mqxboot"
+	depends on BR2_PACKAGE_MQX
+	select BR2_PACKAGE_LIBMCC
+	help
+	  Allow starting of MQX and similar applications on Cortex-M4

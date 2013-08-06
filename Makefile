@@ -526,11 +526,13 @@ target-purgelocales:
 
 	for dir in $(wildcard $(addprefix $(TARGET_DIR),/usr/share/locale /usr/share/X11/locale /usr/man /usr/share/man)); \
 	do \
-		for lang in $$(cd $$dir; ls .|grep -v man); \
+		(cd $$dir && rm -f locale.dir && \
+		for lang in $$(ls .|grep -v "man\|locale\.dir"); \
 		do \
-			grep -qx $$lang $(LOCALE_WHITELIST) || rm -rf $$dir/$$lang; \
-		done; \
-	done
+			grep -qx $$lang $(LOCALE_WHITELIST) || rm -rf $$lang; \
+			[ ! -f $$lang/XLC_LOCALE ] || echo "$$lang/XLC_LOCALE: $$lang" >> locale.dir; \
+		done) \
+	done;
 endif
 
 ifneq ($(GENERATE_LOCALE),)

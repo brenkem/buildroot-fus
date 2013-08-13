@@ -2,21 +2,20 @@
 
 TARGET="$1"
 BOARD="$2"
-LOCAL=board/f+s/common
+COMMON=board/f+s/common
 CP="/bin/cp -f"
 
-tput smso
-echo ">>>   Doing final F+S (common) setup for minimal configuraton"
-tput rmso
-
 # Copy the modified inittab file with mdev support
-${CP} ${LOCAL}/inittab ${TARGET}/etc
+${CP} ${COMMON}/inittab ${TARGET}/etc
+
+# Copy the start script to set up the F&S environment
+${CP} ${COMMON}/S01fssetup ${TARGET}/etc/init.d
 
 # Copy the enhanced mdev configuration file
-${CP} ${LOCAL}/mdev.conf ${TARGET}/etc
+${CP} ${COMMON}/mdev.conf ${TARGET}/etc
 
 # Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
-if [ -h "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];
+if [ -L "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];
 then
     ld=`readlink ${TARGET}/lib/ld-linux-armhf.so.3`
     ln -s "${ld}" ${TARGET}/lib/ld-linux.so.3

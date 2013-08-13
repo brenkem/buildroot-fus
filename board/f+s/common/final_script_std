@@ -2,35 +2,34 @@
 
 TARGET="$1"
 BOARD="$2"
-LOCAL=board/f+s/common
+COMMON=board/f+s/common
 CP="/bin/cp -f"
 
-tput smso
-echo ">>>   Doing final F+S (common) setup for standard configuration"
-tput rmso
-
 # Copy the modified inittab file with mdev support
-${CP} ${LOCAL}/inittab ${TARGET}/etc
+${CP} ${COMMON}/inittab ${TARGET}/etc
 
 # Copy the modified profile file with display and xauth exports
-${CP} ${LOCAL}/profile ${TARGET}/etc
+${CP} ${COMMON}/profile ${TARGET}/etc
 
 # Copy the enhanced mdev configuration file
-${CP} ${LOCAL}/mdev.conf ${TARGET}/etc
+${CP} ${COMMON}/mdev.conf ${TARGET}/etc
+
+# Copy the start script to set up the F&S environment
+${CP} ${COMMON}/S01fssetup ${TARGET}/etc/init.d
 
 # Copy the x11 start script
-${CP} ${LOCAL}/S35x11 ${TARGET}/etc/init.d
+${CP} ${COMMON}/S35x11 ${TARGET}/etc/init.d
 
 # Copy the x11 configuration file
 mkdir -p ${TARGET}/etc/X11
-${CP} ${LOCAL}/xorg.conf ${TARGET}/etc/X11
+${CP} ${COMMON}/xorg.conf ${TARGET}/etc/X11
 
 # setup touch controller configuration
 mkdir -p ${TARGET}/etc/profile.d
-${CP} ${LOCAL}/tslib.sh ${TARGET}/etc/profile.d
+${CP} ${COMMON}/tslib.sh ${TARGET}/etc/profile.d
 
 # Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
-if [ -h "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];
+if [ -L "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];
 then
     ld=`readlink ${TARGET}/lib/ld-linux-armhf.so.3`
     ln -s "${ld}" ${TARGET}/lib/ld-linux.so.3

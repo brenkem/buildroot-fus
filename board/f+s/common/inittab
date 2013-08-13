@@ -1,7 +1,5 @@
 # /etc/inittab
 #
-# Copyright (C) 2001 Erik Andersen <andersen@codepoet.org>
-#
 # Note: BusyBox init doesn't support runlevels.  The runlevels field is
 # completely ignored by BusyBox init. If you want runlevels, use
 # sysvinit.
@@ -25,8 +23,10 @@
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS
 
-# Put a getty on the serial port
-#ttySAC0::respawn:/sbin/getty -L ttySAC0 38400 vt100 # GENERIC_SERIAL
+# Put a getty on the login_tty. /etc/init.d/S01fssetup creates this as a
+# symbolic link to the first console listed in /proc/consoles, which is
+# usually the serial debug port. Baud rate 0 keeps the current baud rate.
+login_tty::respawn:/sbin/getty -L login_tty 0 vt100
 
 # Stuff to do for the 3-finger salute
 ::ctrlaltdel:/sbin/reboot

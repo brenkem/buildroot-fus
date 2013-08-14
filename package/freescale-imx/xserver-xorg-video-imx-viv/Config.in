@@ -1,0 +1,9 @@
+config BR2_PACKAGE_XSERVER_XORG_VIDEO_IMX_VIV
+	bool "xserver-xorg-video-imx-viv"
+	select BR2_PACKAGE_XPROTO_FONTSPROTO
+	select BR2_PACKAGE_XPROTO_RANDRPROTO
+	select BR2_PACKAGE_XPROTO_RENDERPROTO
+	select BR2_PACKAGE_XPROTO_VIDEOPROTO
+	select BR2_PACKAGE_XPROTO_XPROTO
+	help
+	  video driver for vivante video driver device

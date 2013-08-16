@@ -26,6 +26,9 @@ else
 GPU_VIV_BIN_MX6Q_LIB_TARGET = fb
 endif
 
+# NOTE: DRI not working yet. Therefore openGL support only working 
+GPU_VIV_BIN_MX6Q_LIB_TARGET = fb
+
 # The archive is a shell-self-extractor of a bzipped tar. It happens
 # to extract in the correct directory (gpu-viv-bin-mx6q-x.y.z)
 # The --force makes sure it doesn't fail if the source dir already exists.

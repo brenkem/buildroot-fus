@@ -1,5 +1,35 @@
-BuildRoot History for F&S board armStoneA8
-------------------------------------------
+BuildRoot History for F&S boards
+--------------------------------
+
+BuildRoot PicoCOM4-V1.4 (21.08.2013, based on buildroot-2013.02)
+----------------------------------------------------------------
+Supported Boards: armStoneA5, armStoneA8, NetDCU14, NetDCUA5, PicoMOD7A,
+	          PicoCOM4, PicoCOMA5
+
+- Rebase multiplatform-linux version to buildroot-2013.02
+- Merge multiplatform-linux and fsvybrid versions
+- Create link for lib/ld-linux.so.3 if required
+- Add libmcc (MCC: Multi Core Communication) for Vybrid
+- Add mqxboot for Vybrid to start applications on Cortex-M4
+- Add mcc-pingpong example (Linux side) for Vybrid
+- Configure all targets for new toolchains fs-toolchain-4.7.2-*
+- Add ttymxc3/4/5 to /etc/securetty to allow root logins on these lines
+- Combine armStoneA8, NetDCU14 and PicoMOD7A to common fss5pv210
+- New script /etc/init.d/S01fssetup to set up the F&S environment
+- Use login_tty from F&S environment to start a getty on
+- Use gdb 7.4.x
+- Make STD and MIN defconfigs as similar as possible on all platforms
+- Fix some typos, indendations and wrong comments
+
+
+
+BuildRoot fsvybrid-V0.1 (08.05.2013, based on buildroot-2013.02)
+----------------------------------------------------------------
+Supported Boards: armStoneA5, NetDCUA5, PicoCOMA5
+
+- First version for Vybrid architecture, based on buildroot-2013.02
+
+
 
 BuildRoot V2.0 (22.11.2012, based on buildroot-2012.08)
 -------------------------------------------------------

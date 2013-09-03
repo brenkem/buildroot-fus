@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Buildroot 2013.05-gb74757d-dirty Configuration
+# Buildroot 2013.05 Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 # BR2_arcle is not set
@@ -731,7 +731,7 @@ BR2_PACKAGE_XAPP_XCLOCK=y
 # BR2_PACKAGE_XAPP_XHOST is not set
 BR2_PACKAGE_XAPP_XINIT=y
 BR2_PACKAGE_XAPP_XINPUT=y
-# BR2_PACKAGE_XAPP_XINPUT_CALIBRATOR is not set
+BR2_PACKAGE_XAPP_XINPUT_CALIBRATOR=y
 BR2_PACKAGE_XAPP_XKBCOMP=y
 # BR2_PACKAGE_XAPP_XKBEVD is not set
 # BR2_PACKAGE_XAPP_XKBPRINT is not set

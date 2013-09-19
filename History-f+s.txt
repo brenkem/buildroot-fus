@@ -1,8 +1,17 @@
 BuildRoot History for F&S boards
 --------------------------------
 
-BuildRoot PicoCOM4-V1.4 (21.08.2013, based on buildroot-2013.02)
-----------------------------------------------------------------
+buildroot-2013.02-fsvybrid-V1.0 (19.09.2013)
+--------------------------------------------
+Supported Boards: armStoneA5, armStoneA8, NetDCU14, NetDCUA5, PicoMOD7A,
+	          PicoCOM4, PicoCOMA5
+
+- No changes
+
+
+
+buildroot-2013.02-picocom4-V1.4 (21.08.2013)
+--------------------------------------------
 Supported Boards: armStoneA5, armStoneA8, NetDCU14, NetDCUA5, PicoMOD7A,
 	          PicoCOM4, PicoCOMA5
 
@@ -23,16 +32,16 @@ Supported Boards: armStoneA5, armStoneA8, NetDCU14, NetDCUA5, PicoMOD7A,
 
 
 
-BuildRoot fsvybrid-V0.1 (08.05.2013, based on buildroot-2013.02)
-----------------------------------------------------------------
+buildroot-2013.02-fsvybrid-V0.1 (08.05.2013)
+--------------------------------------------
 Supported Boards: armStoneA5, NetDCUA5, PicoCOMA5
 
 - First version for Vybrid architecture, based on buildroot-2013.02
 
 
 
-BuildRoot V2.0 (22.11.2012, based on buildroot-2012.08)
--------------------------------------------------------
+buildroot-2012.08-f+s-V2.0 (22.11.2012)
+---------------------------------------
 Supported Boards: armStoneA8, NetDCU14, PicoMOD7A, PicoCOM4
 
 - Rebase to buildroot-2012.08, this updates lots of packages
@@ -48,8 +57,8 @@ Supported Boards: armStoneA8, NetDCU14, PicoMOD7A, PicoCOM4
 
 
 
-BuildRoot armStoneA8 V1.1 (22.05.2012, based on buildroot-2012.02)
-------------------------------------------------------------------
+buildroot-2012.02-armstonea8-V1.1 (22.05.2012)
+----------------------------------------------
 Supported Boards: armStoneA8
 
 - Redirect output of /etc/init.d/S35x11 to a file
@@ -63,8 +72,8 @@ Supported Boards: armStoneA8
 
 
 
-BuildRoot armStoneA8 V1.0 (16.04.2012, based on buildroot-2012.02)
-------------------------------------------------------------------
+buildroot-2012.02-armstonea8-V1.0 (16.04.2012)
+----------------------------------------------
 Supported Boards: armStoneA8
 
 - Add own busybox configuration (build static, add telnetd, add

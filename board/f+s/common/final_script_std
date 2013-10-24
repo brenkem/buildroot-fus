@@ -5,6 +5,8 @@ BOARD="$2"
 COMMON=board/f+s/common
 CP="/bin/cp -f"
 
+. .config
+
 # Copy the modified inittab file with mdev support
 ${CP} ${COMMON}/inittab ${TARGET}/etc
 
@@ -17,12 +19,12 @@ ${CP} ${COMMON}/mdev.conf ${TARGET}/etc
 # Copy the start script to set up the F&S environment
 ${CP} ${COMMON}/S01fssetup ${TARGET}/etc/init.d
 
-# Copy the x11 start script
-${CP} ${COMMON}/S35x11 ${TARGET}/etc/init.d
-
-# Copy the x11 configuration file
-mkdir -p ${TARGET}/etc/X11
-${CP} ${COMMON}/xorg.conf ${TARGET}/etc/X11
+# Copy the x11 start script and configuration file
+if [ "$BR2_PACKAGE_XSERVER_XORG_SERVER" == "y" ]; then
+    ${CP} ${COMMON}/S35x11 ${TARGET}/etc/init.d
+    mkdir -p ${TARGET}/etc/X11
+    ${CP} ${COMMON}/xorg.conf ${TARGET}/etc/X11
+fi
 
 # setup touch controller configuration
 mkdir -p ${TARGET}/etc/profile.d

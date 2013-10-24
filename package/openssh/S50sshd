@@ -7,19 +7,22 @@
 [ -f /usr/bin/ssh-keygen ] || exit 0
 
 # Check for the SSH1 RSA key
-if [ ! -f /etc/ssh_host_key ] ; then
+if [ ! -f /etc/ssh_host_key ] && touch /etc/ssh_host_key 2>/dev/null; then
+	/bin/rm /etc/ssh_host_key
 	echo Generating RSA Key...
 	/usr/bin/ssh-keygen -t rsa1 -f /etc/ssh_host_key -C '' -N ''
 fi
 
 # Check for the SSH2 RSA key
-if [ ! -f /etc/ssh_host_rsa_key ] ; then
+if [ ! -f /etc/ssh_host_rsa_key ] && touch /etc/ssh_host_rsa_key 2>/dev/null; then
+	/bin/rm /etc/ssh_host_rsa_key
 	echo Generating RSA Key...
 	/usr/bin/ssh-keygen -t rsa -f /etc/ssh_host_rsa_key -C '' -N ''
 fi
 
 # Check for the SSH2 DSA key
-if [ ! -f /etc/ssh_host_dsa_key ] ; then
+if [ ! -f /etc/ssh_host_dsa_key ] && touch /etc/ssh_host_dsa_key 2>/dev/null; then
+	/bin/rm /etc/ssh_host_dsa_key
 	echo Generating DSA Key...
 	echo THIS CAN TAKE A MINUTE OR TWO DEPENDING ON YOUR PROCESSOR!
 	echo
@@ -27,7 +30,8 @@ if [ ! -f /etc/ssh_host_dsa_key ] ; then
 fi
 
 # Check for the SSH2 ECDSA key
-if [ ! -f /etc/ssh_host_ecdsa_key ]; then
+if [ ! -f /etc/ssh_host_ecdsa_key ] && touch /etc/ssh_host_ecdsa_key 2>/dev/null; then
+	/bin/rm /etc/ssh_host_ecdsa_key
 	echo Generating ECDSA Key...
 	echo THIS CAN TAKE A MINUTE OR TWO DEPENDING ON YOUR PROCESSOR!
 	echo

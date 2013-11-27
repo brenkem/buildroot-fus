@@ -5,30 +5,29 @@ BOARD="$2"
 COMMON=board/f+s/common
 CP="/bin/cp -f"
 
-. .config
-
 # Copy the modified inittab file with mdev support
-${CP} ${COMMON}/inittab ${TARGET}/etc
-
-# Copy the modified profile file with display and xauth exports
-${CP} ${COMMON}/profile ${TARGET}/etc
+${CP} ${COMMON}/etc/inittab ${TARGET}/etc
 
 # Copy the enhanced mdev configuration file
-${CP} ${COMMON}/mdev.conf ${TARGET}/etc
+${CP} ${COMMON}/etc/mdev.conf ${TARGET}/etc
 
 # Copy the start script to set up the F&S environment
-${CP} ${COMMON}/S01fssetup ${TARGET}/etc/init.d
-
-# Copy the x11 start script and configuration file
-if [ "$BR2_PACKAGE_XSERVER_XORG_SERVER" == "y" ]; then
-    ${CP} ${COMMON}/S35x11 ${TARGET}/etc/init.d
-    mkdir -p ${TARGET}/etc/X11
-    ${CP} ${COMMON}/xorg.conf ${TARGET}/etc/X11
-fi
+${CP} ${COMMON}/etc/init.d/S01fssetup ${TARGET}/etc/init.d
 
 # setup touch controller configuration
 mkdir -p ${TARGET}/etc/profile.d
-${CP} ${COMMON}/tslib.sh ${TARGET}/etc/profile.d
+${CP} ${COMMON}/etc/profile.d/tslib.sh ${TARGET}/etc/profile.d
+
+# Copy the x11 start script and configuration files
+if grep ^BR2_PACKAGE_XSERVER_XORG_SERVER=y $BUILDROOT_CONFIG > /dev/null; then
+    # Copy xorg.conf to use /dev/input/event[01]
+    mkdir -p ${TARGET}/etc/X11
+    ${CP} ${COMMON}/etc/X11/xorg.conf ${TARGET}/etc/X11
+    # Copy enhanced profile (with DISPLAY and XAUTHORITY)
+    ${CP} ${COMMON}/etc/profile.d/xserver.sh ${TARGET}/etc/profile.d
+    # Copy start script for XServer
+    ${CP} ${COMMON}/etc/init.d/S35x11 ${TARGET}/etc/init.d
+fi
 
 # Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
 if [ -L "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];

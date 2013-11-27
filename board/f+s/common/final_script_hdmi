@@ -2,7 +2,7 @@
 
 TARGET="$1"
 BOARD="$2"
-LOCAL=board/f+s/common
+COMMON=board/f+s/common
 CP="/bin/cp -f"
 
 tput smso
@@ -10,5 +10,5 @@ echo ">>>   Doing final F+S (common) setup for HDMI configuration"
 tput rmso
 
 # Copy the hdmicfg script and startup script
-${CP} ${LOCAL}/hdmicfg ${TARGET}/sbin
-${CP} ${LOCAL}/S17hdmicfg ${TARGET}/etc/init.d
+${CP} ${COMMON}/hdmicfg ${TARGET}/sbin
+${CP} ${COMMON}/etc/init.d/S17hdmicfg ${TARGET}/etc/init.d

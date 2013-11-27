@@ -6,13 +6,13 @@ COMMON=board/f+s/common
 CP="/bin/cp -f"
 
 # Copy the modified inittab file with mdev support
-${CP} ${COMMON}/inittab ${TARGET}/etc
+${CP} ${COMMON}/etc/inittab ${TARGET}/etc
 
 # Copy the start script to set up the F&S environment
-${CP} ${COMMON}/S01fssetup ${TARGET}/etc/init.d
+${CP} ${COMMON}/etc/init.d/S01fssetup ${TARGET}/etc/init.d
 
 # Copy the enhanced mdev configuration file
-${CP} ${COMMON}/mdev.conf ${TARGET}/etc
+${CP} ${COMMON}/etc/mdev.conf ${TARGET}/etc
 
 # Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
 if [ -L "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];

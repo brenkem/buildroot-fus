@@ -1,6 +1,21 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2013.02-fsvybrid-V1.1 (16.12.2013)
+--------------------------------------------
+Supported Boards: armStoneA5, armStoneA8, NetDCU14, NetDCUA5, PicoMOD7A,
+	          PicoCOM4, PicoCOMA5, CUBEA5
+
+- Only start SSH key generation if filesystem is not read-only
+- Only install S35x11 and xorg.conf if X-Server package is selected
+- Add support for CUBEA5
+- Move files in board/f+s/common to subdirectories
+- Fix Qt download site
+- Improve /etc/init.d/S35x11: don't guess input event, but take from
+  /etc/X11/tslib-event.conf instead (or event0 by default); start on VT02
+
+
+
 buildroot-2013.02-fsvybrid-V1.0 (19.09.2013)
 --------------------------------------------
 Supported Boards: armStoneA5, armStoneA8, NetDCU14, NetDCUA5, PicoMOD7A,

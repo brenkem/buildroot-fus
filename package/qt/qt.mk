@@ -11,9 +11,10 @@
 #
 ######################################################################
 
-QT_VERSION = 4.8.4
+QT_VERSION_MAJOR = 4.8
+QT_VERSION = $(QT_VERSION_MAJOR).4
 QT_SOURCE  = qt-everywhere-opensource-src-$(QT_VERSION).tar.gz
-QT_SITE    = http://releases.qt-project.org/qt4/source
+QT_SITE    = http://download.qt-project.org/archive/qt/$(QT_VERSION_MAJOR)/$(QT_VERSION)/
 QT_DEPENDENCIES = host-pkgconf
 QT_INSTALL_STAGING = YES
 

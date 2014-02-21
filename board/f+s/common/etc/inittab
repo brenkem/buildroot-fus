@@ -13,7 +13,7 @@
 
 # Startup the system
 ::sysinit:/bin/mount -t proc proc /proc
-::sysinit:/bin/mount -t tmpfs -o size=64k,mode=0755 tmpfs /dev
+#::sysinit:/bin/mount -t tmpfs -o size=64k,mode=0755 tmpfs /dev
 #::sysinit:/bin/mount -o remount,rw / # REMOUNT_ROOTFS_RW
 ::sysinit:/bin/mkdir -p /dev/pts
 ::sysinit:/bin/mkdir -p /dev/shm

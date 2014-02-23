@@ -1,0 +1,38 @@
+#!/bin/sh
+
+TARGET="$1"
+COMMON=board/f+s/common
+BOARD=board/f+s/fsvybrid
+MKIMAGE=mkimage
+CP="/bin/cp -f"
+MKDIR="/bin/mkdir -p"
+platform=cubea5
+
+tput smso
+echo ">>>   Doing final CUBEA5 setup"
+tput rmso
+
+# Create additional mountpoints /data and /export
+${MKDIR} ${TARGET}/data
+${MKDIR} ${TARGET}/export
+
+# Copy the modified inittab file with mdev support
+${CP} ${COMMON}/etc/fstab-${platform} ${TARGET}/etc/fstab
+
+# Copy the modified inittab file with mdev support
+${CP} ${COMMON}/etc/inittab-${platform} ${TARGET}/etc/inittab
+
+# Copy the enhanced mdev configuration file
+${CP} ${COMMON}/etc/mdev.conf ${TARGET}/etc
+
+# Copy the CUBEA5 specific start script
+${CP} ${COMMON}/etc/init.d/S01${platform} ${TARGET}/etc/init.d
+
+# Copy the kernel
+${CP} output/images/uImage ${TARGET}
+
+# Create update.scr and recover.scr from source texts
+${MKIMAGE} -A arm -O u-boot -T script -C none -n "$platform update script" \
+    -d ${BOARD}/update-$platform.txt ${TARGET}/update.scr
+${MKIMAGE} -A arm -O u-boot -T script -C none -n "$platform recover script" \
+    -d ${BOARD}/recover-$platform.txt ${TARGET}/recover.scr

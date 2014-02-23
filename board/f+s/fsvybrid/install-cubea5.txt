@@ -1,0 +1,19 @@
+echo "---- Starting installation ----"
+# Define UBI partition
+ubi part TargetFS
+# Create UBI volumes; this is the only place where the recovery volume is
+# modified; never ever fiddle with it again, just read it when recovering
+ubi create recovery 03200000 static
+ubi create rootfs 03200000
+ubi create data 03C00000
+ubi create export
+setenv recoversize #recoversize#
+saveenv
+# Store recovery image in RAM to recovery volume
+echo "---- Store recovery image ----"
+ubi write 81000000 recovery $recoversize
+# And also to rootfs volume as initial system, then reboot
+echo "---- Store rootfs image ----"
+ubi write 81000000 rootfs $recoversize
+echo "---- Installation COMPLETE! ----"
+reset

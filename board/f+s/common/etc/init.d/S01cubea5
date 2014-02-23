@@ -1,0 +1,39 @@
+#!/bin/sh
+# Start CUBEA5 environment
+
+start() {
+    # Remount export and data volumes read-write
+    mount -o remount,rw /export
+    mount -o remount,rw /data
+
+    # Remove update.scr or it will be triggered again on next boot
+    /bin/rm -f /data/update.scr
+
+    echo "CUBEA5 environment started"
+}
+
+stop() {
+    # Remount export and data volumes read-only
+    mount -o remount,ro /data
+    mount -o remount,ro /export
+
+    echo "CUBEA5 environment stopped"
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart|reload)
+	stop
+        restart
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit $?

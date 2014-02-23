@@ -1,0 +1,13 @@
+echo "---- Starting update ----"
+# Define UBI partition
+ubi part TargetFS
+# Load update image from data volume
+echo "---- Read update image ----"
+ubifsmount data
+ubifs read . update.img
+# Write update image to rootfs volume
+echo "---- Store as rootfs image ----"
+ubi write . rootfs $filesize
+# Boot system
+echo "---- Update COMPLETE! ----"
+boot

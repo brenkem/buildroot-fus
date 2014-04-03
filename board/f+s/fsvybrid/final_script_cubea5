@@ -31,6 +31,13 @@ ${CP} ${COMMON}/etc/init.d/S01${platform} ${TARGET}/etc/init.d
 # Copy the kernel
 ${CP} output/images/uImage ${TARGET}
 
+# Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
+if [ -L "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];
+then
+    ld=`readlink ${TARGET}/lib/ld-linux-armhf.so.3`
+    ln -s "${ld}" ${TARGET}/lib/ld-linux.so.3
+fi
+
 # Create update.scr and recover.scr from source texts
 ${MKIMAGE} -A arm -O u-boot -T script -C none -n "$platform update script" \
     -d ${BOARD}/update-$platform.txt ${TARGET}/update.scr

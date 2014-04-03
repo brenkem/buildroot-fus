@@ -23,8 +23,10 @@
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS
 
-# Put a getty on ttymxc1 with 115200 bps
-ttymxc1::respawn:/sbin/getty -L ttymxc1 115200 vt100
+# Put a getty on the login_tty. /etc/init.d/S01cubea5 creates this as a
+# symbolic link to the first console listed in /proc/consoles, which is
+# usually the serial debug port. Use 115200 bps.
+login_tty::respawn:/sbin/getty -L login_tty 115200 vt100
 
 # Stuff to do for the 3-finger salute
 ::ctrlaltdel:/sbin/reboot

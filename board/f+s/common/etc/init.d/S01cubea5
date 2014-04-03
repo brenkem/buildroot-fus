@@ -1,6 +1,8 @@
 #!/bin/sh
 # Start CUBEA5 environment
 
+login_tty=/dev/login_tty
+
 start() {
     # Remount export and data volumes read-write
     mount -o remount,rw /export
@@ -8,6 +10,21 @@ start() {
 
     # Remove update.scr or it will be triggered again on next boot
     /bin/rm -f /data/update.scr
+
+    # Create a symbolic link from login_tty to the first console listed in
+    # /proc/consoles. The F&S inittab starts a getty on login_tty.
+    con=`head -n 1 /proc/consoles | cut -f 1 -d ' '`
+    if [ "x${con}" == "x" ] ; then
+	board_name=`cat /sys/bdinfo/board_name`
+	if [ "$board_name" == "CUBEA5" ] ; then
+	    con=ttymxc1
+	else
+	    con=ttymxc3
+	fi
+    fi
+    if [ "x${con}" != "x" ] ; then
+	ln -s /dev/${con} ${login_tty}
+    fi
 
     echo "CUBEA5 environment started"
 }

@@ -3,7 +3,37 @@
 
 login_tty=/dev/login_tty
 
-start() {
+dostart=0
+dostop=0
+
+case "$1" in
+    start)
+	dostart=1
+	;;
+    stop)
+	dostop=1
+	;;
+    restart|reload)
+	dostop=1
+	dostart=1
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|restart}"
+esac
+
+if [ ${dostop} -ne 0 ] ; then
+    # Remount export and data volumes read-only
+    mount -o remount,ro /data
+    mount -o remount,ro /export
+
+    # Remove symbolic link from login_tty
+    if [ -L ${login_tty} ] ; then
+	/bin/rm ${login_tty}
+    fi
+    echo "CUBEA5 environment stopped"
+fi
+
+if [ ${dostart} -ne 0 ] ; then
     # Remount export and data volumes read-write
     mount -o remount,rw /export
     mount -o remount,rw /data
@@ -11,46 +41,9 @@ start() {
     # Remove update.scr or it will be triggered again on next boot
     /bin/rm -f /data/update.scr
 
-    # Create a symbolic link from login_tty to the first console listed in
-    # /proc/consoles. The F&S inittab starts a getty on login_tty.
-    con=`head -n 1 /proc/consoles | cut -f 1 -d ' '`
-    if [ "x${con}" == "x" ] ; then
-	board_name=`cat /sys/bdinfo/board_name`
-	if [ "$board_name" == "CUBEA5" ] ; then
-	    con=ttymxc1
-	else
-	    con=ttymxc3
-	fi
-    fi
-    if [ "x${con}" != "x" ] ; then
+    if [ -e /sys/bdinfo/login_tty ] ; then
+	con=$(cat /sys/bdinfo/login_tty)
 	ln -s /dev/${con} ${login_tty}
     fi
-
     echo "CUBEA5 environment started"
-}
-
-stop() {
-    # Remount export and data volumes read-only
-    mount -o remount,ro /data
-    mount -o remount,ro /export
-
-    echo "CUBEA5 environment stopped"
-}
-
-case "$1" in
-    start)
-        start
-        ;;
-    stop)
-        stop
-        ;;
-    restart|reload)
-	stop
-        restart
-        ;;
-    *)
-        echo "Usage: $0 {start|stop|restart}"
-        exit 1
-esac
-
-exit $?
+fi

@@ -1,6 +1,23 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+
+buildroot-2013.02-fsvybrid-V2.0 (04.07.2014)
+--------------------------------------------
+Supported Boards: armStoneA5, NetDCUA5, PicoCOMA5, CUBEA5, AGATEWAY
+Not tested:       armStoneA8, NetDCU14, PicoMOD7A, PicoCOM4
+
+- Support login_tty from /sys/bdinfo on fsvybrid
+- Add support for customer specific board AGATEWAY
+- Change UBI LEB size to 0x1F000 on fsvybrid, required by new NAND driver
+- Activate alsa in gst-plugins-base to allow audio output via gstreamer
+- Allow compiling the Linux kernel and modules in an external directory;
+  output/build/linux-localdir is still created to hold the .stamp files
+- Modify cubea5_defconfig to use new compilation feature
+- Handle LED stuff in install-cubea5.txt and S01cubea5
+
+
+
 buildroot-2013.02-fsvybrid-V1.2 (23.02.2014)
 --------------------------------------------
 Supported Boards: armStoneA5, NetDCUA5, PicoCOMA5, CUBEA5

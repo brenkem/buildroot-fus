@@ -52,6 +52,14 @@ config BR2_LINUX_KERNEL_CUSTOM_GIT
 	  This option allows Buildroot to get the Linux kernel source
 	  code from a Git repository.
 
+config BR2_LINUX_KERNEL_LOCAL_DIR
+	bool "Build in separate local directory"
+	help
+          This option allows Buildroot to refer to an existing local
+	  directory with already unpacked Linux kernel sources and use
+	  this directory (instead of output/build) to build kernel and
+	  modules.
+
 endchoice
 
 config BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE
@@ -74,6 +82,14 @@ config BR2_LINUX_KERNEL_CUSTOM_GIT_VERSION
 	  Git revision to use in the format used by git rev-parse,
 	  E.G. a sha id, a tag, branch, ..
 
+config BR2_LINUX_KERNEL_CUSTOM_DIR_LOCATION
+	string "Local Directory to use"
+	default "$(TOPDIR)/../linux"
+	depends on BR2_LINUX_KERNEL_LOCAL_DIR
+	help
+	  Local directory to use for building Linux kernel and modules.
+	  This is usually somewhere in parallel to the Buildroot tree.
+
 config BR2_LINUX_KERNEL_VERSION
 	string
 	default "3.7.8" if BR2_LINUX_KERNEL_3_7
@@ -81,6 +97,7 @@ config BR2_LINUX_KERNEL_VERSION
 	default BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE if BR2_LINUX_KERNEL_CUSTOM_VERSION
 	default "custom" if BR2_LINUX_KERNEL_CUSTOM_TARBALL
 	default $BR2_LINUX_KERNEL_CUSTOM_GIT_VERSION if BR2_LINUX_KERNEL_CUSTOM_GIT
+	default "localdir" if BR2_LINUX_KERNEL_LOCAL_DIR
 
 #
 # Patch selection
@@ -88,6 +105,7 @@ config BR2_LINUX_KERNEL_VERSION
 
 config BR2_LINUX_KERNEL_PATCH
 	string "Custom kernel patches"
+	depends on !BR2_LINUX_KERNEL_LOCAL_DIR
 	help
 	  A space-separated list of patches to apply to the
 	  kernel. Each patch can be described as an URL, a local file

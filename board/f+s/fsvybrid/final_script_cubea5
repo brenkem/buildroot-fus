@@ -29,7 +29,8 @@ ${CP} ${COMMON}/etc/mdev.conf ${TARGET}/etc
 ${CP} ${COMMON}/etc/init.d/S01${platform} ${TARGET}/etc/init.d
 
 # Copy the kernel
-${CP} output/images/uImage ${TARGET}
+#mkdir -p ${TARGET}/boot
+#${CP} output/images/uImage ${TARGET}/boot
 
 # Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
 if [ -L "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];

@@ -30,6 +30,8 @@ if [ ${dostop} -ne 0 ] ; then
     if [ -L ${login_tty} ] ; then
 	/bin/rm ${login_tty}
     fi
+    echo 255 > /sys/class/leds/yellow/brightness
+    echo 0 > /sys/class/leds/green/brightness
     echo "CUBEA5 environment stopped"
 fi
 
@@ -45,5 +47,7 @@ if [ ${dostart} -ne 0 ] ; then
 	con=$(cat /sys/bdinfo/login_tty)
 	ln -s /dev/${con} ${login_tty}
     fi
+    echo 0 > /sys/class/leds/yellow/brightness
+    echo 255 > /sys/class/leds/green/brightness
     echo "CUBEA5 environment started"
 fi

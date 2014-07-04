@@ -1,4 +1,7 @@
 echo "---- Starting installation ----"
+# Define preboot command to blink LED
+setenv preboot led 0 off\; led 1 blink
+run preboot
 # Define UBI partition
 ubi part TargetFS
 # Create UBI volumes; this is the only place where the recovery volume is

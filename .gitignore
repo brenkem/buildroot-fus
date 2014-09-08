@@ -13,3 +13,4 @@
 *.rej
 *~
 /install-*.scr
+*.pyc

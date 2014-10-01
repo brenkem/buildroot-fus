@@ -1,0 +1,54 @@
+diff -rupN imx-lib-1.1.0_orig/ipu/mxc_ipu_hl_lib.c imx-lib-1.1.0/ipu/mxc_ipu_hl_lib.c
+--- imx-lib-1.1.0_orig/ipu/mxc_ipu_hl_lib.c	2013-07-03 14:00:13.840303001 +0200
++++ imx-lib-1.1.0/ipu/mxc_ipu_hl_lib.c	2013-07-03 14:01:05.376307060 +0200
+@@ -1330,10 +1330,6 @@ again:
+ 		else
+ 			fbdev = FBDEV2;
+ 
+-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,35)
+-		fbdev = FBDEV1;
+-#endif
+-
+ 		dbg(DBG_INFO, "Output Show to %s\n", fbdev);
+ 
+ 		if ((ipu_priv_handle->output.fd_fb = open(fbdev, O_RDWR, 0)) < 0) {
+@@ -3579,9 +3575,6 @@ int mxc_ipu_lib_task_control(int ctl_cmd
+ 					fbdev = FBDEV1;
+ 				else
+ 					fbdev = FBDEV2;
+-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,35)
+-				fbdev = FBDEV1;
+-#endif
+ 
+ 				if ((ipu_priv_handle->output.fd_fb = open(fbdev, O_RDWR, 0)) < 0) {
+ 					dbg(DBG_ERR, "Unable to open %s\n", fbdev);
+diff -rupN imx-lib-1.1.0_orig/ipu/mxc_ipu_hl_lib.h imx-lib-1.1.0/ipu/mxc_ipu_hl_lib.h
+--- imx-lib-1.1.0_orig/ipu/mxc_ipu_hl_lib.h	2013-07-03 14:00:13.840303001 +0200
++++ imx-lib-1.1.0/ipu/mxc_ipu_hl_lib.h	2013-07-03 14:00:56.016306186 +0200
+@@ -95,11 +95,7 @@ extern "C"{
+ 
+ #include <linux/version.h>
+ 
+-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,35)
+ #include "ipu.h"
+-#else
+-#include <linux/ipu.h>
+-#endif
+ 
+ #include <linux/mxcfb.h>
+ 
+diff -rupN imx-lib-1.1.0_orig/ipu/mxc_ipu_lib.c imx-lib-1.1.0/ipu/mxc_ipu_lib.c
+--- imx-lib-1.1.0_orig/ipu/mxc_ipu_lib.c	2013-07-03 14:00:13.840303001 +0200
++++ imx-lib-1.1.0/ipu/mxc_ipu_lib.c	2013-07-03 14:00:48.640305569 +0200
+@@ -37,11 +37,7 @@
+ #include <sys/types.h>
+ #include <linux/version.h>
+ 
+-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,35)
+ #include "ipu.h"
+-#else
+-#include <linux/ipu.h>
+-#endif
+ 
+ int fd_ipu = -1;
+ static int open_count = 0;

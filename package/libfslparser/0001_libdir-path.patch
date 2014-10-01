@@ -1,0 +1,11 @@
+--- libfslparser-3.0.1/Makefile.in.orig	2013-07-19 13:54:49.672733938 +0200
++++ libfslparser-3.0.1/Makefile.in	2013-07-19 13:55:03.737763374 +0200
+@@ -231,7 +231,7 @@
+ pcparserfile = libfslparser.pc
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = $(pcparserfile)
+-libfslparserlibdir = $(libdir)/imx-mm/parser
++libfslparserlibdir = $(libdir)
+ libfslparserlib_DATA = \
+     $(fslmp4parser)  \
+     $(fslmpg2parser) \

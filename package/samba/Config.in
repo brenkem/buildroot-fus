@@ -13,6 +13,14 @@ config BR2_PACKAGE_SAMBA
 
 if BR2_PACKAGE_SAMBA
 
+config BR2_PACKAGE_SAMBA_MAX_DEBUGLEVEL
+	int "Maximum level of compiled-in debug messages"
+	range -1 10000
+	default -1
+	help
+	  Define the level of compiled-in debug messages.
+	  This allows for big space savings, -1 being the lowest (none).
+
 config BR2_PACKAGE_SAMBA_LIBICONV
 	bool "extended encodings (libiconv)"
 	depends on !BR2_ENABLE_LOCALE
@@ -36,12 +44,12 @@ config BR2_PACKAGE_SAMBA_FINDSMB
 	default y
 	depends on BR2_PACKAGE_SAMBA_SMBCLIENT
 	depends on BR2_PACKAGE_SAMBA_NMBLOOKUP
-	depends on BR2_PACKAGE_MICROPERL
+	depends on BR2_PACKAGE_PERL
 	help
 	  Script to browse network
 
 comment "findsmb       - disabled (requires nmblookup, smbclient and perl)"
-	depends on !BR2_PACKAGE_SAMBA_SMBCLIENT || !BR2_PACKAGE_SAMBA_NMBLOOKUP || !BR2_PACKAGE_MICROPERL
+	depends on !BR2_PACKAGE_SAMBA_SMBCLIENT || !BR2_PACKAGE_SAMBA_NMBLOOKUP || !BR2_PACKAGE_PERL
 
 config BR2_PACKAGE_SAMBA_NET
 	bool "net"
@@ -168,6 +176,13 @@ config BR2_PACKAGE_SAMBA_SWAT
 	help
 	  Samba Web Administration Tool
 
+config BR2_PACKAGE_SAMBA_SMBTA_UTIL
+	bool "smbta-util"
+	default y
+	help
+	  Tool to ease the configuration of the vfs_smb_traffic_analyzer
+	  module regarding data encryption.
+
 config BR2_PACKAGE_SAMBA_SMBTAR
 	bool "smbtar"
 	default y
@@ -226,6 +241,7 @@ config BR2_PACKAGE_SAMBA_AVAHI
 	default y
 	depends on BR2_PACKAGE_AVAHI_DAEMON
 	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
+	depends on BR2_USE_MMU # dbus
 	select BR2_PACKAGE_DBUS
 	help
 	  Include support for avahi

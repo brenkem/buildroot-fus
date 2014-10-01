@@ -15,14 +15,34 @@ BUSYBOX_SOURCE = busybox-$(BUSYBOX_VERSION).tar.bz2
 BUSYBOX_LICENSE = GPLv2
 BUSYBOX_LICENSE_FILES = LICENSE
 
+BUSYBOX_CFLAGS = \
+	$(TARGET_CFLAGS) \
+	-I$(LINUX_HEADERS_DIR)/include
+
+BUSYBOX_LDFLAGS = \
+	$(TARGET_LDFLAGS)
+
+# Link against libtirpc if available so that we can leverage its RPC
+# support for NFS mounting with Busybox
+ifeq ($(BR2_PACKAGE_LIBTIRPC),y)
+BUSYBOX_DEPENDENCIES += libtirpc
+BUSYBOX_CFLAGS += -I$(STAGING_DIR)/usr/include/tirpc/
+# Don't use LDFLAGS for -ltirpc, because LDFLAGS is used for
+# the non-final link of modules as well.
+BUSYBOX_CFLAGS_busybox += -ltirpc
+endif
+
 BUSYBOX_BUILD_CONFIG = $(BUSYBOX_DIR)/.config
 # Allows the build system to tweak CFLAGS
-BUSYBOX_MAKE_ENV = $(TARGET_MAKE_ENV) CFLAGS="$(TARGET_CFLAGS) -I$(LINUX_HEADERS_DIR)/include"
+BUSYBOX_MAKE_ENV = \
+	$(TARGET_MAKE_ENV) \
+	CFLAGS="$(BUSYBOX_CFLAGS)" \
+	CFLAGS_busybox="$(BUSYBOX_CFLAGS_busybox)"
 BUSYBOX_MAKE_OPTS = \
 	CC="$(TARGET_CC)" \
 	ARCH=$(KERNEL_ARCH) \
 	PREFIX="$(TARGET_DIR)" \
-	EXTRA_LDFLAGS="$(TARGET_LDFLAGS)" \
+	EXTRA_LDFLAGS="$(BUSYBOX_LDFLAGS)" \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
 	CONFIG_PREFIX="$(TARGET_DIR)" \
 	SKIP_STRIP=y
@@ -81,25 +101,10 @@ define BUSYBOX_SET_IPV6
 endef
 endif
 
-# If RPC is enabled then enable nfs mounts
-ifeq ($(BR2_INET_RPC),y)
-define BUSYBOX_SET_RPC
-	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_MOUNT_NFS,$(BUSYBOX_BUILD_CONFIG))
-endef
-else
-define BUSYBOX_SET_RPC
-	$(call KCONFIG_DISABLE_OPT,CONFIG_FEATURE_MOUNT_NFS,$(BUSYBOX_BUILD_CONFIG))
-endef
-endif
-
 # If we're using static libs do the same for busybox
 ifeq ($(BR2_PREFER_STATIC_LIB),y)
 define BUSYBOX_PREFER_STATIC
 	$(call KCONFIG_ENABLE_OPT,CONFIG_STATIC,$(BUSYBOX_BUILD_CONFIG))
-endef
-else
-define BUSYBOX_PREFER_STATIC
-	$(call KCONFIG_DISABLE_OPT,CONFIG_STATIC,$(BUSYBOX_BUILD_CONFIG))
 endef
 endif
 
@@ -159,7 +164,7 @@ define BUSYBOX_INSTALL_WATCHDOG_SCRIPT
 	[ -f $(TARGET_DIR)/etc/init.d/S15watchdog ] || \
 		install -D -m 0755 package/busybox/S15watchdog \
 			$(TARGET_DIR)/etc/init.d/S15watchdog && \
-		sed -i s/PERIOD/$(BR2_PACKAGE_BUSYBOX_WATCHDOG_PERIOD)/ \
+		sed -i s/PERIOD/$(call qstrip,$(BR2_PACKAGE_BUSYBOX_WATCHDOG_PERIOD))/ \
 			$(TARGET_DIR)/etc/init.d/S15watchdog
 endef
 endif
@@ -170,7 +175,6 @@ BUSYBOX_POST_EXTRACT_HOOKS += BUSYBOX_COPY_CONFIG
 define BUSYBOX_CONFIGURE_CMDS
 	$(BUSYBOX_SET_LARGEFILE)
 	$(BUSYBOX_SET_IPV6)
-	$(BUSYBOX_SET_RPC)
 	$(BUSYBOX_PREFER_STATIC)
 	$(BUSYBOX_SET_MDEV)
 	$(BUSYBOX_NETKITBASE)
@@ -215,5 +219,5 @@ busybox-menuconfig busybox-xconfig busybox-gconfig: busybox-patch
 	rm -f $(BUSYBOX_DIR)/.stamp_built
 	rm -f $(BUSYBOX_DIR)/.stamp_target_installed
 
-busybox-update-config:
+busybox-update-config: busybox-configure
 	cp -f $(BUSYBOX_BUILD_CONFIG) $(BUSYBOX_CONFIG_FILE)

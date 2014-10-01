@@ -7,11 +7,12 @@ endif
 HOSTMAKE :=$(shell which $(HOSTMAKE) || type -p $(HOSTMAKE) || echo make)
 
 # If BR2_LEVEL is 0, scale the maximum concurrency with the number of
-# CPUs.  A coefficient of 2 is used in order to keep processors busy
+# CPUs. An additional job is used in order to keep processors busy
 # while waiting on I/O.
+# If the number of processors is not available, assume one.
 ifeq ($(BR2_JLEVEL),0)
 PARALLEL_JOBS:=$(shell echo \
-	$$((2 * `getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1`)))
+	$$((1 + `getconf _NPROCESSORS_ONLN 2>/dev/null || echo 1`)))
 else
 PARALLEL_JOBS:=$(BR2_JLEVEL)
 endif
@@ -20,7 +21,7 @@ MAKE1:=$(HOSTMAKE) -j1
 MAKE:=$(HOSTMAKE) -j$(PARALLEL_JOBS)
 
 # Compute GNU_TARGET_NAME
-GNU_TARGET_NAME=$(ARCH)-unknown-linux-$(LIBC)$(ABI)
+GNU_TARGET_NAME=$(ARCH)-buildroot-linux-$(LIBC)$(ABI)
 
 ifeq ($(BR2_TOOLCHAIN_BUILDROOT)$(BR2_TOOLCHAIN_CTNG_uClibc)$(BR2_TOOLCHAIN_EXTERNAL_UCLIBC),y)
 LIBC=uclibc
@@ -56,7 +57,17 @@ TARGET_ABI+=-mabi=spe -mfloat-gprs=double -Wa,-me500mc
 endif
 endif
 
-STAGING_DIR=$(HOST_DIR)/usr/$(GNU_TARGET_NAME)/sysroot
+# Use longcalls option for Xtensa globally.
+# The 'longcalls' option allows calls across a greater range of addresses,
+# and is required for some packages. While this option can degrade both
+# code size and performance, the linker can usually optimize away the
+# overhead when a call ends up within a certain range.
+ifeq ($(BR2_xtensa),y)
+TARGET_ABI += -mlongcalls
+endif
+
+STAGING_SUBDIR = usr/$(GNU_TARGET_NAME)/sysroot
+STAGING_DIR    = $(HOST_DIR)/$(STAGING_SUBDIR)
 
 TARGET_OPTIMIZATION:=$(call qstrip,$(BR2_TARGET_OPTIMIZATION))
 
@@ -85,18 +96,28 @@ ifeq ($(BR2_DEBUG_3),y)
 TARGET_DEBUGGING=-g3
 endif
 
-TARGET_CFLAGS=$(TARGET_ABI) $(TARGET_OPTIMIZATION) $(TARGET_DEBUGGING)
-
-ifeq ($(findstring yy,$(BR2_mips)$(BR2_MIPS_ABI64)),yy)
-TARGET_CFLAGS+=-fno-pic -mno-abicalls
-endif
-
 ifeq ($(BR2_LARGEFILE),y)
-TARGET_CFLAGS+=-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+TARGET_CPPFLAGS += -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
 endif
 
-TARGET_CXXFLAGS=$(TARGET_CFLAGS)
-TARGET_LDFLAGS=$(call qstrip,$(BR2_TARGET_LDFLAGS))
+TARGET_CFLAGS = $(TARGET_CPPFLAGS) $(TARGET_ABI) $(TARGET_OPTIMIZATION) $(TARGET_DEBUGGING)
+TARGET_CXXFLAGS = $(TARGET_CFLAGS)
+TARGET_LDFLAGS = $(call qstrip,$(BR2_TARGET_LDFLAGS))
+
+ifeq ($(BR2_BINFMT_FLAT),y)
+TARGET_LDFLAGS += $(if $($(PKG)_FLAT_STACKSIZE),-Wl$(comma)-elf2flt=-s$($(PKG)_FLAT_STACKSIZE))
+endif
+
+ifeq ($(BR2_BINFMT_FLAT_SHARED),y)
+TARGET_LDFLAGS += -mid-shared-library -mshared-library-id=0
+TARGET_CFLAGS += -mid-shared-library -mshared-library-id=0
+TARGET_CXXFLAGS += -mid-shared-library -mshared-library-id=0
+endif
+ifeq ($(BR2_BINFMT_FLAT_SEP_DATA),y)
+TARGET_LDFLAGS += -msep-data
+TARGET_CFLAGS += -msep-data
+TARGET_CXXFLAGS += -msep-data
+endif
 
 ifeq ($(BR2_TOOLCHAIN_BUILDROOT)$(BR2_TOOLCHAIN_CTNG),y)
 TARGET_CROSS=$(HOST_DIR)/usr/bin/$(GNU_TARGET_NAME)-
@@ -118,6 +139,7 @@ TARGET_FC       = $(TARGET_CROSS)gfortran
 TARGET_LD       = $(TARGET_CROSS)ld
 TARGET_NM       = $(TARGET_CROSS)nm
 TARGET_RANLIB   = $(TARGET_CROSS)ranlib
+TARGET_READELF  = $(TARGET_CROSS)readelf
 TARGET_OBJCOPY  = $(TARGET_CROSS)objcopy
 TARGET_OBJDUMP  = $(TARGET_CROSS)objdump
 
@@ -130,6 +152,7 @@ TARGET_CXX := $(CCACHE) $(TARGET_CXX)
 endif
 
 ifeq ($(BR2_STRIP_strip),y)
+STRIP_STRIP_DEBUG:=--strip-debug
 STRIP_STRIP_UNNEEDED:=--strip-unneeded
 STRIP_STRIP_ALL:=--strip-all
 TARGET_STRIP=$(TARGET_CROSS)strip
@@ -137,6 +160,7 @@ STRIPCMD=$(TARGET_CROSS)strip --remove-section=.comment --remove-section=.note
 KSTRIPCMD=$(STRIPCMD) $(STRIP_STRIP_UNNEEDED)
 endif
 ifeq ($(BR2_STRIP_sstrip),y)
+STRIP_STRIP_DEBUG:=
 STRIP_STRIP_UNNEEDED:=
 STRIP_STRIP_ALL:=
 TARGET_STRIP=$(HOST_DIR)/usr/bin/$(GNU_TARGET_NAME)-sstrip
@@ -153,9 +177,10 @@ FLEX:=$(shell which flex || type -p flex)
 BISON:=$(shell which bison || type -p bison)
 SED:=$(shell which sed || type -p sed) -i -e
 
+HOST_CPPFLAGS  = -I$(HOST_DIR)/usr/include
 HOST_CFLAGS   ?= -O2
-HOST_CFLAGS   += -I$(HOST_DIR)/include -I$(HOST_DIR)/usr/include
-HOST_CXXFLAGS += -I$(HOST_DIR)/include -I$(HOST_DIR)/usr/include
+HOST_CFLAGS   += $(HOST_CPPFLAGS)
+HOST_CXXFLAGS += $(HOST_CFLAGS)
 HOST_LDFLAGS  += -L$(HOST_DIR)/lib -L$(HOST_DIR)/usr/lib -Wl,-rpath,$(HOST_DIR)/usr/lib
 HOST_PATH=$(HOST_DIR)/bin:$(HOST_DIR)/usr/bin:$(PATH)
 
@@ -174,6 +199,7 @@ TARGET_CONFIGURE_OPTS=PATH=$(TARGET_PATH) \
 		CXX="$(TARGET_CXX)" \
 		FC="$(TARGET_FC)" \
 		RANLIB="$(TARGET_RANLIB)" \
+		READELF="$(TARGET_READELF)" \
 		STRIP="$(TARGET_STRIP)" \
 		OBJCOPY="$(TARGET_OBJCOPY)" \
 		OBJDUMP="$(TARGET_OBJDUMP)" \
@@ -184,12 +210,14 @@ TARGET_CONFIGURE_OPTS=PATH=$(TARGET_PATH) \
 		CXX_FOR_BUILD="$(HOSTCXX)" \
 		FC_FOR_BUILD="$(HOSTFC)" \
 		LD_FOR_BUILD="$(HOSTLD)" \
+		CPPFLAGS_FOR_BUILD="$(HOST_CPPFLAGS)" \
 		CFLAGS_FOR_BUILD="$(HOST_CFLAGS)" \
 		CXXFLAGS_FOR_BUILD="$(HOST_CXXFLAGS)" \
 		LDFLAGS_FOR_BUILD="$(HOST_LDFLAGS)" \
 		FCFLAGS_FOR_BUILD="$(HOST_FCFLAGS)" \
 		DEFAULT_ASSEMBLER="$(TARGET_AS)" \
 		DEFAULT_LINKER="$(TARGET_LD)" \
+		CPPFLAGS="$(TARGET_CPPFLAGS)" \
 		CFLAGS="$(TARGET_CFLAGS)" \
 		CXXFLAGS="$(TARGET_CXXFLAGS)" \
 		LDFLAGS="$(TARGET_LDFLAGS)" \
@@ -210,6 +238,7 @@ HOST_CONFIGURE_OPTS=PATH=$(HOST_PATH) \
 		GCC="$(HOSTCC)" \
 		CXX="$(HOSTCXX)" \
 		CPP="$(HOSTCPP)" \
+		CPPFLAGS="$(HOST_CPPFLAGS)" \
 		CFLAGS="$(HOST_CFLAGS)" \
 		CXXFLAGS="$(HOST_CXXFLAGS)" \
 		LDFLAGS="$(HOST_LDFLAGS)" \
@@ -278,7 +307,15 @@ DISABLE_LARGEFILE= --disable-largefile
 endif
 
 ifneq ($(BR2_HAVE_DOCUMENTATION),y)
-DISABLE_DOCUMENTATION=--disable-gtk-doc
+# The configure option varies, but since unknown options are ignored
+# we can pass all of them.
+DISABLE_DOCUMENTATION = \
+	--disable-gtk-doc \
+	--disable-doc \
+	--disable-docs \
+	--disable-documentation \
+	--with-xmlto=no \
+	--with-fop=no
 endif
 
 ifeq ($(BR2_INET_IPV6),y)
@@ -299,7 +336,7 @@ endif
 
 ifeq ($(BR2_PREFER_STATIC_LIB),y)
 SHARED_STATIC_LIBS_OPTS=--enable-static --disable-shared
-TARGET_LDFLAGS += -static
+TARGET_LDFLAGS += --static
 else
 SHARED_STATIC_LIBS_OPTS=--enable-static --enable-shared
 endif

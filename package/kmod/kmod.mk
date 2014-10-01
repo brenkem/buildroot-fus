@@ -1,8 +1,20 @@
-KMOD_VERSION = 9
+#############################################################
+#
+# kmod
+#
+#############################################################
+
+KMOD_VERSION = 13
 KMOD_SOURCE = kmod-$(KMOD_VERSION).tar.xz
 KMOD_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/kernel/kmod/
+KMOD_LICENSE = GPLv2+ LGPLv2.1+
+KMOD_LICENSE_FILES = COPYING libkmod/COPYING
 KMOD_INSTALL_STAGING = YES
-KMOD_DEPENDENCIES = host-pkg-config
+KMOD_DEPENDENCIES = host-pkgconf
+
+ifneq ($(BR2_HAVE_DOCUMENTATION),y)
+KMOD_CONF_OPT += --disable-manpages
+endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 KMOD_DEPENDENCIES += zlib

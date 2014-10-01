@@ -4,9 +4,11 @@
 #
 #############################################################
 PYTHON_VERSION_MAJOR = 2.7
-PYTHON_VERSION       = $(PYTHON_VERSION_MAJOR).2
+PYTHON_VERSION       = $(PYTHON_VERSION_MAJOR).3
 PYTHON_SOURCE        = Python-$(PYTHON_VERSION).tar.bz2
 PYTHON_SITE          = http://python.org/ftp/python/$(PYTHON_VERSION)
+PYTHON_LICENSE       = Python software foundation license v2, others
+PYTHON_LICENSE_FILES = LICENSE
 
 # Python needs itself and a "pgen" program to build itself, both being
 # provided in the Python sources. So in order to cross-compile Python,
@@ -15,6 +17,7 @@ PYTHON_SITE          = http://python.org/ftp/python/$(PYTHON_VERSION)
 # third-party Python modules.
 
 HOST_PYTHON_CONF_OPT += 	\
+	--enable-static		\
 	--without-cxx-main 	\
 	--disable-sqlite3	\
 	--disable-tk		\
@@ -36,18 +39,13 @@ HOST_PYTHON_MAKE_ENV = \
 
 HOST_PYTHON_AUTORECONF = YES
 
-define HOST_PYTHON_CONFIGURE_CMDS
-	(cd $(@D) && rm -rf config.cache; \
-	        $(HOST_CONFIGURE_OPTS) \
-		CFLAGS="$(HOST_CFLAGS)" \
-		LDFLAGS="$(HOST_LDFLAGS)" \
-                $(HOST_PYTHON_CONF_ENV) \
-		./configure \
-		--prefix="$(HOST_DIR)/usr" \
-		--sysconfdir="$(HOST_DIR)/etc" \
-		$(HOST_PYTHON_CONF_OPT) \
-	)
-endef
+# Building host python in parallel sometimes triggers a "Bus error"
+# during the execution of "./python setup.py build" in the
+# installation step. It is probably due to the installation of a
+# shared library taking place in parallel to the execution of
+# ./python, causing spurious Bus error. Building host-python with
+# MAKE1 has shown to workaround the problem.
+HOST_PYTHON_MAKE = $(MAKE1)
 
 PYTHON_DEPENDENCIES  = host-python libffi
 
@@ -110,6 +108,10 @@ else
 PYTHON_CONF_OPT += --disable-zlib
 endif
 
+ifeq ($(BR2_PACKAGE_PYTHON_HASHLIB),y)
+PYTHON_DEPENDENCIES += openssl
+endif
+
 PYTHON_CONF_ENV += \
 	PYTHON_FOR_BUILD=$(HOST_PYTHON_DIR)/python \
 	PGEN_FOR_BUILD=$(HOST_PYTHON_DIR)/Parser/pgen \
@@ -139,6 +141,13 @@ define PYTHON_FIXUP_LIBDIR
 endef
 
 PYTHON_POST_INSTALL_STAGING_HOOKS += PYTHON_FIXUP_LIBDIR
+
+# Bad shebang, normally not used
+define PYTHON_REMOVE_SMTPD
+	rm -f $(TARGET_DIR)/usr/bin/smtpd.py
+endef
+
+PYTHON_POST_INSTALL_TARGET_HOOKS += PYTHON_REMOVE_SMTPD
 
 #
 # Development files removal

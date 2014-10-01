@@ -17,6 +17,9 @@ UCLIBC_VERSION:=$(call qstrip,$(BR2_UCLIBC_VERSION_STRING))
 ifeq ($(BR2_UCLIBC_VERSION_SNAPSHOT),y)
 UCLIBC_SITE:=http://www.uclibc.org/downloads/snapshots
 UCLIBC_DIR:=$(TOOLCHAIN_DIR)/uClibc
+else ifeq ($(findstring arc,$(UCLIBC_VERSION)),arc)
+UCLIBC_SITE:=$(BR2_ARC_SITE)
+UCLIBC_DIR:=$(TOOLCHAIN_DIR)/uClibc-$(UCLIBC_VERSION)
 else
 UCLIBC_SITE:=http://www.uclibc.org/downloads
 UCLIBC_DIR:=$(TOOLCHAIN_DIR)/uClibc-$(UCLIBC_VERSION)
@@ -31,40 +34,27 @@ UCLIBC_TARGET_ARCH:=$(shell $(SHELL) -c "echo $(ARCH) | sed \
 		-e 's/-.*//' \
 		-e 's/i.86/i386/' \
 		-e 's/sparc.*/sparc/' \
+		-e 's/arc.*/arc/g' \
 		-e 's/arm.*/arm/g' \
 		-e 's/m68k.*/m68k/' \
 		-e 's/ppc/powerpc/g' \
 		-e 's/v850.*/v850/g' \
 		-e 's/sh[234].*/sh/' \
 		-e 's/mips.*/mips/' \
-		-e 's/mipsel.*/mips/' \
 		-e 's/cris.*/cris/' \
 		-e 's/xtensa.*/xtensa/' \
 ")
-# just handle the ones that can be big or little
-UCLIBC_TARGET_ENDIAN:=$(shell $(SHELL) -c "echo $(ARCH) | sed \
-		-e 's/armeb/BIG/' \
-		-e 's/arm/LITTLE/' \
-		-e 's/mipsel/LITTLE/' \
-		-e 's/mips/BIG/' \
-		-e 's/sh.*eb/BIG/' \
-		-e 's/sh.*/LITTLE/' \
-		-e 's/sparc.*/BIG/' \
-")
 
-ifneq ($(UCLIBC_TARGET_ENDIAN),LITTLE)
-ifneq ($(UCLIBC_TARGET_ENDIAN),BIG)
-UCLIBC_TARGET_ENDIAN:=
-endif
-endif
+UCLIBC_TARGET_ENDIAN:=$(call qstrip,$(BR2_ENDIAN))
+
 ifeq ($(UCLIBC_TARGET_ENDIAN),LITTLE)
 UCLIBC_NOT_TARGET_ENDIAN:=BIG
 else
 UCLIBC_NOT_TARGET_ENDIAN:=LITTLE
 endif
 
-UCLIBC_ARM_TYPE:=CONFIG_$(call qstrip,$(BR2_ARM_TYPE))
-UCLIBC_SPARC_TYPE:=CONFIG_SPARC_$(call qstrip,$(BR2_SPARC_TYPE))
+UCLIBC_ARM_TYPE:=CONFIG_$(call qstrip,$(BR2_UCLIBC_ARM_TYPE))
+UCLIBC_SPARC_TYPE:=CONFIG_SPARC_$(call qstrip,$(BR2_UCLIBC_SPARC_TYPE))
 
 ifeq ($(GENERATE_LOCALE),)
 # We need at least one locale
@@ -76,10 +66,12 @@ UCLIBC_LOCALES = $(foreach locale,$(GENERATE_LOCALE),\
 endif
 
 $(DL_DIR)/$(UCLIBC_SOURCE):
-	$(call DOWNLOAD,$(UCLIBC_SITE)/$(UCLIBC_SOURCE))
+	$(Q)$(call MESSAGE,"Downloading uClibc")
+	$(call DOWNLOAD,$(UCLIBC_SITE:/=)/$(UCLIBC_SOURCE))
 
 uclibc-unpacked: $(UCLIBC_DIR)/.unpacked
 $(UCLIBC_DIR)/.unpacked: $(DL_DIR)/$(UCLIBC_SOURCE)
+	$(Q)$(call MESSAGE,"Extracting uClibc")
 	mkdir -p $(TOOLCHAIN_DIR)
 	rm -rf $(UCLIBC_DIR)
 	$(UCLIBC_CAT) $(DL_DIR)/$(UCLIBC_SOURCE) | tar -C $(TOOLCHAIN_DIR) $(TAR_OPTIONS) -
@@ -87,6 +79,7 @@ $(UCLIBC_DIR)/.unpacked: $(DL_DIR)/$(UCLIBC_SOURCE)
 
 uclibc-patched: $(UCLIBC_DIR)/.patched
 $(UCLIBC_DIR)/.patched: $(UCLIBC_DIR)/.unpacked
+	$(Q)$(call MESSAGE,"Patching uClibc")
 ifneq ($(BR2_UCLIBC_VERSION_SNAPSHOT),y)
 	support/scripts/apply-patches.sh $(UCLIBC_DIR) $(UCLIBC_PATCH_DIR) \
 		uClibc-$(UCLIBC_VERSION)-\*.patch \
@@ -100,6 +93,7 @@ endif
 
 # Some targets may wish to provide their own UCLIBC_CONFIG_FILE...
 $(UCLIBC_DIR)/.oldconfig: $(UCLIBC_DIR)/.patched $(UCLIBC_CONFIG_FILE)
+	$(Q)$(call MESSAGE,"Pre-configuring uClibc")
 	cp -f $(UCLIBC_CONFIG_FILE) $(UCLIBC_DIR)/.oldconfig
 	$(SED) 's,^CROSS_COMPILER_PREFIX=.*,CROSS_COMPILER_PREFIX="$(TARGET_CROSS)",g' \
 		-e 's,# TARGET_$(UCLIBC_TARGET_ARCH) is not set,TARGET_$(UCLIBC_TARGET_ARCH)=y,g' \
@@ -140,6 +134,9 @@ ifeq ($(BR2_ARM_OABI),y)
 	/bin/echo "CONFIG_ARM_OABI=y" >> $(UCLIBC_DIR)/.oldconfig
 	/bin/echo "# CONFIG_ARM_EABI is not set" >> $(UCLIBC_DIR)/.oldconfig
 endif
+ifeq ($(BR2_fa526)$(BR2_strongarm),y)
+	$(SED) 's,USE_BX=y,# USE_BX is not set,' $(UCLIBC_DIR)/.oldconfig
+endif
 endif
 ifeq ($(UCLIBC_TARGET_ARCH),mips)
 	$(SED) '/CONFIG_MIPS_[NO].._ABI/d' $(UCLIBC_DIR)/.oldconfig
@@ -155,13 +152,13 @@ ifeq ($(UCLIBC_TARGET_ARCH),mips)
 	 /bin/echo "# CONFIG_MIPS_ISA_MIPS32R2 is not set"; \
 	 /bin/echo "# CONFIG_MIPS_ISA_MIPS64 is not set"; \
 	) >> $(UCLIBC_DIR)/.oldconfig
-ifeq ($(BR2_MIPS_OABI),y)
+ifeq ($(BR2_MIPS_OABI32),y)
 	$(SED) 's/.*\(CONFIG_MIPS_O32_ABI\).*/\1=y/' $(UCLIBC_DIR)/.oldconfig
 endif
-ifeq ($(BR2_MIPS_ABI32),y)
+ifeq ($(BR2_MIPS_NABI32),y)
 	$(SED) 's/.*\(CONFIG_MIPS_N32_ABI\).*/\1=y/' $(UCLIBC_DIR)/.oldconfig
 endif
-ifeq ($(BR2_MIPS_ABI64),y)
+ifeq ($(BR2_MIPS_NABI64),y)
 	$(SED) 's/.*\(CONFIG_MIPS_N64_ABI\).*/\1=y/' $(UCLIBC_DIR)/.oldconfig
 endif
 ifeq ($(BR2_mips_1),y)
@@ -245,19 +242,19 @@ ifneq ($(UCLIBC_TARGET_ENDIAN),)
 		-e 's/.*\(ARCH_WANTS_$(UCLIBC_TARGET_ENDIAN)_ENDIAN\).*/\1=y/g' \
 		$(UCLIBC_DIR)/.oldconfig
 endif
-ifeq ($(BR2_LARGEFILE),y)
+ifeq ($(BR2_TOOLCHAIN_BUILDROOT_LARGEFILE),y)
 	$(SED) 's,.*UCLIBC_HAS_LFS.*,UCLIBC_HAS_LFS=y,g' $(UCLIBC_DIR)/.oldconfig
 else
 	$(SED) 's,.*UCLIBC_HAS_LFS.*,UCLIBC_HAS_LFS=n,g' $(UCLIBC_DIR)/.oldconfig
 	$(SED) '/.*UCLIBC_HAS_FOPEN_LARGEFILE_MODE.*/d' $(UCLIBC_DIR)/.oldconfig
 	echo "# UCLIBC_HAS_FOPEN_LARGEFILE_MODE is not set" >> $(UCLIBC_DIR)/.oldconfig
 endif
-ifeq ($(BR2_INET_IPV6),y)
+ifeq ($(BR2_TOOLCHAIN_BUILDROOT_INET_IPV6),y)
 	$(SED) 's,^.*UCLIBC_HAS_IPV6.*,UCLIBC_HAS_IPV6=y,g' $(UCLIBC_DIR)/.oldconfig
 else
 	$(SED) 's,^.*UCLIBC_HAS_IPV6.*,UCLIBC_HAS_IPV6=n,g' $(UCLIBC_DIR)/.oldconfig
 endif
-ifeq ($(BR2_INET_RPC),y)
+ifeq ($(BR2_TOOLCHAIN_BUILDROOT_INET_RPC),y)
 	$(SED) 's,^.*UCLIBC_HAS_RPC.*,UCLIBC_HAS_RPC=y,g' \
 		-e 's,^.*UCLIBC_HAS_FULL_RPC.*,UCLIBC_HAS_FULL_RPC=y,g' \
 		-e 's,^.*UCLIBC_HAS_REENTRANT_RPC.*,UCLIBC_HAS_REENTRANT_RPC=y,g' \
@@ -317,12 +314,12 @@ ifeq ($(BR2_PTHREAD_DEBUG),y)
 else
 	echo "# PTHREADS_DEBUG_SUPPORT is not set" >> $(UCLIBC_DIR)/.oldconfig
 endif
-ifeq ($(BR2_ENABLE_LOCALE),y)
+ifeq ($(BR2_TOOLCHAIN_BUILDROOT_LOCALE),y)
 	$(SED) 's,^.*UCLIBC_HAS_LOCALE.*,UCLIBC_HAS_LOCALE=y\n# UCLIBC_BUILD_ALL_LOCALE is not set\nUCLIBC_BUILD_MINIMAL_LOCALE=y\nUCLIBC_BUILD_MINIMAL_LOCALES="$(UCLIBC_LOCALES)"\nUCLIBC_PREGENERATED_LOCALE_DATA=n\nUCLIBC_DOWNLOAD_PREGENERATED_LOCALE_DATA=n\nUCLIBC_HAS_XLOCALE=y\nUCLIBC_HAS_GLIBC_DIGIT_GROUPING=n\n,g' $(UCLIBC_DIR)/.oldconfig
 else
 	$(SED) 's,^.*UCLIBC_HAS_LOCALE.*,UCLIBC_HAS_LOCALE=n,g' $(UCLIBC_DIR)/.oldconfig
 endif
-ifeq ($(BR2_USE_WCHAR),y)
+ifeq ($(BR2_TOOLCHAIN_BUILDROOT_WCHAR),y)
 	$(SED) 's,^.*UCLIBC_HAS_WCHAR.*,UCLIBC_HAS_WCHAR=y,g' $(UCLIBC_DIR)/.oldconfig
 else
 	$(SED) 's,^.*UCLIBC_HAS_WCHAR.*,UCLIBC_HAS_WCHAR=n,g' $(UCLIBC_DIR)/.oldconfig
@@ -384,6 +381,7 @@ endif
 endif
 
 $(UCLIBC_DIR)/.config: $(UCLIBC_DIR)/.oldconfig
+	$(Q)$(call MESSAGE,"Configuring uClibc")
 	cp -f $(UCLIBC_DIR)/.oldconfig $(UCLIBC_DIR)/.config
 	mkdir -p $(TOOLCHAIN_DIR)/uClibc_dev/usr/include
 	mkdir -p $(TOOLCHAIN_DIR)/uClibc_dev/usr/lib
@@ -394,7 +392,7 @@ $(UCLIBC_DIR)/.config: $(UCLIBC_DIR)/.oldconfig
 		DEVEL_PREFIX=/usr/ \
 		RUNTIME_PREFIX=$(TOOLCHAIN_DIR)/uClibc_dev/ \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
-		UCLIB_EXTRA_CFLAGS="$(TARGET_ABI)" \
+		UCLIBC_EXTRA_CFLAGS="$(TARGET_ABI)" \
 		HOSTCC="$(HOSTCC)" \
 		oldconfig
 	touch $@
@@ -406,14 +404,26 @@ ifeq ($(BR2_CCACHE),y)
 $(UCLIBC_DIR)/.config: | host-ccache
 endif
 
+# For ARC, libgcc is always included, even when -nostdlib is given. This
+# is related to some small pieces of code that are not always generated
+# by the compiler; a call to libgcc is used in those cases instead.
+#
+# During the initial stages of building the toolchain, this is a problem,
+# as libgcc does not exist yet. The ARC compiler supports -really-nostdlib
+# to override the default behavior.
+ifeq ($(BR2_arc),y)
+REALLY_NOSTDLIB=-really-nostdlib
+endif
+
 $(UCLIBC_DIR)/.configured: $(LINUX_HEADERS_DIR)/.configured $(UCLIBC_DIR)/.config
+	$(Q)$(call MESSAGE,"Installing uClibc headers")
 	$(MAKE1) -C $(UCLIBC_DIR) \
 		ARCH="$(UCLIBC_TARGET_ARCH)" \
 		PREFIX=$(TOOLCHAIN_DIR)/uClibc_dev/ \
 		DEVEL_PREFIX=/usr/ \
 		RUNTIME_PREFIX=$(TOOLCHAIN_DIR)/uClibc_dev/ \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
-		UCLIB_EXTRA_CFLAGS="$(TARGET_ABI)" \
+		UCLIBC_EXTRA_CFLAGS="$(TARGET_ABI)" \
 		HOSTCC="$(HOSTCC)" headers \
 		lib/crt1.o lib/crti.o lib/crtn.o \
 		install_headers
@@ -423,19 +433,20 @@ $(UCLIBC_DIR)/.configured: $(LINUX_HEADERS_DIR)/.configured $(UCLIBC_DIR)/.confi
 		cp -pLR $(LINUX_HEADERS_DIR)/include/* \
 			$(TOOLCHAIN_DIR)/uClibc_dev/usr/include/; \
 	fi
-	$(TARGET_CROSS)gcc -nostdlib -nostartfiles -shared -x c /dev/null -o $(TOOLCHAIN_DIR)/uClibc_dev/usr/lib/libc.so
-	$(TARGET_CROSS)gcc -nostdlib -nostartfiles -shared -x c /dev/null -o $(TOOLCHAIN_DIR)/uClibc_dev/usr/lib/libm.so
+	$(TARGET_CROSS)gcc -nostdlib $(REALLY_NOSTDLIB) -nostartfiles -shared -x c /dev/null -o $(TOOLCHAIN_DIR)/uClibc_dev/usr/lib/libc.so
+	$(TARGET_CROSS)gcc -nostdlib $(REALLY_NOSTDLIB) -nostartfiles -shared -x c /dev/null -o $(TOOLCHAIN_DIR)/uClibc_dev/usr/lib/libm.so
 	cp -pLR $(UCLIBC_DIR)/lib/crt[1in].o $(TOOLCHAIN_DIR)/uClibc_dev/usr/lib/
 	touch $@
 
 $(UCLIBC_DIR)/lib/libc.a: $(UCLIBC_DIR)/.configured $(gcc_intermediate) $(LIBFLOAT_TARGET)
+	$(Q)$(call MESSAGE,"Building uClibc")
 	$(MAKE1) -C $(UCLIBC_DIR) \
 		ARCH="$(UCLIBC_TARGET_ARCH)" \
 		PREFIX= \
 		DEVEL_PREFIX=/ \
 		RUNTIME_PREFIX=/ \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
-		UCLIB_EXTRA_CFLAGS="$(TARGET_ABI)" \
+		UCLIBC_EXTRA_CFLAGS="$(TARGET_ABI)" \
 		HOSTCC="$(HOSTCC)" \
 		all
 	touch -c $@
@@ -447,20 +458,21 @@ uclibc-menuconfig: dirs $(UCLIBC_DIR)/.config
 		DEVEL_PREFIX=/usr/ \
 		RUNTIME_PREFIX=$(TOOLCHAIN_DIR)/uClibc_dev/ \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
-		UCLIB_EXTRA_CFLAGS="$(TARGET_ABI)" \
+		UCLIBC_EXTRA_CFLAGS="$(TARGET_ABI)" \
 		HOSTCC="$(HOSTCC)" \
 		menuconfig && \
 	touch -c $(UCLIBC_DIR)/.config
 
 
 $(STAGING_DIR)/usr/lib/libc.a: $(UCLIBC_DIR)/lib/libc.a
+	$(Q)$(call MESSAGE,"Installing uClibc to staging dir")
 	$(MAKE1) -C $(UCLIBC_DIR) \
 		ARCH="$(UCLIBC_TARGET_ARCH)" \
 		PREFIX=$(STAGING_DIR) \
 		DEVEL_PREFIX=/usr/ \
 		RUNTIME_PREFIX=/ \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
-		UCLIB_EXTRA_CFLAGS="$(TARGET_ABI)" \
+		UCLIBC_EXTRA_CFLAGS="$(TARGET_ABI)" \
 		install_runtime install_dev
 	# Install the kernel headers to the staging dir if necessary
 	if [ ! -f $(STAGING_DIR)/usr/include/linux/version.h ]; then \
@@ -484,17 +496,19 @@ $(STAGING_DIR)/usr/lib/libc.a: $(UCLIBC_DIR)/lib/libc.a
 
 ifneq ($(TARGET_DIR),)
 $(TARGET_DIR)/lib/libc.so.0: $(STAGING_DIR)/usr/lib/libc.a
+	$(Q)$(call MESSAGE,"Installing uClibc runtime to target dir")
 	$(MAKE1) -C $(UCLIBC_DIR) \
 		ARCH="$(UCLIBC_TARGET_ARCH)" \
 		PREFIX=$(TARGET_DIR) \
 		DEVEL_PREFIX=/usr/ \
 		RUNTIME_PREFIX=/ \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
-		UCLIB_EXTRA_CFLAGS="$(TARGET_ABI)" \
+		UCLIBC_EXTRA_CFLAGS="$(TARGET_ABI)" \
 		install_runtime
 	touch -c $@
 
 $(TARGET_DIR)/usr/bin/ldd: $(cross_compiler)
+	$(Q)$(call MESSAGE,"Installing uClibc utils to target dir")
 	$(MAKE1) -C $(UCLIBC_DIR) CC=$(TARGET_CROSS)gcc \
 		CPP=$(TARGET_CROSS)cpp LD=$(TARGET_CROSS)ld \
 		ARCH="$(UCLIBC_TARGET_ARCH)" \
@@ -539,11 +553,13 @@ uclibc-target-utils: $(TARGET_DIR)/usr/bin/ldd
 uclibc-target-utils-source: $(DL_DIR)/$(UCLIBC_SOURCE)
 
 $(UCLIBC_DIR)/test/unistd/errno:
+	$(Q)$(call MESSAGE,"Building uClibc test suite")
 	$(MAKE) -C $(UCLIBC_DIR)/test \
 	ARCH_CFLAGS=-I$(STAGING_DIR)/usr/include \
 	UCLIBC_ONLY=1 TEST_INSTALLED_UCLIBC=1 compile
 
 $(TARGET_DIR)/root/uClibc/test/unistd/errno: $(UCLIBC_DIR)/test/unistd/errno
+	$(Q)$(call MESSAGE,"Installing uClibc test suite to target dir")
 	mkdir -p $(TARGET_DIR)/root/uClibc
 	cp -rdpf $(UCLIBC_DIR)/test $(TARGET_DIR)/root/uClibc
 	$(INSTALL) $(UCLIBC_DIR)/Rules.mak $(TARGET_DIR)/root/uClibc
@@ -568,6 +584,7 @@ uclibc-test-dirclean:
 #############################################################
 
 $(TARGET_DIR)/usr/lib/libc.a: $(STAGING_DIR)/usr/lib/libc.a
+	$(Q)$(call MESSAGE,"Installing uClibc development files to target dir")
 	$(MAKE1) -C $(UCLIBC_DIR) \
 		ARCH="$(UCLIBC_TARGET_ARCH)" \
 		PREFIX=$(TARGET_DIR) \

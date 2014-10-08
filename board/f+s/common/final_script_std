@@ -8,6 +8,9 @@ CP="/bin/cp -f"
 # Copy the modified inittab file with mdev support
 ${CP} ${COMMON}/etc/inittab ${TARGET}/etc
 
+# Copy the modified profile file with display and xauth exports
+${CP} ${COMMON}/profile ${TARGET}/etc
+
 # Copy the enhanced mdev configuration file
 ${CP} ${COMMON}/etc/mdev.conf ${TARGET}/etc
 

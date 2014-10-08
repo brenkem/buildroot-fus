@@ -2,12 +2,14 @@
 
 TARGET="$1"
 COMMON=board/f+s/common
-BOARD=board/f+s/QBlissA9
+BOARD=board/f+s/fsimx6
 CP="/bin/cp -f"
 
 tput smso
-echo ">>>   Doing final F+S QBlissA9 setup for standard configuration"
+echo ">>>   Doing final F+S iMX6 setup for standard configuration"
 tput rmso
 
+${CP} ./${COMMON}/.xinitrc ./system/skeleton/root/
 # Call common F+S setup for standard configuration
 sh ./${COMMON}/final_script_std ${TARGET} ${BOARD}
+${CP} ${BOARD}/inittab ${TARGET}/etc

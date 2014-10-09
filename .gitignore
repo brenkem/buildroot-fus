@@ -12,4 +12,5 @@
 *.orig
 *.rej
 *~
+/install-*.scr
 *.pyc

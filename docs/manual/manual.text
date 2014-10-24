@@ -29,65 +29,65 @@ Table of Contents
 4. Frequently Asked Questions & Troubleshooting
 
     4.1. The boot hangs after Starting network…
-    4.2. module-init-tools fails to build with cannot find -lc
-    4.3. Why is there no compiler on the target?
-    4.4. Why are there no development files on the target?
-    4.5. Why is there no documentation on the target?
-    4.6. Why are some packages not visible in the Buildroot config
+    4.2. Why is there no compiler on the target?
+    4.3. Why are there no development files on the target?
+    4.4. Why is there no documentation on the target?
+    4.5. Why are some packages not visible in the Buildroot config
         menu?
-    4.7. Why not use the target directory as a chroot directory?
+    4.6. Why not use the target directory as a chroot directory?
 
-5. Going further in Buildroot’s innards
+5. Known issues
+6. Going further in Buildroot’s innards
 
-    5.1. How Buildroot works
-    5.2. Advanced usage
+    6.1. How Buildroot works
+    6.2. Advanced usage
 
-6. Developer Guidelines
+7. Developer Guidelines
 
-    6.1. Coding style
-    6.2. Adding new packages to Buildroot
-    6.3. Patching a package
-    6.4. Download infrastructure
+    7.1. Coding style
+    7.2. Adding new packages to Buildroot
+    7.3. Patching a package
+    7.4. Download infrastructure
 
-7. Legal notice and licensing
+8. Legal notice and licensing
 
-    7.1. Complying with open source licenses
-    7.2. License abbreviations
-    7.3. Complying with the Buildroot license
+    8.1. Complying with open source licenses
+    8.2. License abbreviations
+    8.3. Complying with the Buildroot license
 
-8. Beyond Buildroot
+9. Beyond Buildroot
 
-    8.1. Boot the generated images
-    8.2. Chroot
+    9.1. Boot the generated images
+    9.2. Chroot
 
-9. Getting involved
+10. Getting involved
 
-    9.1. Mailing List
-    9.2. IRC
-    9.3. Patchwork
-    9.4. Bugtracker
-    9.5. Buildroot wikipage
-    9.6. Events
+    10.1. Mailing List
+    10.2. IRC
+    10.3. Patchwork
+    10.4. Bugtracker
+    10.5. Buildroot wikipage
+    10.6. Events
 
-10. Contributing to Buildroot
+11. Contributing to Buildroot
 
-    10.1. Submitting patches
-    10.2. Reviewing/Testing patches
-    10.3. Autobuild
-    10.4. Reporting issues/bugs, get help
+    11.1. Submitting patches
+    11.2. Reviewing/Testing patches
+    11.3. Autobuild
+    11.4. Reporting issues/bugs, get help
 
-11. Appendix
+12. Appendix
 
-    11.1. Makedev syntax documentation
-    11.2. Makeuser syntax documentation
-    11.3. Package Selection for the target
-    11.4. Host utilities
-    11.5. Deprecated features
+    12.1. Makedev syntax documentation
+    12.2. Makeuser syntax documentation
+    12.3. List of target packages available in Buildroot
+    12.4. List of host utilities available in Buildroot
+    12.5. Deprecated features
 
 List of Examples
 
-6.1. Config script: divine package
-6.2. Config script: imagemagick package:
+7.1. Config script: divine package
+7.2. Config script: imagemagick package:
 
 
 ---------------------------------------------------------------------
@@ -97,8 +97,8 @@ List of Examples
 Buildroot usage and documentation by Thomas Petazzoni. Contributions
 from Karsten Kruse, Ned Ludd, Martin Herren and others.
 
-Buildroot 2013.08 manual generated on 2013-08-31 00:35:03 CEST from
-git revision 53d8d9c
+Buildroot 2013.11 manual generated on 2013-11-30 14:17:27 CET from
+git revision 9b39045
 
 logo.png
 
@@ -172,7 +172,7 @@ for the libraries that may be packaged in 2 distinct packages.
       o patch
       o gzip
       o bzip2
-      o perl
+      o perl (version 5.8.7 or any later)
       o tar
       o cpio
       o python (version 2.6 or 2.7)
@@ -188,10 +188,10 @@ for the libraries that may be packaged in 2 distinct packages.
 
     In the official tree, most of the package sources are retrieved
     using wget; a few are only available through their git,
-    mercurial, or svn repository.
+    mercurial, svn or cvs repository.
 
     All other source fetching methods are implemented and may be used
-    in a development context (further details: refer to Section 6.4,
+    in a development context (further details: refer to Section 7.4,
     “Download infrastructure”).
 
       o bazaar
@@ -214,7 +214,11 @@ for the libraries that may be packaged in 2 distinct packages.
       o The jar tool
   * Documentation generation tools:
 
-      o asciidoc
+      o asciidoc, version 8.6.3 or higher
+      o w3m
+      o python with the argparse module (automatically present in
+        2.7+ and 3.2+)
+      o dblatex (required for the pdf manual only)
 
 
 2.2. Getting Buildroot
@@ -392,17 +396,14 @@ target system uses ARM, the regular compilation toolchain on your
 host runs on x86 and generates code for x86, while the
 cross-compilation toolchain runs on x86 and generates code for ARM.
 
-Buildroot provides different solutions to build, or use existing
-cross-compilation toolchains:
+Buildroot provides two solutions for the cross-compilation toolchain:
 
   * The internal toolchain backend, called Buildroot toolchain in the
     configuration interface.
   * The external toolchain backend, called External toolchain in the
     configuration interface.
-  * The Crosstool-NG toolchain backend, called Crosstool-NG toolchain
-    in the configuration interface.
 
-The choice between these three solutions is done using the Toolchain
+The choice between these two solutions is done using the Toolchain
 Type option in the Toolchain menu. Once one solution has been chosen,
 a number of configuration options appear, they are detailed in the
 following sections.
@@ -416,9 +417,8 @@ userspace applications and libraries for your target embedded system.
 This backend is the historical backend of Buildroot, and has been
 limited for a long time to the usage of the uClibc C library. Support
 for the eglibc C library has been added in 2013 and is at this point
-considered experimental. See the External toolchain backend and 
-Crosstool-NG toolchain backend for other solutions to use glibc or 
-eglibc.
+considered experimental. See the External toolchain backend for
+another solution to use glibc or eglibc.
 
 Once you have selected this backend, a number of options appear. The
 most important ones allow to:
@@ -569,48 +569,6 @@ Drawbacks of this backend:
     get a fix from the toolchain vendor, unless you build your
     external toolchain by yourself using Crosstool-NG.
 
-3.1.1.3. Crosstool-NG toolchain backend
-
-The Crosstool-NG toolchain backend integrates the Crosstool-NG
-project with Buildroot. Crosstool-NG is a highly-configurable,
-versatile and well-maintained tool to build cross-compilation
-toolchains.
-
-If you select the Crosstool-NG toolchain option in Toolchain Type,
-then you will be offered to:
-
-  * Choose which C library you want to use. Crosstool-NG supports the
-    three most important C libraries used in Linux systems: glibc,
-    eglibc and uClibc
-  * Choose a custom Crosstool-NG configuration file. Buildroot has
-    its own default configuration file (one per C library choice),
-    but you can provide your own. Another option is to run make
-    ctng-menuconfig to get access to the Crosstool-NG configuration
-    interface. However, note that all Buildroot packages have only
-    been tested with the default Crosstool-NG configurations.
-  * Choose a number of toolchain options (rather limited if glibc or
-    eglibc are used, or numerous if uClibc is used)
-
-When you will start the Buildroot build process, Buildroot will
-download and install the Crosstool-NG tool, build and install its
-required dependencies, and then run Crosstool-NG with the provided
-configuration.
-
-Advantages of this backend:
-
-  * Not limited to uClibc: glibc and eglibc are supported.
-  * Vast possibilities of toolchain configuration.
-
-Drawbacks of this backend:
-
-  * Crosstool-NG is not perfectly integrated with Buildroot. For
-    example, Crosstool-NG has its own download infrastructure, not
-    integrated with the one in Buildroot (for example a Buildroot
-    make source will not download all the source code tarballs needed
-    by Crosstool-NG).
-  * The toolchain is completely rebuilt from scratch if you do a make
-    clean.
-
 3.1.2. /dev management
 
 On a Linux system, the /dev directory contains special files, called 
@@ -645,7 +603,7 @@ different solutions to handle the /dev directory :
     BR2_ROOTFS_STATIC_DEVICE_TABLE to system/device_table_dev.txt
     board/<yourcompany>/<yourproject>/device_table_dev.txt. For more
     details about the format of the device table file, see
-    Section 11.1, “Makedev syntax documentation”.
+    Section 12.1, “Makedev syntax documentation”.
   * The second solution is Dynamic using devtmpfs only. devtmpfs is a
     virtual filesystem inside the Linux kernel that has been
     introduced in kernel 2.6.32 (if you use an older kernel, it is
@@ -777,8 +735,6 @@ file may hide some targets:
     enabled;
   * uclibc-menuconfig is only available when the Buildroot internal
     toolchain backend is used;
-  * ctng-menuconfig is only available when the crosstool-NG backend
-    is used;
   * barebox-menuconfig and barebox-savedefconfig only work when the
     barebox bootloader is enabled.
 
@@ -800,10 +756,8 @@ The manual outputs will be generated in output/docs/manual.
 
 Notes
 
-  * asciidoc is required to build the documentation (see:
+  * A few tools are required to build the documentation (see:
     Section 2.1.2, “Optional packages”).
-  * There is a known issue that you can’t build it under Debian
-    Squeeze.
 
 Reseting Buildroot for a new target: To delete all build products as
 well as the configuration:
@@ -812,7 +766,7 @@ well as the configuration:
 
 Notes. If ccache is enabled, running make clean or distclean does not
 empty the compiler cache used by Buildroot. To delete it, refer to
-Section 5.2.2, “Using ccache in Buildroot”.
+Section 6.2.2, “Using ccache in Buildroot”.
 
 
 3.3. Customization
@@ -855,7 +809,7 @@ there are a few ways to customize the resulting target filesystem.
     these variables in your post-build script:
 
       o BUILDROOT_CONFIG: the path to the Buildroot .config file
-      o HOST_DIR, STAGING_DIR, TARGET_DIR: see Section 6.2.4.2,
+      o HOST_DIR, STAGING_DIR, TARGET_DIR: see Section 7.2.4.2,
         “generic-package Reference”
       o BINARIES_DIR: the place where all binary files (aka images)
         are stored
@@ -974,31 +928,31 @@ not generate it.
 It also requires to set the Buildroot settings according to the
 toolchain ones (see Section 3.1.1.2, “External toolchain backend”).
 
+When using an external toolchain, Buildroot generates a wrapper
+program, that passes the appropriate options (according to the
+configuration) to the external toolchain programs. In case you need
+to debug this wrapper, you can set the environment variable
+BR_DEBUG_WRAPPER to either one of:
+
+  * 0, empty or not set: no debug
+  * 1: trace all arguments on a single line
+  * 2: trace one argument per line
+
 3.3.5.2. Using the internal Buildroot toolchain backend
 
-The internal Buildroot toolchain backend only allows to generate 
-uClibc-based toolchains.
+The internal Buildroot toolchain backend allows to generate
+toolchains based on uClibc, glibc and eglibc. Generation of (e)
+glibc-based toolchains is still experimental in Buildroot.
 
-However, it allows to tune major settings, such as:
+It allows to tune major settings, such as:
 
   * Linux headers version;
-  * uClibc configuration (see uClibc Section 3.3.3, “Customizing the
-    uClibc configuration”);
+  * C library configuration (only available for uClibc, see uClibc
+    Section 3.3.3, “Customizing the uClibc configuration”);
   * Binutils, GCC, Gdb and toolchain options.
 
 These settings are available after selecting the Buildroot toolchain
 type in the menu Toolchain.
-
-3.3.5.3. Using the Crosstool-NG backend
-
-The crosstool-NG toolchain backend enables a rather limited set of
-settings under the Buildroot Toolchain menu:
-
-  * The crosstool-NG configuration file
-  * Gdb and some toolchain options
-
-Then, the toolchain can be fine-tuned by invoking make
-ctng-menuconfig.
 
 
 3.4. Storing the configuration
@@ -1033,14 +987,13 @@ with make defconfig BR2_DEFCONFIG=<path-to-defconfig-file>.
 
 3.4.1.2. Other package configuration
 
-The configuration files for busybox, the linux kernel, barebox,
-uClibc and crosstool-NG should be stored as well if changed. For each
-of these, a buildroot configuration option exists to point to an
-input configuration file, e.g. BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE.
-To save their configuration, set those configuration options to a
-path outside your output directory, e.g. board/<manufacturer>/
-<boardname>/linux.config. Then, copy the configuration files to that
-path.
+The configuration files for busybox, the linux kernel, barebox and
+uClibc should be stored as well if changed. For each of these, a
+buildroot configuration option exists to point to an input
+configuration file, e.g. BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE. To save
+their configuration, set those configuration options to a path
+outside your output directory, e.g. board/<manufacturer>/<boardname>/
+linux.config. Then, copy the configuration files to that path.
 
 Make sure that you create a configuration file before changing the
 BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE etc. options. Otherwise,
@@ -1062,9 +1015,9 @@ configuration files easier.
     path specified by BR2_UCLIBC_CONFIG.
   * make barebox-update-defconfig saves the barebox configuration to
     the path specified by BR2_TARGET_BAREBOX_CUSTOM_CONFIG_FILE.
-  * For crosstool-NG and at91bootstrap3, no helper exists so you have
-    to copy the config file manually to BR2_TOOLCHAIN_CTNG_CONFIG,
-    resp. BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_CONFIG_FILE.
+  * For at91bootstrap3, no helper exists so you have to copy the
+    config file manually to
+    BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_CONFIG_FILE.
 
 3.4.2. Creating your own board support
 
@@ -1119,7 +1072,6 @@ case.
 
       * BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE
       * BR2_PACKAGE_BUSYBOX_CONFIG
-      * BR2_TOOLCHAIN_CTNG_CONFIG
       * BR2_UCLIBC_CONFIG
       * BR2_TARGET_AT91BOOTSTRAP3_CUSTOM_CONFIG_FILE
       * BR2_TARGET_BAREBOX_CUSTOM_CONFIG_FILE
@@ -1127,8 +1079,6 @@ case.
 
       * make linux-update-defconfig
       * make busybox-update-config
-      * cp <output>/build/build-toolchain/.config board/
-        <manufacturer>/<boardname>/ctng.config
       * make uclibc-update-config
       * cp <output>/build/at91bootstrap3-*/.config board/
         <manufacturer>/<boardname>/at91bootstrap3.config
@@ -1153,7 +1103,7 @@ case.
     at91bootstrap and at91bootstrap3.
 12. If you need modifications to other packages, or if you need to
     add packages, do that directly in the packages/ directory,
-    following the instructions in Section 6.2, “Adding new packages
+    following the instructions in Section 7.2, “Adding new packages
     to Buildroot”.
 
 3.4.4. Customizing packages
@@ -1195,8 +1145,6 @@ In some cases, a full rebuild is mandatory:
 
       o after changing any toolchain option under the Toolchain menu
         (if the internal Buildroot backend is used);
-      o after running make ctng-menuconfig (if the crosstool-NG
-        backend is used);
       o after running make uclibc-menuconfig.
   * after removing some libraries from the package selection.
 
@@ -1249,7 +1197,7 @@ Note: toolchain packages use custom makefiles. Their stamp files are
 named differently.
 
 Further details about package special make targets are explained in
-Section 5.2.4, “Package-specific make targets”.
+Section 6.2.4, “Package-specific make targets”.
 
 3.5.3. Offline builds
 
@@ -1363,7 +1311,7 @@ eclipse-buildroot-bundle/wiki.
 If Buildroot does not yet fit all your requirements, you may be
 interested in hacking it to add:
 
-  * new packages: refer to the Developer guide Section 6.2, “Adding
+  * new packages: refer to the Developer guide Section 7.2, “Adding
     new packages to Buildroot”
   * new board support: refer to the Developer guide Section 3.4.2,
     “Creating your own board support”.
@@ -1405,21 +1353,7 @@ the /etc/inittab file of the generated system so that a shell starts
 on the correct serial port.
 
 
-4.2. module-init-tools fails to build with cannot find -lc
-
---------------
-
-If the build of module-init-tools for the host fails with:
-
-/usr/bin/ld: cannot find -lc
-
-then probably you are running a Fedora (or similar) distribution, and
-you should install the glibc-static package. This is because the
-module-init-tools build process wants to link statically against the
-C library.
-
-
-4.3. Why is there no compiler on the target?
+4.2. Why is there no compiler on the target?
 
 --------------
 
@@ -1445,11 +1379,11 @@ and you should opt for something like:
   * …
 
 
-4.4. Why are there no development files on the target?
+4.3. Why are there no development files on the target?
 
 --------------
 
-Since there is no compiler available on the target (see Section 4.3,
+Since there is no compiler available on the target (see Section 4.2,
 “Why is there no compiler on the target?”), it does not make sense to
 waste space with headers or static libraries.
 
@@ -1457,7 +1391,7 @@ Therefore, those files are always removed from the target since the
 Buildroot-2012.11 release.
 
 
-4.5. Why is there no documentation on the target?
+4.4. Why is there no documentation on the target?
 
 --------------
 
@@ -1467,11 +1401,11 @@ make sense to waste space with the documentation data.
 
 If you need documentation data on your target anyway, then Buildroot
 is not suitable for your purpose, and you should look for a real
-distribution (see: Section 4.3, “Why is there no compiler on the
+distribution (see: Section 4.2, “Why is there no compiler on the
 target?”).
 
 
-4.6. Why are some packages not visible in the Buildroot config menu?
+4.5. Why are some packages not visible in the Buildroot config menu?
 
 --------------
 
@@ -1491,7 +1425,7 @@ then you should certainly run a full rebuild (see Section 3.2, “make
 tips” for more explanations).
 
 
-4.7. Why not use the target directory as a chroot directory?
+4.6. Why not use the target directory as a chroot directory?
 
 --------------
 
@@ -1512,12 +1446,41 @@ it as root.
 
 ---------------------------------------------------------------------
 
-Chapter 5. Going further in Buildroot’s innards
+Chapter 5. Known issues
+
+---------------------------------------------------------------------
+
+  * The ltp-testsuite package does not build with the default uClibc
+    configuration used by the Buildroot toolchain backend. The LTP
+    testsuite uses several functions that are considered obsolete,
+    such as sigset() and others. uClibc configuration options such as
+    DO_XSI_MATH, UCLIBC_HAS_OBSOLETE_BSD_SIGNAL and
+    UCLIBC_SV4_DEPRECATED are needed if one wants to build the
+    ltp-testsuite package with uClibc. You need to either use a glibc
+    or eglibc based toolchain, or enable the appropriate options in
+    the uClibc configuration.
+  * The xfsprogs package does not build with the default uClibc
+    configuration used by the Buildroot toolchain backend. You need
+    to either use a glibc or eglibc based toolchain, or enable the
+    appropriate options in the uClibc configuration.
+  * The mrouted package does not build with the default uClibc
+    configuration used by the Buildroot toolchain backend. You need
+    to either use a glibc or eglibc based toolchain, or enable the
+    appropriate options in the uClibc configuration.
+  * The libffi package is not supported on the SuperH 2 and ARC
+    architectures.
+  * The prboom package triggers a compiler failure with the SuperH 4
+    compiler from Sourcery CodeBench, version 2012.09.
+
+
+---------------------------------------------------------------------
+
+Chapter 6. Going further in Buildroot’s innards
 
 ---------------------------------------------------------------------
 
 
-5.1. How Buildroot works
+6.1. How Buildroot works
 
 --------------
 
@@ -1577,11 +1540,11 @@ configuration is done):
     depending on the configuration.
 
 
-5.2. Advanced usage
+6.2. Advanced usage
 
 --------------
 
-5.2.1. Using the generated toolchain outside Buildroot
+6.2.1. Using the generated toolchain outside Buildroot
 
 You may want to compile, for your target, your own programs or other
 software that are not packaged in Buildroot. In order to do this you
@@ -1601,7 +1564,7 @@ directory other than output/host by using the Build options → Host
 dir option. This could be useful if the toolchain must be shared with
 other users.
 
-5.2.2. Using ccache in Buildroot
+6.2.2. Using ccache in Buildroot
 
 ccache is a compiler cache. It stores the object files resulting from
 each compilation process, and is able to skip future compilation of
@@ -1622,7 +1585,16 @@ this directory.
 You can get statistics on the cache (its size, number of hits,
 misses, etc.) by running make ccache-stats.
 
-5.2.3. Location of downloaded packages
+The make target ccache-options and the CCACHE_OPTIONS variable
+provide more generic access to the ccache. For example
+
+# set cache limit size
+make CCACHE_OPTIONS="--max-size=5G" ccache-options
+
+# zero statistics counters
+make CCACHE_OPTIONS="--zero-stats" ccache-options
+
+6.2.3. Location of downloaded packages
 
 The various tarballs that are downloaded by Buildroot are all stored
 in BR2_DL_DIR, which by default is the dl directory. If you want to
@@ -1643,7 +1615,7 @@ The download location can also be set in the .config file, with the
 BR2_DL_DIR option. This value is overridden by the BUILDROOT_DL_DIR
 environment variable.
 
-5.2.4. Package-specific make targets
+6.2.4. Package-specific make targets
 
 Running make <package> builds and installs that particular package
 and its dependencies.
@@ -1719,12 +1691,12 @@ Additionally, there are some other useful make targets:
 
 ---------------------------------------------------------------------
 
-Chapter 6. Developer Guidelines
+Chapter 7. Developer Guidelines
 
 ---------------------------------------------------------------------
 
 
-6.1. Coding style
+7.1. Coding style
 
 --------------
 
@@ -1739,7 +1711,7 @@ keep the consistency of the whole file, so you can:
   * or entirely rework it in order to make it comply with these
     rules.
 
-6.1.1. Config.in file
+7.1.1. Config.in file
 
 Config.in files contain entries for almost anything configurable in
 Buildroot.
@@ -1765,7 +1737,7 @@ Buildroot, which is the regular Kconfig. For further details about
 the Kconfig language, refer to http://kernel.org/doc/Documentation/
 kbuild/kconfig-language.txt.
 
-6.1.2. The .mk file
+7.1.2. The .mk file
 
   * Header: The file starts with a header. It contains the module
     name, preferably in lowercase, enclosed between separators made
@@ -1839,7 +1811,7 @@ kbuild/kconfig-language.txt.
     LIBFOO_POST_INSTALL_TARGET_HOOKS += LIBFOO_REMOVE_DATA
     endif
 
-6.1.3. The documentation
+7.1.3. The documentation
 
 The documentation uses the asciidoc format.
 
@@ -1847,7 +1819,7 @@ For further details about the asciidoc syntax, refer to http://
 www.methods.co.nz/asciidoc/userguide.html.
 
 
-6.2. Adding new packages to Buildroot
+7.2. Adding new packages to Buildroot
 
 --------------
 
@@ -1856,17 +1828,17 @@ applications) can be integrated into Buildroot. It also shows how
 existing packages are integrated, which is needed for fixing issues
 or tuning their configuration.
 
-6.2.1. Package directory
+7.2.1. Package directory
 
 First of all, create a directory under the package directory for your
 software, for example libfoo.
 
-Some packages have been grouped by topic in a sub-directory:
-multimedia, x11r7, efl and matchbox. If your package fits in one of
-these categories, then create your package directory in these. New
-subdirectories are discouraged, however.
+Some packages have been grouped by topic in a sub-directory: x11r7,
+efl and matchbox. If your package fits in one of these categories,
+then create your package directory in these. New subdirectories are
+discouraged, however.
 
-6.2.2. Config.in file
+7.2.2. Config.in file
 
 Then, create a file named Config.in. This file will contain the
 option descriptions related to our libfoo software that will be used
@@ -1899,7 +1871,7 @@ contain anything but the bare name of the package.
 
 source "package/libfoo/Config.in"
 
-6.2.2.1. Choosing depends on or select
+7.2.2.1. Choosing depends on or select
 
 The Config.in file of your package must also ensure that dependencies
 are enabled. Typically, Buildroot uses the following rules:
@@ -1909,18 +1881,15 @@ are enabled. Typically, Buildroot uses the following rules:
     make sense to have the kconfig system ensure that the
     dependencies are selected. For example, the libgtk2 package uses
     select BR2_PACKAGE_LIBGLIB2 to make sure this library is also
-    enabled. The select keyword express the dependency with a
+    enabled. The select keyword expresses the dependency with a
     backward semantic.
   * Use a depends on type of dependency when the user really needs to
     be aware of the dependency. Typically, Buildroot uses this type
-    of dependency for dependencies on toolchain options (target
-    architecture, MMU support, C library, C++ support, large file
-    support, thread support, RPC support, IPV6 support, WCHAR
-    support), or for dependencies on "big" things, such as the X.org
-    system. For dependencies on toolchain options, there should be a
-    comment that is displayed when the option is not enabled, so that
-    the user knows why the package is not available. The depends on
-    keyword express the dependency with a forward semantic.
+    of dependency for dependencies on target architecture, MMU
+    support and toolchain options (see Section 7.2.2.2, “Dependencies
+    on target and toolchain options”), or for dependencies on "big"
+    things, such as the X.org system. The depends on keyword
+    expresses the dependency with a forward semantic.
 
 Note. The current problem with the kconfig language is that these two
 dependency semantics are not internally linked. Therefore, it may be
@@ -1941,7 +1910,7 @@ config BR2_PACKAGE_ACL
 
           http://savannah.nongnu.org/projects/acl
 
-comment "acl requires a toolchain with LARGEFILE support"
+comment "acl needs a toolchain w/ largefile"
         depends on !BR2_LARGEFILE
 
 Note that these two dependency types are only transitive with the
@@ -1996,10 +1965,99 @@ also enabled, but not necessarily built before your package. To do
 so, the dependency also needs to be expressed in the .mk file of the
 package.
 
-Further formatting details: see the coding style Section 6.1.1,
+Further formatting details: see the coding style Section 7.1.1,
 “Config.in file”.
 
-6.2.3. The .mk file
+7.2.2.2. Dependencies on target and toolchain options
+
+Many packages depend on certain options of the toolchain: the choice
+of C library, C++ support, largefile support, thread support, RPC
+support, IPv6 support, wchar support, or dynamic library support.
+Some packages can only be built on certain target architectures, or
+if an MMU is available in the processor.
+
+These dependencies have to be expressed with the appropriate depends
+on statements in the Config.in file. Additionally, for dependencies
+on toolchain options, a comment should be displayed when the option
+is not enabled, so that the user knows why the package is not
+available. Dependencies on target architecture or MMU support should
+not be made visible in a comment: since it is unlikely that the user
+can freely choose another target, it makes little sense to show these
+dependencies explicitly.
+
+The comment should only be visible if the config option itself would
+be visible when the toolchain option dependencies are met. This means
+that all other dependencies of the package (including dependencies on
+target architecture and MMU support) have to be repeated on the
+comment definition. To keep it clear, the depends on statement for
+these non-toolchain option should be kept separate from the depends
+on statement for the toolchain options. If there is a dependency on a
+config option in that same file (typically the main package) it is
+preferable to have a global if … endif construct rather than
+repeating the depends on statement on the comment and other config
+options.
+
+The general format of a dependency comment for package foo is:
+
+foo needs a toolchain w/ featA, featB, featC
+
+for example:
+
+aircrack-ng needs a toolchain w/ largefile, threads
+
+Note that this text is kept brief on purpose, so that it will fit on
+a 80-character terminal.
+
+The rest of this section enumerates the different target and
+toolchain options, the corresponding config symbols to depend on, and
+the text to use in the comment.
+
+  * Target architecture
+
+      o Dependency symbol: BR2_powerpc, BR2_mips, … (see arch/
+        Config.in)
+      o Comment string: no comment to be added
+  * MMU support
+
+      o Dependency symbol: BR2_USE_MMU
+      o Comment string: no comment to be added
+  * C library
+
+      o Dependency symbol: BR2_TOOLCHAIN_USES_GLIBC,
+        BR2_TOOLCHAIN_USES_UCLIBC
+      o Comment string: for the C library, a slightly different
+        comment text is used: foo needs an (e)glibc toolchain, or foo
+        needs an (e)glibc toolchain w/ C++ support
+  * C++ support
+
+      o Dependency symbol: BR2_INSTALL_LIBSTDCPP
+      o Comment string: C++
+  * largefile support
+
+      o Dependency symbol: BR2_LARGEFILE
+      o Comment string: largefile
+  * thread support
+
+      o Dependency symbol: BR2_TOOLCHAIN_HAS_THREADS
+      o Comment string: threads
+  * RPC support
+
+      o Dependency symbol: BR2_TOOLCHAIN_HAS_NATIVE_RPC
+      o Comment string: RPC
+  * IPv6 support
+
+      o Dependency symbol: BR2_INET_IPV6
+      o Comment string: IPv6 (lowercase v)
+  * wchar support
+
+      o Dependency symbol: BR2_USE_WCHAR
+      o Comment string: wchar
+  * dynamic library
+
+      o Dependency symbol: !BR2_PREFER_STATIC_LIB
+      o Comment string: dynamic library
+
+7.2.3. The .mk file
 
 Finally, here’s the hardest part. Create a file named libfoo.mk. It
 describes how the package should be downloaded, configured, built,
@@ -2017,34 +2075,34 @@ different way, using different infrastructures:
     do not use the autotools as their build system. In the future,
     other specialized infrastructures might be written for other
     build systems. We cover them through in a tutorial
-    Section 6.2.4.1, “generic-package Tutorial” and a reference
-    Section 6.2.4.2, “generic-package Reference”.
+    Section 7.2.4.1, “generic-package Tutorial” and a reference
+    Section 7.2.4.2, “generic-package Reference”.
   * Makefiles for autotools-based software (autoconf, automake,
     etc.): We provide a dedicated infrastructure for such packages,
     since autotools is a very common build system. This
     infrastructure must be used for new packages that rely on the
     autotools as their build system. We cover them through a tutorial
-    Section 6.2.5.1, “autotools-package tutorial” and reference
-    Section 6.2.5.2, “autotools-package reference”.
+    Section 7.2.5.1, “autotools-package tutorial” and reference
+    Section 7.2.5.2, “autotools-package reference”.
   * Makefiles for cmake-based software: We provide a dedicated
     infrastructure for such packages, as CMake is a more and more
     commonly used build system and has a standardized behaviour. This
     infrastructure must be used for new packages that rely on CMake.
-    We cover them through a tutorial Section 6.2.6.1, “cmake-package
-    tutorial” and reference Section 6.2.6.2, “cmake-package
+    We cover them through a tutorial Section 7.2.6.1, “cmake-package
+    tutorial” and reference Section 7.2.6.2, “cmake-package
     reference”.
 
-Further formating details: see the writing rules Section 6.1.2, “The
+Further formatting details: see the writing rules Section 7.1.2, “The
 .mk file”.
 
-6.2.4. Infrastructure for packages with specific build systems
+7.2.4. Infrastructure for packages with specific build systems
 
 By packages with specific build systems we mean all the packages
 whose build system is not one of the standard ones, such as autotools
 or CMake. This typically includes packages whose build system is
 based on hand-written Makefiles or shell scripts.
 
-6.2.4.1. generic-package Tutorial
+7.2.4.1. generic-package Tutorial
 
 01: ################################################################################
 02: #
@@ -2092,10 +2150,10 @@ based on hand-written Makefiles or shell scripts.
 
 The Makefile begins on line 7 to 11 with metadata information: the
 version of the package (LIBFOO_VERSION), the name of the tarball
-containing the package (LIBFOO_SOURCE) the Internet location at which
-the tarball can be downloaded from (LIBFOO_SITE), the license
-(LIBFOO_LICENSE) and file with the license text
-(LIBFOO_LICENSE_FILES). All variables must start with the same
+containing the package (LIBFOO_SOURCE) (xz-ed tarball recommended)
+the Internet location at which the tarball can be downloaded from
+(LIBFOO_SITE), the license (LIBFOO_LICENSE) and file with the license
+text (LIBFOO_LICENSE_FILES). All variables must start with the same
 prefix, LIBFOO_ in this case. This prefix is always the uppercased
 version of the package name (see below to understand where the
 package name is defined).
@@ -2128,7 +2186,7 @@ be given.
 In addition, the scripts listed in LIBFOO_CONFIG_SCRIPTS are removed
 from $(TARGET_DIR)/usr/bin, since they are not needed on the target.
 
-Example 6.1. Config script: divine package
+Example 7.1. Config script: divine package
 
 Package divine installs shell script $(STAGING_DIR)/usr/bin/
 divine-config.
@@ -2138,7 +2196,7 @@ So its fixup would be:
 DIVINE_CONFIG_SCRIPTS = divine-config
 
 
-Example 6.2. Config script: imagemagick package:
+Example 7.2. Config script: imagemagick package:
 
 Package imagemagick installs the following scripts: $(STAGING_DIR)/
 usr/bin/{Magick,Magick++,MagickCore,MagickWand,Wand}-config
@@ -2181,7 +2239,7 @@ Finally, on line 43, we call the generic-package function, which
 generates, according to the variables defined previously, all the
 Makefile code necessary to make your package working.
 
-6.2.4.2. generic-package Reference
+7.2.4.2. generic-package Reference
 
 There are two variants of the generic target. The generic-package
 macro is used for packages to be cross-compiled for the target. The
@@ -2235,7 +2293,7 @@ information is (assuming the package name is libfoo) :
     Buildroot itself use a different mechanism: all files of the form
     <packagename>-*.patch present in the package directory inside
     Buildroot will be applied to the package after extraction (see
-    patching a package Section 6.3, “Patching a package”). Finally,
+    patching a package Section 7.3, “Patching a package”). Finally,
     patches listed in the LIBFOO_PATCH variable are applied before
     the patches stored in the Buildroot package directory.
   * LIBFOO_SITE provides the location of the package, which can be a
@@ -2255,6 +2313,12 @@ information is (assuming the package name is libfoo) :
     LIBFOO_SITE=http://svn.xiph.org/trunk/Tremor/ LIBFOO_SITE=git://
     github.com/kergoth/tslib.git LIBFOO_SITE=/opt/software/
     libfoo.tar.gz LIBFOO_SITE=$(TOPDIR)/../src/libfoo/
+  * LIBFOO_EXTRA_DOWNLOADS lists a number of additional files that
+    Buildroot should download from LIBFOO_SITE in addition to the
+    main LIBFOO_SOURCE (which usually is a tarball). Buildroot will
+    not do anything with those additional files, except download
+    files: it will be up to the package recipe to use them from $
+    (DL_DIR).
   * LIBFOO_SITE_METHOD determines the method used to fetch or copy
     the package source code. In many cases, Buildroot guesses the
     method from the contents of LIBFOO_SITE and setting
@@ -2274,6 +2338,13 @@ information is (assuming the package name is libfoo) :
         Buildroot performs a checkout which is preserved as a tarball
         in the download cache; subsequent builds use the tarball
         instead of performing another checkout.
+      o cvs for retrieving source code from a CVS repository. Used by
+        default when LIBFOO_SITE begins with cvs://. The downloaded
+        source code is cached as with the svn method. Only anonymous
+        pserver mode is supported. LIBFOO_SITE must contain the
+        source URL as well as the remote repository directory. The
+        module is the package name. LIBFOO_VERSION is mandatory and 
+        must be a timestamp.
       o git for retrieving source code from a Git repository. Used by
         default when LIBFOO_SITE begins with git://. The downloaded
         source code is cached as with the svn method.
@@ -2315,22 +2386,22 @@ information is (assuming the package name is libfoo) :
   * LIBFOO_DEVICES lists the device files to be created by Buildroot
     when using the static device table. The syntax to use is the
     makedevs one. You can find some documentation for this syntax in
-    the Section 11.1, “Makedev syntax documentation”. This variable
+    the Section 12.1, “Makedev syntax documentation”. This variable
     is optional.
   * LIBFOO_PERMISSIONS lists the changes of permissions to be done at
     the end of the build process. The syntax is once again the
     makedevs one. You can find some documentation for this syntax in
-    the Section 11.1, “Makedev syntax documentation”. This variable
+    the Section 12.1, “Makedev syntax documentation”. This variable
     is optional.
   * LIBFOO_USERS lists the users to create for this package, if it
     installs a program you want to run as a specific user (eg. as a
     daemon, or as a cron-job). The syntax is similar in spirit to the
-    makedevs one, and is described in the Section 11.2, “Makeuser
+    makedevs one, and is described in the Section 12.2, “Makeuser
     syntax documentation”. This variable is optional.
   * LIBFOO_LICENSE defines the license (or licenses) under which the
     package is released. This name will appear in the manifest file
     produced by make legal-info. If the license appears in the
-    following list Section 7.2, “License abbreviations”, use the same
+    following list Section 8.2, “License abbreviations”, use the same
     string to make the manifest file uniform. Otherwise, describe the
     license in a precise and concise way, avoiding ambiguous names
     such as BSD which actually name a family of licenses. This
@@ -2339,7 +2410,7 @@ information is (assuming the package name is libfoo) :
   * LIBFOO_LICENSE_FILES is a space-separated list of files in the
     package tarball that contain the license(s) under which the
     package is released. make legal-info copies all of these files in
-    the legal-info directory. See Chapter 7, Legal notice and
+    the legal-info directory. See Chapter 8, Legal notice and
     licensing for more information. This variable is optional. If it
     is not defined, a warning will be produced to let you know, and
     not saved will appear in the license files field of the manifest
@@ -2423,46 +2494,12 @@ In the action definitions, you can use the following variables:
   * Of course the $(HOST_DIR), $(STAGING_DIR) and $(TARGET_DIR)
     variables to install the packages properly.
 
-The last feature of the generic infrastructure is the ability to add
-hooks. These define further actions to perform after existing steps.
-Most hooks aren’t really useful for generic packages, since the .mk
-file already has full control over the actions performed in each step
-of the package construction. The hooks are more useful for packages
-using the autotools infrastructure described below. However, since
-they are provided by the generic infrastructure, they are documented
-here. The exception is LIBFOO_POST_PATCH_HOOKS. Patching the package
-and producing legal info are not user definable, so
-LIBFOO_POST_PATCH_HOOKS and LIBFOO_POST_LEGAL_INFO_HOOKS are useful
-for generic packages.
+Finally, you can also use hooks. See Section 7.2.7, “Hooks available
+in the various build steps” for more information.
 
-The following hook points are available:
+7.2.5. Infrastructure for autotools-based packages
 
-  * LIBFOO_POST_DOWNLOAD_HOOKS
-  * LIBFOO_POST_EXTRACT_HOOKS
-  * LIBFOO_PRE_PATCH_HOOKS
-  * LIBFOO_POST_PATCH_HOOKS
-  * LIBFOO_PRE_CONFIGURE_HOOKS
-  * LIBFOO_POST_CONFIGURE_HOOKS
-  * LIBFOO_POST_BUILD_HOOKS
-  * LIBFOO_POST_INSTALL_HOOKS (for host packages only)
-  * LIBFOO_POST_INSTALL_STAGING_HOOKS (for target packages only)
-  * LIBFOO_POST_INSTALL_TARGET_HOOKS (for target packages only)
-  * LIBFOO_POST_LEGAL_INFO_HOOKS
-
-These variables are lists of variable names containing actions to be
-performed at this hook point. This allows several hooks to be
-registered at a given hook point. Here is an example:
-
-define LIBFOO_POST_PATCH_FIXUP
-        action1
-        action2
-endef
-
-LIBFOO_POST_PATCH_HOOKS += LIBFOO_POST_PATCH_FIXUP
-
-6.2.5. Infrastructure for autotools-based packages
-
-6.2.5.1. autotools-package tutorial
+7.2.5.1. autotools-package tutorial
 
 First, let’s see how to write a .mk file for an autotools-based
 package, with an example :
@@ -2485,9 +2522,9 @@ package, with an example :
 
 On line 7, we declare the version of the package.
 
-On line 8 and 9, we declare the name of the tarball and the location
-of the tarball on the Web. Buildroot will automatically download the
-tarball from this location.
+On line 8 and 9, we declare the name of the tarball (xz-ed tarball
+recommended) and the location of the tarball on the Web. Buildroot
+will automatically download the tarball from this location.
 
 On line 10, we tell Buildroot to install the package to the staging
 directory. The staging directory, located in output/staging/ is the
@@ -2519,7 +2556,7 @@ Finally, on line line 15, we invoke the autotools-package macro that
 generates all the Makefile rules that actually allows the package to
 be built.
 
-6.2.5.2. autotools-package reference
+7.2.5.2. autotools-package reference
 
 The main macro of the autotools package infrastructure is
 autotools-package. It is similar to the generic-package macro. The
@@ -2595,8 +2632,8 @@ well for most autotools-based packages. However, when required, it is
 still possible to customize what is done in any particular step:
 
   * By adding a post-operation hook (after extract, patch, configure,
-    build or install). See the reference documentation of the generic
-    infrastructure for details.
+    build or install). See Section 7.2.7, “Hooks available in the
+    various build steps” for details.
   * By overriding one of the steps. For example, even if the
     autotools infrastructure is used, if the package .mk file defines
     its own LIBFOO_CONFIGURE_CMDS variable, it will be used instead
@@ -2604,9 +2641,9 @@ still possible to customize what is done in any particular step:
     be restricted to very specific cases. Do not use it in the
     general case.
 
-6.2.6. Infrastructure for CMake-based packages
+7.2.6. Infrastructure for CMake-based packages
 
-6.2.6.1. cmake-package tutorial
+7.2.6.1. cmake-package tutorial
 
 First, let’s see how to write a .mk file for a CMake-based package,
 with an example :
@@ -2629,9 +2666,9 @@ with an example :
 
 On line 7, we declare the version of the package.
 
-On line 8 and 9, we declare the name of the tarball and the location
-of the tarball on the Web. Buildroot will automatically download the
-tarball from this location.
+On line 8 and 9, we declare the name of the tarball (xz-ed tarball
+recommended) and the location of the tarball on the Web. Buildroot
+will automatically download the tarball from this location.
 
 On line 10, we tell Buildroot to install the package to the staging
 directory. The staging directory, located in output/staging/ is the
@@ -2662,7 +2699,7 @@ Finally, on line line 15, we invoke the cmake-package macro that
 generates all the Makefile rules that actually allows the package to
 be built.
 
-6.2.6.2. cmake-package reference
+7.2.6.2. cmake-package reference
 
 The main macro of the CMake package infrastructure is cmake-package.
 It is similar to the generic-package macro. The ability to have
@@ -2723,8 +2760,8 @@ well for most CMake-based packages. However, when required, it is
 still possible to customize what is done in any particular step:
 
   * By adding a post-operation hook (after extract, patch, configure,
-    build or install). See the reference documentation of the generic
-    infrastructure for details.
+    build or install). See Section 7.2.7, “Hooks available in the
+    various build steps” for details.
   * By overriding one of the steps. For example, even if the CMake
     infrastructure is used, if the package .mk file defines its own
     LIBFOO_CONFIGURE_CMDS variable, it will be used instead of the
@@ -2732,7 +2769,62 @@ still possible to customize what is done in any particular step:
     restricted to very specific cases. Do not use it in the general
     case.
 
-6.2.7. Gettext integration and interaction with packages
+7.2.7. Hooks available in the various build steps
+
+The generic infrastructure (and as a result also the derived
+autotools and cmake infrastructures) allow packages to specify hooks.
+These define further actions to perform after existing steps. Most
+hooks aren’t really useful for generic packages, since the .mk file
+already has full control over the actions performed in each step of
+the package construction.
+
+The following hook points are available:
+
+  * LIBFOO_POST_DOWNLOAD_HOOKS
+  * LIBFOO_POST_EXTRACT_HOOKS
+  * LIBFOO_POST_RSYNC_HOOKS
+  * LIBFOO_PRE_PATCH_HOOKS
+  * LIBFOO_POST_PATCH_HOOKS
+  * LIBFOO_PRE_CONFIGURE_HOOKS
+  * LIBFOO_POST_CONFIGURE_HOOKS
+  * LIBFOO_POST_BUILD_HOOKS
+  * LIBFOO_POST_INSTALL_HOOKS (for host packages only)
+  * LIBFOO_POST_INSTALL_STAGING_HOOKS (for target packages only)
+  * LIBFOO_POST_INSTALL_TARGET_HOOKS (for target packages only)
+  * LIBFOO_POST_LEGAL_INFO_HOOKS
+
+These variables are lists of variable names containing actions to be
+performed at this hook point. This allows several hooks to be
+registered at a given hook point. Here is an example:
+
+define LIBFOO_POST_PATCH_FIXUP
+        action1
+        action2
+endef
+
+LIBFOO_POST_PATCH_HOOKS += LIBFOO_POST_PATCH_FIXUP
+
+7.2.7.1. Using the POST_RSYNC hook
+
+The POST_RSYNC hook is run only for packages that use a local source,
+either through the local site method or the OVERRIDE_SRCDIR
+mechanism. In this case, package sources are copied using rsync from
+the local location into the buildroot build directory. The rsync
+command does not copy all files from the source directory, though.
+Files belonging to a version control system, like the directories
+.git, .hg, etc. are not copied. For most packages this is sufficient,
+but a given package can perform additional actions using the
+POST_RSYNC hook.
+
+In principle, the hook can contain any command you want. One specific
+use case, though, is the intentional copying of the version control
+directory using rsync. The rsync command you use in the hook can,
+among others, use the following variables:
+
+  * $(SRCDIR): the path to the overridden source directory
+  * $(@D): the path to the build directory
+
+7.2.8. Gettext integration and interaction with packages
 
 Many packages that support internationalization use the gettext
 library. Dependencies for this library are fairly complicated and
@@ -2773,9 +2865,9 @@ rare) should:
   * use $(if $(BR2_NEEDS_GETTEXT),gettext) in the package
     DEPENDENCIES variable in the .mk file.
 
-6.2.8. Tips and tricks
+7.2.9. Tips and tricks
 
-6.2.8.1. Package name, config entry name and makefile variable
+7.2.9.1. Package name, config entry name and makefile variable
 relationship
 
 In Buildroot, there is some relationship between:
@@ -2798,25 +2890,26 @@ the following rules:
   * the *.mk file variable prefix is the upper case package name .
     and - characters substituted with _ (e.g.: FOO_BAR_BOO_VERSION).
 
-6.2.8.2. How to add a package from github
+7.2.9.2. How to add a package from github
 
 Packages on github often don’t have a download area with release
 tarballs. However, it is possible to download tarballs directly from
 the repository on github.
 
-FOO_VERSION = v1.0 # tag or (abbreviated) commit ID
+FOO_VERSION = v1.0 # tag or full commit ID
 FOO_SITE = http://github.com/<user>/<package>/tarball/$(FOO_VERSION)
 
 Notes
 
   * The FOO_VERSION can either be a tag or a commit ID.
   * The tarball name generated by github matches the default one from
-    Buildroot (e.g.: foo-1234567.tar.gz), so it is not necessary to
-    specify it in the .mk file.
-  * When using a commit ID as version, usually the first 7 characters
-    of the SHA1 are enough.
+    Buildroot (e.g.:
+    foo-f6fb6654af62045239caed5950bc6c7971965e60.tar.gz), so it is
+    not necessary to specify it in the .mk file.
+  * When using a commit ID as version, you should use the full 40 hex
+    characters.
 
-6.2.9. Conclusion
+7.2.10. Conclusion
 
 As you can see, adding a software package to Buildroot is simply a
 matter of writing a Makefile using an existing example and modifying
@@ -2824,10 +2917,10 @@ it according to the compilation process required by the package.
 
 If you package software that might be useful for other people, don’t
 forget to send a patch to the Buildroot mailing list (see
-Section 10.1, “Submitting patches”)!
+Section 11.1, “Submitting patches”)!
 
 
-6.3. Patching a package
+7.3. Patching a package
 
 --------------
 
@@ -2840,18 +2933,18 @@ during the builds. It supports three ways of applying patch sets:
 downloaded patches, patches supplied within buildroot and patches
 located in a user-defined global patch directory.
 
-6.3.1. Providing patches
+7.3.1. Providing patches
 
-6.3.1.1. Downloaded
+7.3.1.1. Downloaded
 
 If it is necessary to apply a patch that is available for download,
-then it to the <packagename>_PATCH variable. It is downloaded from
-the same site as the package itself. It can be a single patch, or a
-tarball containing a patch series.
+then add it to the <packagename>_PATCH variable. It is downloaded
+from the same site as the package itself. It can be a single patch,
+or a tarball containing a patch series.
 
 This method is typically used for packages from Debian.
 
-6.3.1.2. Within Buildroot
+7.3.1.2. Within Buildroot
 
 Most patches are provided within Buildroot, in the package directory;
 these typically aim to fix cross-compilation, libc support, or other
@@ -2871,13 +2964,13 @@ Notes
   * The field <number> in the patch file name refers to the apply
     order.
 
-6.3.1.3. Global patch directory
+7.3.1.3. Global patch directory
 
 The BR2_GLOBAL_PATCH_DIR configuration file option can be used to
 specify a directory containing global package patches. See
 Section 3.4.4, “Customizing packages” for details.
 
-6.3.2. How patches are applied
+7.3.2. How patches are applied
 
  1. Run the <packagename>_PRE_PATCH_HOOKS commands if defined;
  2. Cleanup the build directory, removing any existing *.rej files;
@@ -2898,7 +2991,7 @@ Section 3.4.4, “Customizing packages” for details.
 
 If something goes wrong in the steps 3 or 4, then the build fails.
 
-6.3.3. Format and licensing of the package patches
+7.3.3. Format and licensing of the package patches
 
 Patches are released under the same license as the software that is
 modified.
@@ -2921,7 +3014,7 @@ At the end, the patch should look like:
 
 configure.ac: add C++ support test
 
-signed-off-by John Doe <john.doe@noname.org>
+Signed-off-by: John Doe <john.doe@noname.org>
 
 --- configure.ac.orig
 +++ configure.ac
@@ -2939,7 +3032,7 @@ AC_PROG_MAKE_SET
 +
 +AM_CONDITIONAL([CXX_WORKS], [test "x$rw_cv_prog_cxx_works" = "xyes"])
 
-6.3.4. Integrating patches found on the Web
+7.3.4. Integrating patches found on the Web
 
 When integrating a patch of which you are not the author, you have to
 add a few things in the header of the patch itself.
@@ -2958,7 +3051,7 @@ It is also sensible to add a few words about any changes to the patch
 that may have been necessary.
 
 
-6.4. Download infrastructure
+7.4. Download infrastructure
 
 --------------
 
@@ -2967,12 +3060,12 @@ TODO
 
 ---------------------------------------------------------------------
 
-Chapter 7. Legal notice and licensing
+Chapter 8. Legal notice and licensing
 
 ---------------------------------------------------------------------
 
 
-7.1. Complying with open source licenses
+8.1. Complying with open source licenses
 
 --------------
 
@@ -3034,7 +3127,7 @@ make legal-info, Buildroot produces warnings in the README file to
 inform you of relevant material that could not be saved.
 
 
-7.2. License abbreviations
+8.2. License abbreviations
 
 --------------
 
@@ -3064,7 +3157,7 @@ in Buildroot, with the name used in the manifest file:
   * MIT: MIT-style license.
 
 
-7.3. Complying with the Buildroot license
+8.3. Complying with the Buildroot license
 
 --------------
 
@@ -3093,16 +3186,16 @@ doubt.
 
 ---------------------------------------------------------------------
 
-Chapter 8. Beyond Buildroot
+Chapter 9. Beyond Buildroot
 
 ---------------------------------------------------------------------
 
 
-8.1. Boot the generated images
+9.1. Boot the generated images
 
 --------------
 
-8.1.1. NFS boot
+9.1.1. NFS boot
 
 To achieve NFS-boot, enable tar root filesystem in the Filesystem
 images menu.
@@ -3117,7 +3210,7 @@ Remember to add this path to /etc/exports.
 Then, you can execute a NFS-boot from your target.
 
 
-8.2. Chroot
+9.2. Chroot
 
 --------------
 
@@ -3135,7 +3228,7 @@ you should be aware of:
 
 ---------------------------------------------------------------------
 
-Chapter 9. Getting involved
+Chapter 10. Getting involved
 
 ---------------------------------------------------------------------
 
@@ -3148,14 +3241,14 @@ Each of those ways may interest you if you are looking for some help,
 want to understand Buildroot or contribute to the project.
 
 
-9.1. Mailing List
+10.1. Mailing List
 
 --------------
 
 Buildroot has a mailing list http://lists.busybox.net/pipermail/
 buildroot for discussion and development.
 
-9.1.1. Subscribing to the mailing list
+10.1.1. Subscribing to the mailing list
 
 You can subscribe by visiting http://lists.busybox.net/mailman/
 listinfo/buildroot. Only subscribers to the Buildroot mailing list
@@ -3165,7 +3258,7 @@ The list is also available through Gmane http://gmane.org, at
 gmane.comp.lib.uclibc.buildroot http://dir.gmane.org/
 gmane.comp.lib.uclibc.buildroot.
 
-9.1.2. Searching the List Archives
+10.1.2. Searching the List Archives
 
 Please search the mailing list archives before asking questions on
 the mailing list, since there is a good chance someone else has asked
@@ -3173,7 +3266,7 @@ the same question before. Checking the archives is a great way to
 avoid annoying everyone on the list with frequently asked questions…
 
 
-9.2. IRC
+10.2. IRC
 
 --------------
 
@@ -3184,27 +3277,55 @@ When asking for help on IRC, share relevant logs or pieces of code
 using a code sharing website.
 
 
-9.3. Patchwork
+10.3. Patchwork
 
 --------------
 
-The Buildroot patch management interface is at http://
+Patchwork is a web-based patch tracking system designed to facilitate
+the contribution and management of contributions to an open-source
+project. Patches that have been sent to a mailing list are 'caught'
+by the system, and appear on a web page. Any comments posted that
+reference the patch are appended to the patch page too. For more
+information on Patchwork see http://jk.ozlabs.org/projects/patchwork.
+
+Buildroot’s Patchwork website is mainly for use by Buildroot’s
+maintainer to ensure patches aren’t missed. The website however,
+exposes patches and their corresponding review comments in a clean
+and concise web interface.
+
+The Buildroot patch management interface is available at http://
 patchwork.buildroot.org.
 
-All patches and comments sent through the mailing list are
-automatically indexed in patchwork.
+10.3.1. Applying Patches from Patchwork
+
+The main use of Buildroot’s Patchwork website for a developer is for
+pulling in patches into their local git repository for testing
+purposes.
+
+When browsing patches in the patchwork management interface, an mbox
+link is provided at the top of the page. Copy this link address and
+run the following commands:
+
+$ git checkout -b <test-branch-name>
+$ wget -O - <mbox-url> | git am
+
+Another option for applying patches is to create a bundle. A bundle
+is a set of patches that you can group together using the patchwork
+interface. Once the bundle is created and the bundle is made public,
+you can copy the mbox link for the bundle and apply the bundle using
+the above commands.
 
 
-9.4. Bugtracker
+10.4. Bugtracker
 
 --------------
 
 The Buildroot bugtracker is at https://bugs.busybox.net.
 
-To open a bug, see Section 10.4, “Reporting issues/bugs, get help”.
+To open a bug, see Section 11.4, “Reporting issues/bugs, get help”.
 
 
-9.5. Buildroot wikipage
+10.5. Buildroot wikipage
 
 --------------
 
@@ -3216,22 +3337,23 @@ This page is reachable at http://elinux.org/Buildroot.
 Currently, this page is mainly used as a todo-list.
 
 
-9.6. Events
+10.6. Events
 
 --------------
 
-9.6.1. Buildroot Developer Days aside ELC-E 2012 (November 3-4, 2012
+10.6.1. Buildroot Developer Days aside ELC-E 2012 (November 3-4, 2012
 - Barcelona)
 
   * Event page: http://elinux.org/Buildroot:DeveloperDaysELCE2012
 
-9.6.2. Buildroot presentation at LSM 2012 (July 12-14, 2012 - Geneva)
+10.6.2. Buildroot presentation at LSM 2012 (July 12-14, 2012 -
+Geneva)
 
   * Announcement: http://lists.busybox.net/pipermail/buildroot/
     2012-May/053845.html
 
-9.6.3. Buildroot Developer Days aside FOSDEM 2012 (February 3, 2012 -
-Brussels)
+10.6.3. Buildroot Developer Days aside FOSDEM 2012 (February 3, 2012
+- Brussels)
 
   * Announcement & agenda thread: http://lists.busybox.net/pipermail/
     buildroot/2012-January/049340.html
@@ -3241,7 +3363,7 @@ Brussels)
 
 ---------------------------------------------------------------------
 
-Chapter 10. Contributing to Buildroot
+Chapter 11. Contributing to Buildroot
 
 ---------------------------------------------------------------------
 
@@ -3249,19 +3371,19 @@ If you want to contribute to Buildroot, you will need a git view of
 the project. Refer to Section 2.2, “Getting Buildroot” to get it.
 
 Currently, the mailing list is the central place for contribution. If
-you have not already subscribed to it, then refer to Section 9.1.1,
+you have not already subscribed to it, then refer to Section 10.1.1,
 “Subscribing to the mailing list”.
 
 Recently, a web interface is also used to manage patches sent to the
-mailing list, see Section 9.3, “Patchwork”.
+mailing list, see Section 10.3, “Patchwork”.
 
 Note
 
 Please, do not attach patches to bugs, send them to the mailing list
-instead (see Section 10.1, “Submitting patches”).
+instead (see Section 11.1, “Submitting patches”).
 
 
-10.1. Submitting patches
+11.1. Submitting patches
 
 --------------
 
@@ -3279,7 +3401,7 @@ To generate it, run:
 $ git format-patch -M -n -s -o outgoing origin/master
 
 This will generate patch files in the outgoing subdirectory,
-automatically adding the signed-off-by line.
+automatically adding the Signed-off-by line.
 
 Once patch files are generated, you can review/edit the commit
 message before submitting them using your favorite text editor.
@@ -3295,7 +3417,7 @@ Make sure posted patches are not line-wrapped, otherwise they cannot
 easily be applied. In such a case, fix your e-mail client, or better,
 use git send-email to send your patches.
 
-10.1.1. Cover letter
+11.1.1. Cover letter
 
 If you want to present the whole patch set in a separate mail, add
 --cover-letter to the git format-patch command (see man
@@ -3311,7 +3433,7 @@ the following cases:
   * whenever you feel it will help presenting your work, your
     choices, the review process, etc.
 
-10.1.2. Patch revision changelog
+11.1.2. Patch revision changelog
 
 When improvements are requested, the new revision of each commit
 should include a changelog of the modifications between each
@@ -3337,7 +3459,7 @@ Some more paragraph giving some more details.
 
 And yet another paragraph giving more details.
 
-Signed-off-by John Doe <john.doe@noname.org>
+Signed-off-by: John Doe <john.doe@noname.org>
 ---
 Changes v2 -> v3:
   - foo bar  (suggested by Jane)
@@ -3358,13 +3480,20 @@ $ git format-patch --subject-prefix "PATCH v4" \
     -M -o outgoing origin/master
 
 
-10.2. Reviewing/Testing patches
+11.2. Reviewing/Testing patches
 
 --------------
 
+The review process for new patches is done over the mailing list.
+Once a patch is submitted to the mailing list, other developers will
+provide feedback to the patch via emails sent through the mailing
+list.
+
 In the review process, do not hesitate to respond to patch
 submissions for remarks, suggestions or anything that will help
-everyone to understand the patches and make them better.
+everyone to understand the patches and make them better. Please use
+internet style replies in plain text emails when responding to patch
+submissions.
 
 Some tags are used to help following the state of any patch posted on
 the mailing-list:
@@ -3375,8 +3504,13 @@ Tested-by
     Indicates that the patch has been tested. It is useful but not
     necessary to add a comment about what has been tested.
 
+Buildroot’s Patchwork website can be used to pull in patches for
+testing purposes. Please see Section 10.3.1, “Applying Patches from
+Patchwork” for more information on using Buildroot’s Patchwork
+website to apply patches.
 
-10.3. Autobuild
+
+11.3. Autobuild
 
 --------------
 
@@ -3392,17 +3526,17 @@ to the build result directory (the dir link in the data column):
 Fixes http://autobuild.buildroot.org/results/51000a9d4656afe9e0ea6f07b9f8ed374c2e4069
 
 
-10.4. Reporting issues/bugs, get help
+11.4. Reporting issues/bugs, get help
 
 --------------
 
 Before reporting any issue, please check the mailing list archive
-Section 9.1.1, “Subscribing to the mailing list” in case someone has
+Section 10.1.1, “Subscribing to the mailing list” in case someone has
 already reported and fixed a similar problem.
 
 However you choose to report bugs or get help, opening a bug
-Section 9.4, “Bugtracker” or send a mail to the mailing list
-Section 9.1.1, “Subscribing to the mailing list”, there are a number
+Section 10.4, “Bugtracker” or send a mail to the mailing list
+Section 10.1.1, “Subscribing to the mailing list”, there are a number
 of details to provide in order to help people reproduce and find a
 solution to the issue.
 
@@ -3432,12 +3566,12 @@ alternatives-to/pastebin.com).
 
 ---------------------------------------------------------------------
 
-Chapter 11. Appendix
+Chapter 12. Appendix
 
 ---------------------------------------------------------------------
 
 
-11.1. Makedev syntax documentation
+12.1. Makedev syntax documentation
 
 --------------
 
@@ -3488,7 +3622,7 @@ hda, /dev/hdaX, X ranging from 1 to 15:
 /dev/hda        b       640     0       0       3       1       1       1       15
 
 
-11.2. Makeuser syntax documentation
+12.2. Makeuser syntax documentation
 
 --------------
 
@@ -3574,19 +3708,19 @@ This will create this user:
   * comment is: Test user
 
 
-11.3. Package Selection for the target
+12.3. List of target packages available in Buildroot
 
 --------------
 
 
-11.4. Host utilities
+12.4. List of host utilities available in Buildroot
 
 --------------
 
 The following packages are all available in the menu Host utilities.
 
 
-11.5. Deprecated features
+12.5. Deprecated features
 
 --------------
 

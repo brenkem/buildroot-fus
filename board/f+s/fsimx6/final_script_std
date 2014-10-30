@@ -13,3 +13,4 @@ ${CP} ./${COMMON}/.xinitrc ./system/skeleton/root/
 # Call common F+S setup for standard configuration
 sh ./${COMMON}/final_script_std ${TARGET} ${BOARD}
 ${CP} ${BOARD}/inittab ${TARGET}/etc
+#${CP} ${COMMON}/etc/inittab ${TARGET}/etc

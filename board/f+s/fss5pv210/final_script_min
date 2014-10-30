@@ -10,3 +10,6 @@ tput rmso
 
 # Call common F+S setup for minimal configuration
 sh ./${COMMON}/final_script_min ${TARGET} ${BOARD}
+
+# Copy specific inittab to target
+cp ${BOARD}/inittab ${TARGET}/etc

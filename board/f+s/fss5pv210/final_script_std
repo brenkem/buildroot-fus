@@ -11,5 +11,8 @@ tput rmso
 # Call common F+S setup for standard configuration
 sh ./${COMMON}/final_script_std ${TARGET} ${BOARD}
 
+# Copy specific inittab to target
+cp ${BOARD}/inittab ${TARGET}/etc
+
 # Call common F+S setup for HDMI configuration
 sh ./${COMMON}/final_script_hdmi ${TARGET} ${BOARD}

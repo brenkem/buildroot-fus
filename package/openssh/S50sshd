@@ -24,7 +24,6 @@ fi
 if [ ! -f /etc/ssh_host_dsa_key ] && touch /etc/ssh_host_dsa_key 2>/dev/null; then
 	/bin/rm /etc/ssh_host_dsa_key
 	echo Generating DSA Key...
-	echo THIS CAN TAKE A MINUTE OR TWO DEPENDING ON YOUR PROCESSOR!
 	echo
 	/usr/bin/ssh-keygen -t dsa -f /etc/ssh_host_dsa_key -C '' -N ''
 fi
@@ -33,9 +32,15 @@ fi
 if [ ! -f /etc/ssh_host_ecdsa_key ] && touch /etc/ssh_host_ecdsa_key 2>/dev/null; then
 	/bin/rm /etc/ssh_host_ecdsa_key
 	echo Generating ECDSA Key...
-	echo THIS CAN TAKE A MINUTE OR TWO DEPENDING ON YOUR PROCESSOR!
 	echo
 	/usr/bin/ssh-keygen -t ecdsa -f /etc/ssh_host_ecdsa_key -C '' -N ''
+fi
+
+# Check for the ed25519 key
+if [ ! -f /etc/ssh_host_ed25519_key ]; then
+	echo Generating ed25519 Key...
+	echo
+	/usr/bin/ssh-keygen -t ed25519 -f /etc/ssh_host_ed25519_key -C '' -N ''
 fi
 
 umask 077

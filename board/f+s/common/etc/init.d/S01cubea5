@@ -43,11 +43,18 @@ if [ ${dostart} -ne 0 ] ; then
     # Remove update.scr or it will be triggered again on next boot
     /bin/rm -f /data/update.scr
 
+    # Set the login_tty
     if [ -e /sys/bdinfo/login_tty ] ; then
 	con=$(cat /sys/bdinfo/login_tty)
 	ln -s /dev/${con} ${login_tty}
     fi
-    echo 0 > /sys/class/leds/yellow/brightness
-    echo 255 > /sys/class/leds/green/brightness
+
+    # Switch status LED to green
+    if [ -e /sys/class/leds/yellow/brightness ] ; then
+	echo 0 > /sys/class/leds/yellow/brightness
+    fi
+    if [ -e /sys/class/leds/green/brightness ] ; then
+	echo 255 > /sys/class/leds/green/brightness
+    fi
     echo "CUBEA5 environment started"
 fi

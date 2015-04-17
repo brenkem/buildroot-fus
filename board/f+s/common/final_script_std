@@ -21,6 +21,9 @@ ${CP} ${COMMON}/etc/init.d/S01fssetup ${TARGET}/etc/init.d
 mkdir -p ${TARGET}/etc/profile.d
 ${CP} ${COMMON}/etc/profile.d/tslib.sh ${TARGET}/etc/profile.d
 
+# Copy the F&S aliases file
+${CP} ${COMMON}/etc/profile.d/fsalias.sh ${TARGET}/etc/profile.d
+
 # Copy the x11 start script and configuration files
 if grep ^BR2_PACKAGE_XSERVER_XORG_SERVER=y $BR2_CONFIG > /dev/null; then
     # Copy xorg.conf to use /dev/input/event[01]

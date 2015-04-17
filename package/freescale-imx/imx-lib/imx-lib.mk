@@ -14,9 +14,9 @@ IMX_LIB_INSTALL_STAGING = YES
 # imx-lib needs access to imx-specific kernel headers
 IMX_LIB_DEPENDENCIES += linux
 IMX_LIB_INCLUDE = \
-	-I$(LINUX_SDIR)/drivers/mxc/security/rng/include \
-	-I$(LINUX_SDIR)/drivers/mxc/security/sahara2/include \
-	-idirafter $(LINUX_SDIR)/include
+	-I$(LINUX_DIR)/drivers/mxc/security/rng/include \
+	-I$(LINUX_DIR)/drivers/mxc/security/sahara2/include \
+	-idirafter $(LINUX_DIR)/include
 
 IMX_LIB_MAKE_ENV = \
 	$(TARGET_MAKE_ENV) \

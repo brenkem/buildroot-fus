@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Check if source is actually a directory
+[ -d "$1" ] || exit 1
+
+# Determine the link type by trying to hardlink the Makefile
+[ -f "$1/Makefile" ] || exit 1
+if ln -f "$1/Makefile" "$2" 2>/dev/null ; then
+    link_type=-l
+else
+    link_type=-s
+fi
+
+# We also need the hidden files, but omit .git
+topfiles=$(/bin/ls -A -I .git "$1/")
+for i in $topfiles ; do
+    cp -r $link_type "$1/$i" "$2" || exit 1
+done

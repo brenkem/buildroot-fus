@@ -1,4 +1,4 @@
-menu "Package Selection for the target"
+menu "Target packages"
 
 source "package/busybox/Config.in"
 
@@ -97,7 +97,6 @@ source "package/flex/Config.in"
 if BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
 source "package/gawk/Config.in"
 endif
-#source "toolchain/gcc/Config.in.2"
 source "package/gettext/Config.in"
 source "package/git/Config.in"
 source "package/gperf/Config.in"
@@ -568,6 +567,7 @@ endmenu
 
 menu "Hardware handling"
 source "package/ccid/Config.in"
+source "package/dtc/Config.in"
 source "package/lcdapi/Config.in"
 source "package/libaio/Config.in"
 source "package/libatasmart/Config.in"

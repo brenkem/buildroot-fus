@@ -14,7 +14,7 @@ LINUX_TARBALL = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION))
 LINUX_SITE = $(patsubst %/,%,$(dir $(LINUX_TARBALL)))
 LINUX_SOURCE = $(notdir $(LINUX_TARBALL))
 else ifeq ($(LINUX_VERSION),localdir)
-# F&S extension: do not download, extract or patch anything
+# F&S extension: do not download anything
 LINUX_SOURCE =
 else ifeq ($(BR2_LINUX_KERNEL_CUSTOM_LOCAL),y)
 LINUX_SITE = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_LOCAL_PATH))

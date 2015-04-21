@@ -1,6 +1,32 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2014.02-fsimx6-V2.0 (21.04.2015)
+------------------------------------------
+Supported Boards: armStoneA9, QBlissA9, PicoMODA9, efusA9
+Not tested:       armStoneA5, armStoneA8, NetDCUA5, NetDCU14, PicoMOD7A,
+                  PicoCOMA5, PicoCOM4, CUBEA5, AGATEWAY, HGATEWAY, 
+
+- Rebase to buildroot-2013.05
+- Join GIT trees from fsimx6 buildroot with multiplatform buildroot
+- Switch to current directfb version (was 1.2.0 for a while)
+- Make fsimx6 version match the behavior of other F&S platforms
+- Rebase to buildroot-2013.08
+- Make fsimx6 version use localdir variant for kernel compilation
+- Rebase to buildroot-2013.11
+- Rebase to buildroot-2014.02
+- Add support for customer specific board HGATEWAY
+- Use tty_login for fsimx6
+- Use regular inittab file from board/f+s/common on fsimx6
+- Switch to busybox-1.22
+- Add useful aliases for interactive shells in /etc/profile.d/fsalias.sh
+- Remove .xinitrc for fsimx6, it was restricted to blackbox WM
+- Change Linux kernel compilation procedure for localdir
+- Add fsimx6_min_defconfig and fsimx6_std_defconfig for all fsimx6 platforms
+- Remove board-specific defconfigs for fsimx6 platforms
+- Remove librid patches for libfslcodec/libfslparser or aiurparser won't work
+- Reduce the differences to mainline buildroot as much as possible
+
 
 buildroot-2013.02-fsvybrid-V2.1 (22.08.2014)
 --------------------------------------------

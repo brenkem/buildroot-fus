@@ -25,8 +25,9 @@ ${CP} ${COMMON}/etc/inittab-${platform} ${TARGET}/etc/inittab
 # Copy the enhanced mdev configuration file
 ${CP} ${COMMON}/etc/mdev.conf ${TARGET}/etc
 
-# Copy the CUBEA5 specific start script
+# Copy the CUBEA5 specific start scripts
 ${CP} ${COMMON}/etc/init.d/S01${platform} ${TARGET}/etc/init.d
+${CP} ${COMMON}/etc/init.d/S02leds ${TARGET}/etc/init.d
 
 # Copy the kernel
 #mkdir -p ${TARGET}/boot

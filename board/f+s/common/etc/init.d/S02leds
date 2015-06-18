@@ -1,0 +1,59 @@
+#!/bin/sh
+# Set status LED
+
+dostart=0
+dostop=0
+
+# $1: name, $2: brightness
+set_led()
+{
+    if [ -e /sys/class/leds/$1/brightness ] ; then
+	echo $2 > /sys/class/leds/$1/brightness
+    fi
+}
+
+case "$1" in
+    start)
+	dostart=1
+	;;
+    stop)
+	dostop=1
+	;;
+    restart|reload)
+	dostop=1
+	dostart=1
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|restart}"
+esac
+
+board_name=unknown
+if [ -e /sys/bdinfo/board_name ] ; then
+    board_name=`cat /sys/bdinfo/board_name`
+fi
+
+if [ ${dostop} -ne 0 ] ; then
+    # Switch status LEDs off
+    if [ $board_name = "HGATEWAY" ] ; then
+	set_led rgb-r 0
+	set_led rgb-g 0
+	set_led rgb-b 0
+    else
+	set_led yellow 0
+	set_led green 0
+    fi
+fi
+
+if [ ${dostart} -ne 0 ] ; then
+    # Switch status LEDs to green
+    if [ $board_name = "HGATEWAY" ] ; then
+	set_led rgb-r  0
+	set_led rgb-g  100
+	set_led rgb-b  0
+	set_led green  0
+	set_led yellow  0
+    else
+	set_led yellow  0
+	set_led green  255
+    fi
+fi

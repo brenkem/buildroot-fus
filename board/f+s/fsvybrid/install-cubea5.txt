@@ -1,6 +1,6 @@
 echo "---- Starting installation ----"
 # Define preboot command to blink LED
-setenv preboot led 0 off\; led 1 blink
+setenv preboot led 0 blink\; led 1 off
 run preboot
 # Define UBI partition
 ubi part TargetFS

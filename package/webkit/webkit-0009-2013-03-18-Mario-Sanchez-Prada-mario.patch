@@ -1,0 +1,83 @@
+From daf943559ac9521aa74d2a7f9636c19a73cd1243 Mon Sep 17 00:00:00 2001
+From: Mario Sanchez Prada <mario.prada@samsung.com>
+Date: Mon, 18 Mar 2013 18:29:32 +0000
+Subject: [PATCH] 2013-03-18  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Wrong guard USE(GLX) in RedirectedXCompositeWindow
+        https://bugs.webkit.org/show_bug.cgi?id=112600
+
+        Reviewed by NOBODY (OOPS!).
+
+        Replace USE(GLX) condition with USE(OPENGL) && PLATFORM(X11).
+
+        * platform/gtk/RedirectedXCompositeWindow.cpp: Updated guard.
+        * platform/gtk/RedirectedXCompositeWindow.h: Ditto.
+---
+ Source/WebCore/ChangeLog                                   |   12 ++++++++++++
+ Source/WebCore/platform/gtk/RedirectedXCompositeWindow.cpp |    4 ++--
+ Source/WebCore/platform/gtk/RedirectedXCompositeWindow.h   |    4 ++--
+ 3 files changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/Source/WebCore/ChangeLog b/Source/WebCore/ChangeLog
+index 9157c4e..dfc31c1 100644
+--- a/Source/WebCore/ChangeLog
++++ b/Source/WebCore/ChangeLog
+@@ -1,3 +1,15 @@
++2013-03-18  Mario Sanchez Prada  <mario.prada@samsung.com>
++
++        [GTK] Wrong guard USE(GLX) in RedirectedXCompositeWindow
++        https://bugs.webkit.org/show_bug.cgi?id=112600
++
++        Reviewed by NOBODY (OOPS!).
++
++        Replace USE(GLX) condition with USE(OPENGL) && PLATFORM(X11).
++
++        * platform/gtk/RedirectedXCompositeWindow.cpp: Updated guard.
++        * platform/gtk/RedirectedXCompositeWindow.h: Ditto.
++
+ 2013-02-05  Praveen Jadhav  <praveen.j@samsung.com>
+
+        Floating point precision error in AudioPannerNode.
+diff --git a/Source/WebCore/platform/gtk/RedirectedXCompositeWindow.cpp b/Source/WebCore/platform/gtk/RedirectedXCompositeWindow.cpp
+index a45258f..c8e81e4 100644
+--- a/Source/WebCore/platform/gtk/RedirectedXCompositeWindow.cpp
++++ b/Source/WebCore/platform/gtk/RedirectedXCompositeWindow.cpp
+@@ -27,7 +27,7 @@
+ #include "config.h"
+ #include "RedirectedXCompositeWindow.h"
+ 
+-#if USE(GLX)
++#if USE(OPENGL) && PLATFORM(X11)
+ 
+ #include <X11/extensions/Xcomposite.h>
+ #include <X11/extensions/Xdamage.h>
+@@ -267,4 +267,4 @@ void RedirectedXCompositeWindow::callDamageNotifyCallback()
+ 
+ } // namespace WebCore
+ 
+-#endif // USE(GLX)
++#endif // USE(OPENGL) && PLATFORM(X11)
+diff --git a/Source/WebCore/platform/gtk/RedirectedXCompositeWindow.h b/Source/WebCore/platform/gtk/RedirectedXCompositeWindow.h
+index ff2a48b..0d47326 100644
+--- a/Source/WebCore/platform/gtk/RedirectedXCompositeWindow.h
++++ b/Source/WebCore/platform/gtk/RedirectedXCompositeWindow.h
+@@ -27,7 +27,7 @@
+ #ifndef  RedirectedXCompositeWindow_h
+ #define  RedirectedXCompositeWindow_h
+ 
+-#if USE(GLX)
++#if USE(OPENGL) && PLATFORM(X11)
+ 
+ #include "GLContext.h"
+ #include "IntSize.h"
+@@ -80,6 +80,6 @@ private:
+ 
+ } // namespace WebCore
+ 
+-#endif // USE(GLX)
++#endif // USE(OPENGL) && PLATFORM(X11)
+ 
+ #endif // RedirectedXCompositeWindow_h
+-- 
+1.7.10.4
+

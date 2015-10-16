@@ -13,6 +13,7 @@ ifeq ($(BR2_LINUX_KERNEL_CUSTOM_TARBALL),y)
 LINUX_TARBALL = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION))
 LINUX_SITE = $(patsubst %/,%,$(dir $(LINUX_TARBALL)))
 LINUX_SOURCE = $(notdir $(LINUX_TARBALL))
+BR_NO_CHECK_HASH_FOR += $(LINUX_SOURCE)
 else ifeq ($(LINUX_VERSION),localdir)
 # F&S extension: do not download anything
 LINUX_SOURCE =
@@ -175,7 +176,7 @@ define LINUX_APPLY_LOCAL_PATCHES
 	done
 endef
 
-LINUX_POST_PATCH_HOOKS += LINUX_APPLY_PATCHES
+LINUX_POST_PATCH_HOOKS += LINUX_APPLY_LOCAL_PATCHES
 
 # When compiling from the local directory, we copy the local directory
 # to $(LINUX_DIR), but we will use hard links if possible, soft links

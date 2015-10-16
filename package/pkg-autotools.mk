@@ -200,9 +200,8 @@ define $(2)_CONFIGURE_CMDS
 		--with-xmlto=no \
 		--with-fop=no \
 		--disable-dependency-tracking \
+		--enable-ipv6 \
 		$$(DISABLE_NLS) \
-		$$(DISABLE_LARGEFILE) \
-		$$(DISABLE_IPV6) \
 		$$(ENABLE_DEBUG) \
 		$$(SHARED_STATIC_LIBS_OPTS) \
 		$$(QUIET) $$($$(PKG)_CONF_OPTS) \
@@ -315,17 +314,17 @@ endif
 #
 ifndef $(2)_INSTALL_STAGING_CMDS
 define $(2)_INSTALL_STAGING_CMDS
-        $$(TARGET_MAKE_ENV) $$($$(PKG)_MAKE_ENV) $$($$(PKG)_MAKE) $$($$(PKG)_INSTALL_STAGING_OPTS) -C $$($$(PKG)_SRCDIR)
-        find $$(STAGING_DIR)/usr/lib* -name "*.la" | xargs --no-run-if-empty \
-                $$(SED) "s:$$(BASE_DIR):@BASE_DIR@:g" \
-                        -e "s:$$(STAGING_DIR):@STAGING_DIR@:g" \
-                        $$(if $$(TOOLCHAIN_EXTERNAL_INSTALL_DIR),\
-                                -e "s:$$(TOOLCHAIN_EXTERNAL_INSTALL_DIR):@TOOLCHAIN_EXTERNAL_INSTALL_DIR@:g") \
-                        -e "s:\(['= ]\)/usr:\\1@STAGING_DIR@/usr:g" \
-                        $$(if $$(TOOLCHAIN_EXTERNAL_INSTALL_DIR),\
-                                -e "s:@TOOLCHAIN_EXTERNAL_INSTALL_DIR@:$$(TOOLCHAIN_EXTERNAL_INSTALL_DIR):g") \
-                        -e "s:@STAGING_DIR@:$$(STAGING_DIR):g" \
-                        -e "s:@BASE_DIR@:$$(BASE_DIR):g"
+	$$(TARGET_MAKE_ENV) $$($$(PKG)_MAKE_ENV) $$($$(PKG)_MAKE) $$($$(PKG)_INSTALL_STAGING_OPTS) -C $$($$(PKG)_SRCDIR)
+	find $$(STAGING_DIR)/usr/lib* -name "*.la" | xargs --no-run-if-empty \
+		$$(SED) "s:$$(BASE_DIR):@BASE_DIR@:g" \
+			-e "s:$$(STAGING_DIR):@STAGING_DIR@:g" \
+			$$(if $$(TOOLCHAIN_EXTERNAL_INSTALL_DIR),\
+				-e "s:$$(TOOLCHAIN_EXTERNAL_INSTALL_DIR):@TOOLCHAIN_EXTERNAL_INSTALL_DIR@:g") \
+			-e "s:\(['= ]\)/usr:\\1@STAGING_DIR@/usr:g" \
+			$$(if $$(TOOLCHAIN_EXTERNAL_INSTALL_DIR),\
+				-e "s:@TOOLCHAIN_EXTERNAL_INSTALL_DIR@:$$(TOOLCHAIN_EXTERNAL_INSTALL_DIR):g") \
+			-e "s:@STAGING_DIR@:$$(STAGING_DIR):g" \
+			-e "s:@BASE_DIR@:$$(BASE_DIR):g"
 endef
 endif
 

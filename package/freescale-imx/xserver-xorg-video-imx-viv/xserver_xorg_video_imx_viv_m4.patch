@@ -1,5 +1,0 @@
-diff -Naur A/EXA/m4/dummy B/EXA/m4/dummy
---- A/EXA/m4/dummy	1970-01-01 01:00:00.000000000 +0100
-+++ B/EXA/m4/dummy	2014-10-29 12:52:25.926430091 +0100
-@@ -0,0 +1 @@
-+dummy

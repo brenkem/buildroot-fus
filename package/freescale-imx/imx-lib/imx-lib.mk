@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_LIB_VERSION = 3.10.53-1.1.0 
+IMX_LIB_VERSION = $(FREESCALE_IMX_VERSION)
 IMX_LIB_SITE = $(FREESCALE_IMX_SITE)
 IMX_LIB_LICENSE = LGPLv2.1+
 IMX_LIB_LICENSE_FILES = EULA

@@ -23,10 +23,12 @@ null::sysinit:/bin/hostname -F /etc/hostname
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS
 
-# Put a getty on the login_tty. /etc/init.d/S01fssetup creates this as a
-# symbolic link to the device given in /sys/bdinfo/login_tty, usually the
-# serial port; we also set the speed that is given in /sys/bdinfo/login_speed
-login_tty::respawn:/sbin/getty -L login_tty $(/bin/cat /sys/bdinfo/login_speed) vt100
+# Put a getty on the login_tty with speed /tmp/login_speed. These
+# values are created by /etc/init.d/S01fssetup, usually by setting a
+# symbolic link to the device given in /sys/bdinfo/login_tty and by
+# copying of the speed given in /sys/bdinfo/login_speed.
+
+login_tty::respawn:/sbin/getty -L login_tty $(/bin/cat /tmp/login_speed) vt100
 
 # Stuff to do for the 3-finger salute
 ::ctrlaltdel:/sbin/reboot

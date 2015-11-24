@@ -1,0 +1,11 @@
+# Handle touchscreen input devices with tslib
+#
+# If you want to use this tslib version, you should rename the file to
+# 10-tslib.conf and rename the file 10-evdev.conf to 10-evdev.conf.off
+
+Section "InputClass"
+    Identifier "touch with tslib"
+    Driver "tslib"
+    MatchIsTouchscreen "on"
+    MatchDevicePath "/dev/input/event*"
+EndSection

@@ -1,6 +1,40 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2015.08.1-fsimx6ul-V1.0 (25.11.2015)
+----------------------------------------------
+Supported Boards: efusA7UL
+
+- Fix download site for xdriver_xf86-input-tslib
+- Fix tslib crash on xserver 1.12 or newer with unknown xf86XInputSetScreen
+- Fix libtool .la file modification style
+- Rebase to buildroot-2014.05
+- Rebase to buildroot-2014.08
+- Fix rename mismatch for package procps
+- Rebase to buildroot-2015.02
+- Backport alsa-utils from buildroot-2015.05
+- Fix *OPT to *OPTS renaming issues in xdriver and pkg-autotools
+- Rebase to buildroot-2015.05
+- Rebase to buildroot-2015.08.1
+- Fix xkeyboardconfig and gcc versions in F&S defconfigs
+- Remove freescale-imx/xserver-xorg-video-imx-viv package, use regular version
+  from x11r7/xdriver_xf86-video-imx*
+- Remove now unused package multimedia (gst-fsl-plugins are now in gstreamer)
+- Replace i.MX6 graphic stuff for 3.10.53 with newest version for 3.14.38:
+  firmware-imx, imx-gpu-viv, imx-kobs, imx-lib, imx-vpu, gst-fsl-plugins,
+  libfslcodec, libfslparser, libfslvpuwrap, xdriver_xf86-video-imx-viv
+- Fix issues that prevent compiling (cairo, imx-lib, etc.)
+- Fix version conflict for gettext in package xkeyboard-config
+- Check if /etc is writable before computing openssh keys
+- Improve login_tty settings in S01fssetup for F&S boards
+- Fix defconfig problems when building Linux kernel
+- Update F&S defconfig for busybox to 1.23.x
+- Fix ARM NEON handling in libpng
+- Add fsimx6ul_min_defconfig and fsimx6ul_std_defconfig (for efusA7UL)
+- Switch touch support from tslib to evdev, tslib remains as option
+
+
+
 buildroot-2014.02-fsimx6-V2.0 (21.04.2015)
 ------------------------------------------
 Supported Boards: armStoneA9, QBlissA9, PicoMODA9, efusA9
@@ -26,6 +60,7 @@ Not tested:       armStoneA5, armStoneA8, NetDCUA5, NetDCU14, PicoMOD7A,
 - Remove board-specific defconfigs for fsimx6 platforms
 - Remove librid patches for libfslcodec/libfslparser or aiurparser won't work
 - Reduce the differences to mainline buildroot as much as possible
+
 
 
 buildroot-2013.02-fsvybrid-V2.1 (22.08.2014)

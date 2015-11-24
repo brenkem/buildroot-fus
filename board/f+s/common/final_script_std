@@ -3,6 +3,8 @@
 TARGET="$1"
 BOARD="$2"
 COMMON=board/f+s/common
+#XORG_CONF_D=etc/X11/xorg.conf.d
+XORG_CONF_D=usr/share/X11/xorg.conf.d
 CP="/bin/cp -f"
 
 # Copy the modified inittab file with mdev support
@@ -26,9 +28,11 @@ ${CP} ${COMMON}/etc/profile.d/fsalias.sh ${TARGET}/etc/profile.d
 
 # Copy the x11 start script and configuration files
 if grep ^BR2_PACKAGE_XSERVER_XORG_SERVER=y $BR2_CONFIG > /dev/null; then
-    # Copy xorg.conf to use /dev/input/event[01]
+    # Copy X server configuration
     mkdir -p ${TARGET}/etc/X11
     ${CP} ${COMMON}/etc/X11/xorg.conf ${TARGET}/etc/X11
+    mkdir -p ${TARGET}/${XORG_CONF_D}
+    ${CP} ${COMMON}/${XORG_CONF_D}/10-tslib.conf.off ${TARGET}/${XORG_CONF_D}
     # Copy enhanced profile (with DISPLAY and XAUTHORITY)
     ${CP} ${COMMON}/etc/profile.d/xserver.sh ${TARGET}/etc/profile.d
     # Copy start script for XServer

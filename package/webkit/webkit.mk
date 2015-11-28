@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-WEBKIT_VERSION = 1.11.5
-WEBKIT_SITE = http://www.webkitgtk.org/releases
+WEBKIT_VERSION = 1.11.92
+WEBKIT_SITE = http://www.webkitgtk.org/releases/
 WEBKIT_SOURCE = webkitgtk-$(WEBKIT_VERSION).tar.xz
 WEBKIT_INSTALL_STAGING = YES
 WEBKIT_DEPENDENCIES = host-ruby host-flex host-bison host-gperf enchant harfbuzz \
@@ -23,7 +23,7 @@ WEBKIT_INSTALL_TARGET_OPT = -j1 DESTDIR=$(TARGET_DIR) install
 # in newer releases
 define DISABLE_INDEXED_DATABASE
 	$(SED) '/ENABLE_INDEXED_DATABASE/s:1:0:' \
-			$(@D)/Source/WebCore/GNUmakefile.features.am
+			$(@D)/Source/WebCore/GNUmakefile.am
 endef
 
 WEBKIT_PRE_CONFIGURE_HOOKS += DISABLE_INDEXED_DATABASE

@@ -1,0 +1,39 @@
+diff -Naur qt5_orig/src/plugins/platforms/eglfs/qeglfshooks.cpp qt5_new/src/plugins/platforms/eglfs/qeglfshooks.cpp
+--- qt5_orig/src/plugins/platforms/eglfs/qeglfshooks.cpp	2015-12-03 14:16:51.088599686 +0100
++++ qt5_new/src/plugins/platforms/eglfs/qeglfshooks.cpp	2015-12-03 14:41:02.715935366 +0100
+@@ -31,8 +31,8 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qeglfshooks.h"
+ #include <QLoggingCategory>
++#include "qeglfshooks.h"
+ 
+ QT_BEGIN_NAMESPACE
+ 
+diff -Naur qt5_orig/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.cpp qt5_new/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.cpp
+--- qt5_orig/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.cpp	2015-12-03 14:16:51.090599698 +0100
++++ qt5_new/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.cpp	2015-12-03 14:49:59.499179535 +0100
+@@ -31,8 +31,8 @@
+ **
+ ****************************************************************************/
+ 
+-#include "qeglfsoffscreenwindow.h"
+ #include "qeglfshooks.h"
++#include "qeglfsoffscreenwindow.h"
+ #include <QtGui/QOffscreenSurface>
+ #include <QtPlatformSupport/private/qeglconvenience_p.h>
+ 
+diff -Naur qt5_orig/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.h qt5_new/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.h
+--- qt5_orig/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.h	2015-12-03 14:16:51.090599698 +0100
++++ qt5_new/src/plugins/platforms/eglfs/qeglfsoffscreenwindow.h	2015-12-03 14:41:55.346253451 +0100
+@@ -34,8 +34,8 @@
+ #ifndef QEGLFSOFFSCREENWINDOW_H
+ #define QEGLFSOFFSCREENWINDOW_H
+ 
+-#include <EGL/egl.h>
+ #include <qpa/qplatformoffscreensurface.h>
++#include <EGL/egl.h>
+ #include "qeglfsglobal.h"
+ 
+ QT_BEGIN_NAMESPACE

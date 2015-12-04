@@ -1,0 +1,21 @@
+diff -Naur qt5_orig/config.tests/qpa/eglfs-viv/eglfs-viv.pro qt5_new/config.tests/qpa/eglfs-viv/eglfs-viv.pro
+--- qt5_orig/config.tests/qpa/eglfs-viv/eglfs-viv.pro	2015-12-03 14:16:51.624602912 +0100
++++ qt5_new/config.tests/qpa/eglfs-viv/eglfs-viv.pro	2015-12-03 14:20:52.453052587 +0100
+@@ -3,4 +3,4 @@
+ 
+ CONFIG -= qt
+ 
+-LIBS += -lEGL -lGLESv2 -lGAL
++LIBS += -lEGL-fb -lEGL -lGLESv2 -lGAL
+diff -Naur qt5_orig/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv/eglfs_viv.pro qt5_new/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv/eglfs_viv.pro
+--- qt5_orig/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv/eglfs_viv.pro	2015-12-03 14:16:51.090599698 +0100
++++ qt5_new/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv/eglfs_viv.pro	2015-12-03 14:22:08.741511809 +0100
+@@ -9,7 +9,7 @@
+ INCLUDEPATH += $$PWD/../..
+ CONFIG += egl
+ DEFINES += LINUX=1 EGL_API_FB=1
+-LIBS += -lGAL
++LIBS += -lEGL-fb -lGAL
+ QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
+ 
+ SOURCES += $$PWD/qeglfsvivmain.cpp \

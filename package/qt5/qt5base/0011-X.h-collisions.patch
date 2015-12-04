@@ -1,0 +1,44 @@
+diff -Naur qt5_orig/src/corelib/io/qdir.h qt5_new/src/corelib/io/qdir.h
+--- qt5_orig/src/corelib/io/qdir.h	2015-12-04 15:58:18.287234473 +0100
++++ qt5_new/src/corelib/io/qdir.h	2015-12-04 15:57:11.627391517 +0100
+@@ -76,6 +76,7 @@
+     };
+     Q_DECLARE_FLAGS(Filters, Filter)
+ 
++#undef Unsorted //Unsorted is defined to 0 in X11/X.h This leads to collisions so undef Unsorted here
+     enum SortFlag { Name        = 0x00,
+                     Time        = 0x01,
+                     Size        = 0x02,
+diff -Naur qt5_orig/src/corelib/io/qurl.h qt5_new/src/corelib/io/qurl.h
+--- qt5_orig/src/corelib/io/qurl.h	2015-12-04 15:58:27.322770147 +0100
++++ qt5_new/src/corelib/io/qurl.h	2015-12-04 15:57:25.026109309 +0100
+@@ -126,6 +126,7 @@
+         DecodedMode
+     };
+ 
++    #undef None //None is defined to 0L in X11/X.h this leads to collisions here so undef None
+     // encoding / toString values
+     enum UrlFormattingOption {
+         None = 0x0,
+diff -Naur qt5_orig/src/corelib/json/qjsonvalue.h qt5_new/src/corelib/json/qjsonvalue.h
+--- qt5_orig/src/corelib/json/qjsonvalue.h	2015-12-04 15:58:34.300926091 +0100
++++ qt5_new/src/corelib/json/qjsonvalue.h	2015-12-04 15:57:37.589408241 +0100
+@@ -56,6 +56,7 @@
+ 
+ class Q_CORE_EXPORT QJsonValue
+ {
++#undef Bool //Bool is defined to int in X11/xlib.h or X11/ICE/ICElib.h This leads to collisions so undef Bool
+ public:
+     enum Type {
+         Null =  0x0,
+diff -Naur qt5_orig/src/gui/kernel/qwindowsysteminterface_p.h qt5_new/src/gui/kernel/qwindowsysteminterface_p.h
+--- qt5_orig/src/gui/kernel/qwindowsysteminterface_p.h	2015-12-04 15:58:39.068784977 +0100
++++ qt5_new/src/gui/kernel/qwindowsysteminterface_p.h	2015-12-04 15:57:46.747857103 +0100
+@@ -54,6 +54,7 @@
+ 
+ QT_BEGIN_NAMESPACE
+ 
++#undef Expose	// Expose is defined to 12 in X11/X.h this leads to collisions here so undef Expose
+ class Q_GUI_EXPORT QWindowSystemInterfacePrivate {
+ public:
+     enum EventType {

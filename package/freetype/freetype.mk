@@ -70,7 +70,6 @@ define FREETYPE_FIX_CONFIG_FILE_LIBS
 endef
 FREETYPE_POST_INSTALL_STAGING_HOOKS += FREETYPE_FIX_CONFIG_FILE_LIBS
 
-<<<<<<< HEAD
 # Version 2.5.1 reorganized headers out of freetype2/freetype.
 # It is unexpected for some packages so symlink it until it spreads
 # upstream. Note that we also have to remove the symlink prior to the
@@ -97,8 +96,6 @@ define HOST_FREETYPE_FIX_FREETYPE_INCLUDE
 endef
 HOST_FREETYPE_POST_INSTALL_HOOKS += HOST_FREETYPE_FIX_FREETYPE_INCLUDE
 
-=======
->>>>>>> orig
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
 

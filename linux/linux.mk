@@ -70,7 +70,7 @@ LINUX_MAKE_FLAGS = \
 	HOSTCFLAGS="$(HOSTCFLAGS)" \
 	ARCH=$(KERNEL_ARCH) \
 	INSTALL_MOD_PATH=$(TARGET_DIR) \
-	CROSS_COMPILE="$(CCACHE) $(TARGET_CROSS)" \
+	CROSS_COMPILE="$(TARGET_CROSS)" \
 	DEPMOD=$(HOST_DIR)/sbin/depmod
 
 LINUX_MAKE_ENV = \
@@ -108,12 +108,16 @@ else ifeq ($(BR2_LINUX_KERNEL_BZIMAGE),y)
 LINUX_IMAGE_NAME = bzImage
 else ifeq ($(BR2_LINUX_KERNEL_ZIMAGE),y)
 LINUX_IMAGE_NAME = zImage
+else ifeq ($(BR2_LINUX_KERNEL_ZIMAGE_EPAPR),y)
+LINUX_IMAGE_NAME = zImage.epapr
 else ifeq ($(BR2_LINUX_KERNEL_APPENDED_ZIMAGE),y)
 LINUX_IMAGE_NAME = zImage
 else ifeq ($(BR2_LINUX_KERNEL_CUIMAGE),y)
 LINUX_IMAGE_NAME = cuImage.$(KERNEL_DTS_NAME)
 else ifeq ($(BR2_LINUX_KERNEL_SIMPLEIMAGE),y)
 LINUX_IMAGE_NAME = simpleImage.$(KERNEL_DTS_NAME)
+else ifeq ($(BR2_LINUX_KERNEL_IMAGE),y)
+LINUX_IMAGE_NAME = Image
 else ifeq ($(BR2_LINUX_KERNEL_LINUX_BIN),y)
 LINUX_IMAGE_NAME = linux.bin
 else ifeq ($(BR2_LINUX_KERNEL_VMLINUX_BIN),y)
@@ -194,6 +198,8 @@ LINUX_KCONFIG_DEFCONFIG_CMDS = \
 		$(LINUX_KCONFIG_OPTS) olddefconfig
 
 define LINUX_KCONFIG_FIXUP_CMDS
+	$(if $(LINUX_NEEDS_MODULES),
+		$(call KCONFIG_ENABLE_OPT,CONFIG_MODULES,$(@D)/.config))
 	$(if $(BR2_arm)$(BR2_armeb),
 		$(call KCONFIG_ENABLE_OPT,CONFIG_AEABI,$(@D)/.config))
 	$(if $(BR2_TARGET_ROOTFS_CPIO),
@@ -311,7 +317,7 @@ endif
 define LINUX_INSTALL_HOST_TOOLS
 	# Installing dtc (device tree compiler) as host tool, if selected
 	if grep -q "CONFIG_DTC=y" $(@D)/.config; then 	\
-		$(INSTALL) -D -m 0755 $(@D)/scripts/dtc/dtc $(HOST_DIR)/usr/bin/dtc ;	\
+		$(INSTALL) -D -m 0755 $(@D)/scripts/dtc/dtc $(HOST_DIR)/usr/bin/linux-dtc ;	\
 	fi
 endef
 

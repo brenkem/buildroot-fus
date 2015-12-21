@@ -1,0 +1,27 @@
+When determining the library names on the target, sysroot must not
+be part of the path anymore. So use PKG_CONFIG_SYSROOT_DIR="" when
+determining the different paths. This implies a patch in the
+PKG_CONFIG wrapper that does not replace the default path if it is
+set to an empty string.
+
+diff -Naur gst-fsl-plugins-3.0.11-orig/configure.ac gst-fsl-plugins-3.0.11-new/configure.ac
+--- gst-fsl-plugins-3.0.11-orig/configure.ac	2014-03-10 11:54:28.000000000 +0100
++++ gst-fsl-plugins-3.0.11-new/configure.ac	2015-12-21 11:29:27.000000000 +0100
+@@ -15,7 +15,7 @@
+ AC_DEFUN([FIND_PARSER_SONAME],
+ [
+     AC_MSG_CHECKING([for lib_$1_parser_$2_elinux.3.0.so soname])
+-    path=`$PKG_CONFIG --variable=libdir libfslparser`
++    path=`PKG_CONFIG_SYSROOT_DIR="" $PKG_CONFIG --variable=libdir libfslparser`
+     SONAME=$( $CC -print-file-name=$PKG_CONFIG_SYSROOT_DIR$path/lib_$1_parser_$2_elinux.so | \
+ 	    while read output; do objdump -p $output | \
+ 	    grep "SONAME" | \
+@@ -34,7 +34,7 @@
+ AC_DEFUN([FIND_ACODEC_SONAME],
+ [
+     AC_MSG_CHECKING([for lib_$1_wrap_$2_elinux.so soname])
+-    path=`$PKG_CONFIG --variable=libdir libfslaudiocodec`
++    path=`PKG_CONFIG_SYSROOT_DIR="" $PKG_CONFIG --variable=libdir libfslaudiocodec`
+     SONAME=$( $CC -print-file-name=$PKG_CONFIG_SYSROOT_DIR$path/wrap/lib_$1_wrap_$2_elinux.so | \
+ 	    while read output; do objdump -p $output | \
+ 	    grep "SONAME" | \

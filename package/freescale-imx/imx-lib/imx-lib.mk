@@ -16,7 +16,7 @@ IMX_LIB_DEPENDENCIES += linux
 IMX_LIB_INCLUDE = \
 	-I$(LINUX_DIR)/drivers/mxc/security/rng/include \
 	-I$(LINUX_DIR)/drivers/mxc/security/sahara2/include \
-	-idirafter $(LINUX_DIR)/include/uapi
+	-idirafter $(LINUX_DIR)/include
 
 IMX_LIB_MAKE_ENV = \
 	$(TARGET_MAKE_ENV) \

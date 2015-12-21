@@ -36,6 +36,11 @@ $(2)_KCONFIG_EDITORS ?= menuconfig
 $(2)_KCONFIG_OPTS ?=
 $(2)_KCONFIG_FIXUP_CMDS ?=
 
+$(2)_KCONFIG_DEFCONFIG_CMDS ?= \
+	$$(INSTALL) -m 0644 $$($(2)_KCONFIG_FILE) $$($(2)_DIR)/.config \
+	$$(Q)yes "" | $$($(2)_MAKE_ENV) $$(MAKE) -C $$($(2)_DIR) \
+		$$($(2)_KCONFIG_OPTS) oldconfig
+
 # The config file could be in-tree, so before depending on it the package should
 # be extracted (and patched) first
 $$($(2)_KCONFIG_FILE): | $(1)-patch
@@ -46,9 +51,7 @@ $$($(2)_KCONFIG_FILE): | $(1)-patch
 # full .config first. We use 'make oldconfig' because this can be safely
 # done even when the package does not support defconfigs.
 $$($(2)_DIR)/.config: $$($(2)_KCONFIG_FILE)
-	$$(INSTALL) -m 0644 $$($(2)_KCONFIG_FILE) $$($(2)_DIR)/.config
-	@yes "" | $$($(2)_MAKE_ENV) $$(MAKE) -C $$($(2)_DIR) \
-		$$($(2)_KCONFIG_OPTS) oldconfig
+	$$($(2)_KCONFIG_DEFCONFIG_CMDS)
 
 # In order to get a usable, consistent configuration, some fixup may be needed.
 # The exact rules are specified by the package .mk file.

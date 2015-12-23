@@ -1,6 +1,34 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2015.05-fsimx6-V2.1 (23.12.2015)
+------------------------------------------
+Supported Boards: armStoneA9, QBlissA9, PicoMODA9, efusA9
+
+- Fix download site for xdriver_xf86-input-tslib
+- Fix tslib crash on xserver 1.12 or newer with unknown xf86XInputSetScreen
+- Fix libtool .la file modification style
+- Rebase to buildroot-2014.05
+- Rebase to buildroot-2014.08
+- Fix rename mismatch for package procps
+- Rebase to buildroot-2015.02
+- Backport alsa-utils from buildroot-2015.05
+- Fix *OPT to *OPTS renaming issues in xdriver and pkg-autotools
+- Rebase to buildroot-2015.05
+- Fix defconfig problems when building Linux kernel
+- Remove unneeded patch from udev
+- Remove obsolete package/freescale-imx/xserver-xorg-video-imx-viv
+- Make gst-fsl-plugins work on fsimx6
+- Check if /etc is writable before creating openssh keys
+- Make imx-lib work with 3.0.35 kernel
+- Improve fsimx6 defconfig files
+- Update F&S defconfig for busybox to 1.23.x
+- Improve login_tty settings in S01fssetup for F&S boards
+- Switch F&S touch support from tslib to evdev
+- Add host-libxml2 dependency to package gettext to avoid crash when building
+
+
+
 buildroot-2014.02-fsimx6-V2.0 (21.04.2015)
 ------------------------------------------
 Supported Boards: armStoneA9, QBlissA9, PicoMODA9, efusA9

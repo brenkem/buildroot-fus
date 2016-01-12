@@ -15,6 +15,7 @@ ${CP} ${COMMON}/etc/init.d/S01fssetup ${TARGET}/etc/init.d
 ${CP} ${COMMON}/etc/mdev.conf ${TARGET}/etc
 
 # Copy the F&S aliases file
+mkdir -p ${TARGET}/etc/profile.d
 ${CP} ${COMMON}/etc/profile.d/fsalias.sh ${TARGET}/etc/profile.d
 
 # Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3

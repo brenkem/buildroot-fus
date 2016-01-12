@@ -5,7 +5,7 @@
 ################################################################################
 
 MIDORI_VERSION_MAJOR = 0.4
-MIDORI_VERSION = $(MIDORI_VERSION_MAJOR).6
+MIDORI_VERSION = $(MIDORI_VERSION_MAJOR).9
 MIDORI_SOURCE = midori-$(MIDORI_VERSION).tar.bz2
 MIDORI_SITE = http://archive.xfce.org/src/apps/midori/$(MIDORI_VERSION_MAJOR)
 MIDORI_LICENSE = LGPLv2.1+
@@ -21,6 +21,9 @@ MIDORI_DEPENDENCIES = \
 	$(if $(BR2_NEEDS_GETTEXT_IF_LOCALE),gettext) \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
 
+MIDORI_CONF_OPTS = \
+	-DUSE_ZEITGEIST=OFF
+
 ifneq ($(BR2_PACKAGE_XORG7),y)
 define MIDORI_WITHOUT_X11
 	$(SED) "s/check_pkg ('x11')/#check_pkg ('x11')/" $(@D)/wscript
@@ -34,7 +37,9 @@ define MIDORI_CONFIGURE_CMDS
 		$(HOST_DIR)/usr/bin/python2 ./waf configure \
 		--prefix=/usr			\
 		--disable-libnotify		\
-	)
+		--disable-unique		\
+		--disable-zeitgeist		\
+       )
 endef
 
 define MIDORI_BUILD_CMDS

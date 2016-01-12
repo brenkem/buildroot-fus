@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WEBKIT_VERSION = 1.11.5
+WEBKIT_VERSION = 1.11.92
 WEBKIT_SITE = http://www.webkitgtk.org/releases
 WEBKIT_SOURCE = webkitgtk-$(WEBKIT_VERSION).tar.xz
 WEBKIT_INSTALL_STAGING = YES
@@ -27,7 +27,7 @@ WEBKIT_INSTALL_TARGET_OPTS = -j1 DESTDIR=$(TARGET_DIR) install
 # in newer releases
 define DISABLE_INDEXED_DATABASE
 	$(SED) '/ENABLE_INDEXED_DATABASE/s:1:0:' \
-		$(@D)/Source/WebCore/GNUmakefile.features.am
+			$(@D)/Source/WebCore/GNUmakefile.am
 endef
 
 WEBKIT_PRE_CONFIGURE_HOOKS += DISABLE_INDEXED_DATABASE
@@ -46,6 +46,7 @@ WEBKIT_CONF_OPTS += \
 	--disable-webkit2 \
 	--disable-glibtest \
 	--disable-video \
+	--disable-gtk-doc-html \
 	--disable-tests
 
 # Xorg Dependencies

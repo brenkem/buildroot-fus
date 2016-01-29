@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_GPU_VIV_BASE_VERSION = 5.0.11.p4.5
+IMX_GPU_VIV_BASE_VERSION = 5.0.11.p7.1
 ifeq ($(BR2_ARM_EABIHF),y)
 IMX_GPU_VIV_VERSION = $(IMX_GPU_VIV_BASE_VERSION)-hfp
 else
@@ -26,18 +26,13 @@ define IMX_GPU_VIV_EXTRACT_CMDS
 	$(call FREESCALE_IMX_EXTRACT_HELPER,$(DL_DIR)/$(IMX_GPU_VIV_SOURCE))
 endef
 
-# For some reason libGAL_egl for x11 is called libGAL_egl.dri.so
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),x11)
-define IMX_GPU_VIV_FIXUP_SYMLINKS
-	ln -sf libGAL_egl.dri.so $(@D)/gpu-core/usr/lib/libGAL_egl.so
-endef
-endif
-
 # Instead of building, we fix up the inconsistencies that exist
 # in the upstream archive here.
 # Make sure these commands are idempotent.
 define IMX_GPU_VIV_BUILD_CMDS
 	$(SED) 's/defined(LINUX)/defined(__linux__)/g' $(@D)/gpu-core/usr/include/*/*.h
+	$(RM) $(@D)/gpu-core/usr/lib/libGAL.fb.so
+	$(RM) $(@D)/gpu-core/usr/lib/libVIVANTE.fb.so
 	ln -sf libGL.so.1.2 $(@D)/gpu-core/usr/lib/libGL.so
 	ln -sf libGL.so.1.2 $(@D)/gpu-core/usr/lib/libGL.so.1
 	ln -sf libGL.so.1.2 $(@D)/gpu-core/usr/lib/libGL.so.1.2.0
@@ -49,8 +44,6 @@ define IMX_GPU_VIV_BUILD_CMDS
 	ln -sf libGLESv2-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGLESv2.so.2.0.0
 	ln -sf libVIVANTE-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libVIVANTE.so
 	ln -sf libGAL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGAL.so
-	ln -sf libGAL_egl.$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGAL_egl.so
-	$(IMX_GPU_VIV_FIXUP_SYMLINKS)
 endef
 
 ifeq ($(IMX_GPU_VIV_LIB_TARGET),fb)

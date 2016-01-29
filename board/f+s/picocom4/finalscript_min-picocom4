@@ -1,0 +1,6 @@
+#!/bin/sh
+
+FS_ARCH=picocom4
+
+# Source-in the common F+S setup for standard configuration
+. board/f+s/common/finalscript_min-common

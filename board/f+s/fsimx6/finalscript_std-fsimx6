@@ -1,0 +1,6 @@
+#!/bin/sh
+
+FS_ARCH=fsimx6
+
+# Source-in common F+S setup for standard configuration
+. board/f+s/common/finalscript_std-common

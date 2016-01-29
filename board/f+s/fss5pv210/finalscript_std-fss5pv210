@@ -1,13 +1,11 @@
 #!/bin/sh
 
-TARGET="$1"
-BOARD="$2"
 COMMON=board/f+s/common
-CP="/bin/cp -f"
+FS_ARCH=fss5pv210
+INITTAB=$COMMON/etc/inittab-$FS_ARCH
 
-tput smso
-echo ">>>   Doing final F+S (common) setup for HDMI configuration"
-tput rmso
+# Source-in the common F+S setup for standard configuration
+. ${COMMON}/finalscript_std-common
 
 # Copy the hdmicfg script and startup script
 ${CP} ${COMMON}/hdmicfg ${TARGET}/sbin

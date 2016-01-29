@@ -1,0 +1,6 @@
+#!/bin/sh
+
+FS_ARCH=fsimx6ul
+
+# Source-in common F+S setup for minimal configuration
+. board/f+s/common/finalscript_min-common

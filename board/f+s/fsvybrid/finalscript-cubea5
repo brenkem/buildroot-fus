@@ -16,7 +16,7 @@ tput rmso
 ${MKDIR} ${TARGET}/data
 ${MKDIR} ${TARGET}/export
 
-# Copy the modified inittab file with mdev support
+# Copy the modified fstab file
 ${CP} ${COMMON}/etc/fstab-${platform} ${TARGET}/etc/fstab
 
 # Copy the modified inittab file with mdev support

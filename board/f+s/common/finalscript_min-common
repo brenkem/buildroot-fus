@@ -1,0 +1,52 @@
+#!/bin/sh
+#
+# This file is meant to be sourced in by the final script of a board. The
+# calling script can set the following variables. If a variable is not set,
+# the default in parentheses is used.
+#
+#   TARGET:    Path of the target directory ($1)
+#   FS_ARCH:   Name of board/architecture (fsimx6)
+#   FS_CONFIG: Name of the configuration to set (minimal)
+#   FS_SETUP:  Name of the board setup script ($COMMON/etc/init.d/S01fssetup}
+#   INITTAB:   Path of the inittab file to use ($COMMON/etc/inittab)
+#
+# This script outputs a message and then install inittab, mdev.conf, the
+# fsalias file and also sets up a sysmbolic link to ld-linux.so.3 if
+# required.
+
+TARGET="$1"
+FS_ARCH=${FS_ARCH:-fsimx6}
+FS_CONFIG=${FS_CONFIG:-minimal}
+FS_SETUP=${FS_SETUP:-$COMMON/etc/init.d/S01fssetup}
+COMMON=board/f+s/common
+BOARD=${BOARD:-board/f+s/$FS_ARCH}
+INITTAB=${INITTAB:-$COMMON/etc/inittab}
+
+#tput smso
+echo "Doing final $FS_ARCH setup for $FS_CONFIG configuration"
+#tput rmso
+
+CP="/bin/cp -f"
+
+# Copy the requested inittab file
+${CP} $INITTAB ${TARGET}/etc/inittab
+
+# Copy the start script to set up the board environment
+${CP} $FS_SETUP ${TARGET}/etc/init.d
+
+# If mdev is used, copy the mdev.conf file and activate mdev in inittab
+if grep ^BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_MDEV=y $BR2_CONFIG > /dev/null; then
+    ${CP} ${COMMON}/etc/mdev.conf ${TARGET}/etc
+    sed -i -e "s/^#\(.*# USE_MDEV\)/\1/g" $TARGET/etc/init.d
+fi
+
+# Copy the F&S aliases file
+mkdir -p ${TARGET}/etc/profile.d
+${CP} ${COMMON}/etc/profile.d/fsalias.sh ${TARGET}/etc/profile.d
+
+# Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
+if [ -L "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];
+then
+    ld=`readlink ${TARGET}/lib/ld-linux-armhf.so.3`
+    ln -s "${ld}" ${TARGET}/lib/ld-linux.so.3
+fi

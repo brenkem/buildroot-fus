@@ -1,0 +1,8 @@
+#!/bin/sh
+
+COMMON=board/f+s/common
+FS_ARCH=fss5pv210
+INITTAB=$COMMON/etc/inittab-$FS_ARCH
+
+# Source-in the common F+S setup for minimal configuration
+. ${COMMON}/finalscript_min-common

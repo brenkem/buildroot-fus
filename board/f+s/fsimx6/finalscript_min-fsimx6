@@ -3,4 +3,4 @@
 FS_ARCH=fsimx6
 
 # Source-in common F+S setup for minimal configuration
-. ./${COMMON}/finalscript_min-common
+. ./board/f+s/common/finalscript_min-common

@@ -15,10 +15,10 @@
 # required.
 
 TARGET="$1"
+COMMON=board/f+s/common
 FS_ARCH=${FS_ARCH:-fsimx6}
 FS_CONFIG=${FS_CONFIG:-minimal}
 FS_SETUP=${FS_SETUP:-$COMMON/etc/init.d/S01fssetup}
-COMMON=board/f+s/common
 BOARD=${BOARD:-board/f+s/$FS_ARCH}
 INITTAB=${INITTAB:-$COMMON/etc/inittab}
 

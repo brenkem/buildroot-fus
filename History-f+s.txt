@@ -1,6 +1,23 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2015.11.1-fsimx6sx-V1.0 (19.02.2016)
+----------------------------------------------
+Supported Boards: efusA9X, BemA9X
+
+- Fix freetype changes of include paths for older packages
+- Fix qt5base compilation
+- Rebase to buildroot-2015.11.1
+- On F&S boards, final_script_min must create /etc/profile.d
+- Reorganize final script system for F&S boards
+- Update GPU packages to be used with i.MX6-SoloX
+  * Update package imx-gpu-viv from 5.0.11.p4.5 to 5.0.11.p7.1
+  * Update package xdriver_xf86-video-imx-viv from 5.0.11.p4.5 to 5.0.11.p7.1
+  * Update package imx-lib from 3.14.28-1.0.0 to 5.1
+  * Update package firmware-imx from 3.14.28-1.0.0 to 5.2
+- Create separate support for fsimx6sx
+
+
 buildroot-2015.08.1-fsimx6ul-V1.0 (25.11.2015)
 ----------------------------------------------
 Supported Boards: efusA7UL

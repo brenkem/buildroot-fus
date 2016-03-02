@@ -1285,6 +1285,7 @@ menu "Miscellaneous"
 	source "package/snowball-init/Config.in"
 	source "package/wine/Config.in"
 	source "package/xutil_util-macros/Config.in"
+	source "package/ptp-gadget/Config.in"
 endmenu
 
 menu "Networking applications"

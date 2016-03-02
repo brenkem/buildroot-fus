@@ -1,0 +1,36 @@
+From bfcae618429ca487ac6ce4fb0376df207b0a4c7f Mon Sep 17 00:00:00 2001
+Message-Id: <bfcae618429ca487ac6ce4fb0376df207b0a4c7f.1456917931.git.keller@fs-net.de>
+From: Hartmut Keller <keller@fs-net.de>
+Date: Wed, 2 Mar 2016 12:25:14 +0100
+Subject: [PATCH] Fix printf messages
+
+---
+ ptp.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/ptp.c b/ptp.c
+index 1afa100..a983c03 100644
+--- a/ptp.c
++++ b/ptp.c
+@@ -976,7 +976,8 @@ static int send_storage_info(void *recv_buf, void *send_buf, size_t send_len)
+ 
+ 	if (verbose > 1)
+ 		fprintf(stderr, "Block-size %d, total 0x%lx, free 0x%lx\n",
+-			fs.f_bsize, fs.f_blocks, fs.f_bfree);
++			fs.f_bsize, (unsigned long)fs.f_blocks,
++			(unsigned long)fs.f_bfree);
+ 
+ 	count = sizeof(storage_info) + sizeof(*s_container);
+ 
+@@ -1292,7 +1293,7 @@ static int process_send_object_info(void *recv_buf, void *send_buf)
+ 	p2 = __le32_to_cpu(*(param + 1));
+ 
+ 	if (verbose) {
+-		fprintf(stderr, "store_id 0x%llx, parent handle 0x%llx\n",
++		fprintf(stderr, "store_id 0x%lx, parent handle 0x%lx\n",
+ 			(unsigned long)p1, (unsigned long)p2);
+ 	}
+ 
+-- 
+1.7.4.4
+

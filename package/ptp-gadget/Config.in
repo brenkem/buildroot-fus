@@ -1,0 +1,23 @@
+config BR2_PACKAGE_PTP_GADGET
+	bool "ptp-gadget"
+	select BR2_PACKAGE_LIBGLIB2
+	depends on BR2_TOOLCHAIN_GLIBC_GCONV_LIBS_COPY
+	depends on BR2_arm || BR2_i386 || BR2_x86_64
+	help
+	  ptp-gadget is a simple picture transfer protocol (PTP) device
+	  implementation. PTP provides access from a USB host to a directory
+	  of the device and allows the host to load files from and store
+	  files to this directory (usually pictures, but basically any file
+	  type is possible). Other than with a USB mass storage device, the
+	  device itself can still have access to this directory while the
+	  host is connected and local changes to the directory contents are
+	  immediately visible from the host.
+
+	  http://git.denx.de/ptp-gadget.git
+
+config BR2_PACKAGE_PTP_GADGET_DIR
+	string "Directory to export for ptp-gadget"
+	default "/tmp/ptp"
+	depends on BR2_PACKAGE_PTP_GADGET
+	help
+	  The path that is exported by the ptp-gadget to the outside.

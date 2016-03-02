@@ -1,0 +1,37 @@
+#!/bin/sh
+# Start PTP gadget
+
+PTP_GADGET_DIR=${PTP_GADGET_DIR:-@PTP_GADGET_DIR@}
+
+dostart=0
+dostop=0
+
+case "$1" in
+    start)
+	dostart=1
+	;;
+    stop)
+	dostop=1
+	;;
+    restart|reload)
+	dostop=1
+	dostart=1
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|restart}"
+esac
+
+if [ ${dostop} -ne 0 ] ; then
+    # Stop PTP gadget
+    kill-all ptp
+fi
+
+if [ ${dostart} -ne 0 ] ; then
+    # Start PTP gadget
+    mkdir -p $PTP_GADGET_DIR
+    mkdir /dev/ptp
+    modprobe g_ffs
+    mount -t functionfs ptp /dev/ptp
+    /usr/bin/ptp $PTP_GADGET_DIR > /dev/null &
+    echo "PTP gadget started on directory $PTP_GADGET_DIR"
+fi

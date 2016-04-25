@@ -1,0 +1,38 @@
+# In addition to this xorg.conf, the X-Server also reads all files in
+# /etc/X11/xorg.conf.d and /usr/share/X11/xorg.conf.d that have suffix
+# ".conf". This can be used to add additional sections to the configuration,
+# e.g. calibration data for a touchpanel or additional InputClass sections.
+# These files are read in order of their names.
+#
+# The regular InputClass sections for the evdev driver can be found in
+#
+#   /usr/share/X11/xorg.conf.d/10-evdev.conf
+#
+# If you want to use tslib instead, rename that file to 10-evdev.conf.off and
+# activate the tslib version by renaming the file 10-tslib.conf.off to
+# 10-tslib.conf in the same directory.
+
+Section "Device"
+    Identifier  "i.MX Accelerated Framebuffer Device"
+    Driver      "vivante"
+    Option      "fbdev"     "/dev/fb0"
+    Option      "vivante_fbdev" "/dev/fb0"
+    Option      "HWcursor"  "false"
+EndSection
+
+Section "ServerFlags"
+    Option "BlankTime"  "0"
+    Option "StandbyTime"  "0"
+    Option "SuspendTime"  "0"
+    Option "OffTime"  "0"
+EndSection
+
+Section "Screen"
+    Identifier "Builtin Default fbdev Screen 0"
+    Device "Builtin Default fbdev Device 0"
+EndSection
+
+Section "ServerLayout"
+    Identifier "Builtin Default Layout"
+    Screen "Builtin Default fbdev Screen 0"
+EndSection

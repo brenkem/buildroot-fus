@@ -1,6 +1,8 @@
 #!/bin/sh
 
+COMMON=board/f+s/common
 FS_ARCH=fsimx6
+XORG_CONF=$COMMON/etc/X11/xorg.conf-$FS_ARCH
 
 # Source-in common F+S setup for standard configuration
-. board/f+s/common/finalscript_std-common
+. $COMMON/finalscript_std-common

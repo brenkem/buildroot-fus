@@ -62,14 +62,6 @@ config BR2_LINUX_KERNEL_CUSTOM_GIT
 	  This option allows Buildroot to get the Linux kernel source
 	  code from a Git repository.
 
-config BR2_LINUX_KERNEL_LOCAL_DIR
-	bool "Build in separate local directory"
-	help
-          This option allows Buildroot to refer to an existing local
-	  directory with already unpacked Linux kernel sources and use
-	  this directory (instead of output/build) to build kernel and
-	  modules.
-
 config BR2_LINUX_KERNEL_CUSTOM_HG
 	bool "Custom Mercurial repository"
 	help
@@ -81,6 +73,24 @@ config BR2_LINUX_KERNEL_CUSTOM_LOCAL
 	help
 	  This option allows Buildroot to get the Linux kernel source
 	  code from a local directory.
+
+config BR2_LINUX_KERNEL_LOCAL_DIR
+	bool "Local directory (F&S)"
+	help
+	  This option allows Buildroot to refer to an existing local
+	  directory with already unpacked Linux kernel sources and use
+	  this directory (instead of output/build) to build kernel and
+	  modules.
+
+	  The content is copied to output/build/linux-localdir by creating
+	  hard or soft links. Hard links are used if the existing directory
+	  is on the same filesystem as output/build, soft links are used if
+	  they are on different filesystems. Using links speeds up the copy
+	  process considerably compared to rsync that is used in buildroot's
+	  regular version of "Local directory". But please remember that
+	  some data is shared between the existing directory and output/build,
+	  e.g. the source code files. So modifying either of them may result
+	  in changing the file in the other directory, too.
 
 endchoice
 

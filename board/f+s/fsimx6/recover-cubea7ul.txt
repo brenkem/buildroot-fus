@@ -1,0 +1,13 @@
+echo "---- Starting recovery ----"
+# Define UBI partition
+ubi part TargetFS
+# Load recovery image from recover volume
+echo "---- Read recovery image ----"
+ubi read . recovery $recoversize
+# Write recovery image to rootfs volume and clear data volume
+echo "---- Store as rootfs image ----"
+ubi write . rootfs $filesize
+ubi write . data 0
+# Boot system
+echo "---- Recovery COMPLETE! ----"
+boot

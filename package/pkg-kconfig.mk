@@ -36,10 +36,13 @@ $(2)_KCONFIG_EDITORS ?= menuconfig
 $(2)_KCONFIG_OPTS ?=
 $(2)_KCONFIG_FIXUP_CMDS ?=
 
-$(2)_KCONFIG_DEFCONFIG_CMDS ?= \
-	$$(INSTALL) -m 0644 $$($(2)_KCONFIG_FILE) $$($(2)_DIR)/.config \
+ifndef $(2)_KCONFIG_DEFCONFIG_CMDS
+define $(2)_KCONFIG_DEFCONFIG_CMDS
+	$$(INSTALL) -m 0644 $$($(2)_KCONFIG_FILE) $$($(2)_DIR)/.config
 	$$(Q)yes "" | $$($(2)_MAKE_ENV) $$(MAKE) -C $$($(2)_DIR) \
 		$$($(2)_KCONFIG_OPTS) oldconfig
+endef
+endif
 
 # The config file could be in-tree, so before depending on it the package should
 # be extracted (and patched) first

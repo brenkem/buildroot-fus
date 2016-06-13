@@ -16,7 +16,7 @@ GST_FSL_PLUGINS_INSTALL_STAGING = YES
 GST_FSL_PLUGINS_AUTORECONF = YES
 
 GST_FSL_PLUGINS_DEPENDENCIES += host-pkgconf gstreamer gst-plugins-base \
-	libfslvpuwrap imx-lib imx-vpu libfslparser libfslcodec
+	imx-vpuwrap imx-lib imx-vpu imx-parser imx-codec
 
 GST_FSL_PLUGINS_CONF_ENV = \
 	PLATFORM=$(BR2_PACKAGE_GST_FSL_PLUGINS_PLATFORM) \

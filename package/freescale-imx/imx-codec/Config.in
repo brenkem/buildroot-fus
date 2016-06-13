@@ -1,5 +1,5 @@
-config BR2_PACKAGE_LIBFSLCODEC
-	bool "libfslcodec"
+config BR2_PACKAGE_IMX_CODEC
+	bool "imx-codec"
 	depends on BR2_arm # Only relevant for i.MX
 	depends on BR2_TOOLCHAIN_USES_GLIBC # prebuilt binaries
 	help
@@ -8,6 +8,6 @@ config BR2_PACKAGE_LIBFSLCODEC
 	  This library is provided by Freescale as-is and doesn't have
 	  an upstream.
 
-comment "libfslcodec needs an (e)glibc toolchain"
+comment "imx-codec needs an (e)glibc toolchain"
 	depends on BR2_arm
 	depends on !BR2_TOOLCHAIN_USES_GLIBC

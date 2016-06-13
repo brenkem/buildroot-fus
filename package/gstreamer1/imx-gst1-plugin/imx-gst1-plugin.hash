@@ -1,0 +1,2 @@
+# From Yocto meta-bsp/recipes-multimedia/gstreamer/imx-gst1.0-plugin_4.0.9.bb
+sha256	4ab74e3660a56c5a79c714b820bb1ce8dd1db5d66c92529b5378bb211cf25896  imx-gst1.0-plugin-4.0.9.tar.gz

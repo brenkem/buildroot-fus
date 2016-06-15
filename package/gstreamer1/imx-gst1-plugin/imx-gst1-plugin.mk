@@ -40,7 +40,14 @@ define IMX_GST1_PLUGIN_PATCH_M4
 	mkdir -p $(@D)/m4
 endef
 
-IMX_GST1_PLUGIN_POST_PATCH_HOOKS += IMX_GST1_PLUGIN_PATCH_M4
+# We need the newest videodev2.h, which in turn needs compiler.h
+define IMX_GST1_PLUGIN_VIDEODEV2
+	mkdir -p $(@D)/libs/linux
+	cp $(LINUX_DIR)/include/uapi/linux/videodev2.h $(@D)/libs/linux
+	cp $(LINUX_DIR)/include/linux/compiler.h $(@D)/libs/linux
+endef
+
+IMX_GST1_PLUGIN_POST_PATCH_HOOKS += IMX_GST1_PLUGIN_PATCH_M4 IMX_GST1_PLUGIN_VIDEODEV2
 
 IMX_GST1_PLUGIN_CONF_ENV += PKG_CONFIG_SYSROOT_DIR="$(STAGING_DIR)"
 

@@ -4,15 +4,14 @@
 #
 ################################################################################
 
-IMX_GPU_VIV_BASE_VERSION = 5.0.11.p8.3
-IMX_GPU_VIV_VERSION = $(IMX_GPU_VIV_BASE_VERSION)-hfp
+IMX_GPU_VIV_VERSION = 5.0.11.p8.3-hfp
 IMX_GPU_VIV_SITE = $(FREESCALE_IMX_SITE)
 IMX_GPU_VIV_SOURCE = imx-gpu-viv-$(IMX_GPU_VIV_VERSION).bin
 
 IMX_GPU_VIV_INSTALL_STAGING = YES
 
-IMX_GPU_VIV_LICENSE = Freescale Semiconductor Software License Agreement
-IMX_GPU_VIV_LICENSE_FILES = EULA
+IMX_GPU_VIV_LICENSE = NXP Semiconductor Software License Agreement
+IMX_GPU_VIV_LICENSE_FILES = EULA COPYING
 IMX_GPU_VIV_REDISTRIBUTE = NO
 
 IMX_GPU_VIV_PROVIDES = libegl libgles libopenvg

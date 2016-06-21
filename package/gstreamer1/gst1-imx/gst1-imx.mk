@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_IMX_VERSION = 0.12.0
+GST1_IMX_VERSION = 0.12.1
 GST1_IMX_SITE = $(call github,Freescale,gstreamer-imx,$(GST1_IMX_VERSION))
 
 GST1_IMX_LICENSE = LGPLv2+
@@ -18,10 +18,13 @@ GST1_IMX_DEPENDENCIES += \
 	gstreamer1 \
 	gst1-plugins-base
 
-# needs access to imx-specific kernel headers
+GST1_IMX_CONF_OPTS = --prefix="/usr"
+
+ifeq ($(BR2_LINUX_KERNEL),y)
+# IPU and PXP need access to imx-specific kernel headers
 GST1_IMX_DEPENDENCIES += linux
-GST1_IMX_CONF_OPTS += --prefix="/usr" \
-	--kernel-headers="$(LINUX_DIR)/include"
+GST1_IMX_CONF_OPTS += --kernel-headers="$(LINUX_DIR)/include"
+endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD),y)
 GST1_IMX_DEPENDENCIES += gst1-plugins-bad

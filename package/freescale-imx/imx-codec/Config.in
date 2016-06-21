@@ -3,9 +3,9 @@ config BR2_PACKAGE_IMX_CODEC
 	depends on BR2_arm # Only relevant for i.MX
 	depends on BR2_TOOLCHAIN_USES_GLIBC # prebuilt binaries
 	help
-	  Binary codec libraries for the Freescale i.MX SoCs.
+	  Binary codec libraries for the NXP i.MX SoCs.
 
-	  This library is provided by Freescale as-is and doesn't have
+	  This library is provided by NXP as-is and doesn't have
 	  an upstream.
 
 comment "imx-codec needs an (e)glibc toolchain"

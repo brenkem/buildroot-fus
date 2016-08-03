@@ -1,6 +1,45 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2016.05-fsimx6-V3.0 (08.08.2016)
+------------------------------------------
+Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9
+Not tested:       efusA7UL, CubeA7UL, efusA9X, BemA9X
+
+- Add patch for ncurses-5.9 to be compatible with gcc-5.x
+- Add EGL support to fsimx6
+- On F&S boards remove screen blanking in xorg.conf
+- Switch F&S kernel build to BR2_LINUX_KERNEL_CUSTOM_LOCAL
+- Rebase to buildroot-2016.02
+- Add ptp-gadget package
+- Switch NXP-based F&S boards to fs-toolchain-5.2.0-armv7ahf
+- Add support for CubeA7UL
+- Add device trees and bdinfo based login_tty to fsimx6_{min,std}_defconfig
+- Switch to imx-gpu-viv/xserver-xorg-video-imx-viv 5.0.11.p8.3
+- Improve fsimx6_std_defconfig with regard to display issues
+- Remove TWM, DirectFB and input-event-daemon from fsimx6_std_defconfig
+- Update multimedia libraries for i.MX6
+  * Update firmware-imx, imx-lib and imx-kobs to 5.4
+  * Update imx-vpu to 5.4.33
+  * Rename libfslcodec to imx-codec, update to 4.0.9, move to freescale-imx
+  * Rename libfslparser to imx-parser, update to 4.0.9, move to freescale-imx
+  * Rename libfslvpuwrap to imx-vpuwrap, update to 4.0.9, move to freescale-imx
+  * Change all packages that depend on the above modifications
+- Add imx-gst1-plugin to gstreamer1 package
+- Switch from gstreamer-0.10 to gstreamer-1.x on fsimx6
+- Fix compilation of imx-gst1-plugin
+- Rebase to buildroot-2016.05
+- In imx-gpu-viv, use x11 output if X11R7 active, fb otherwise
+- Use uImage for kernel image again (was accidentally dropped in last rebase)
+- Bring IMX libraries in sync with upstrem (git repo)
+- Add e2fsprogs package to allow eMMC configuration and formatting
+- Add iw package for WLAN on CubeA7UL
+- Drop architecture prefix from F&S device tree names
+- Add fsimx6_qt5_defconfig, includes most Qt5 packages and all Qt5 examples
+- Add device trees for PicoMODA9 to fsimx6_{min,std}_defconfig
+
+
+
 buildroot-2015.11.1-fsimx6sx-V1.0 (19.02.2016)
 ----------------------------------------------
 Supported Boards: efusA9X, BemA9X
@@ -16,6 +55,7 @@ Supported Boards: efusA9X, BemA9X
   * Update package imx-lib from 3.14.28-1.0.0 to 5.1
   * Update package firmware-imx from 3.14.28-1.0.0 to 5.2
 - Create separate support for fsimx6sx
+
 
 
 buildroot-2015.08.1-fsimx6ul-V1.0 (25.11.2015)

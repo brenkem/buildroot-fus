@@ -32,7 +32,7 @@ ${CP} ${COMMON}/etc/init.d/S02leds ${TARGET}/etc/init.d
 # Copy the kernel and the devicetree
 mkdir -p ${TARGET}/boot
 ${CP} output/images/uImage ${TARGET}/boot
-${CP} output/images/fsimx6ul-${platform}.dtb ${TARGET}/boot
+${CP} output/images/${platform}.dtb ${TARGET}/boot
 
 # Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
 if [ -L "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];

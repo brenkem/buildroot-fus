@@ -1,6 +1,13 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2016.05-fsimx6sx-V2.0 (20.08.2016)
+--------------------------------------------
+
+No changes.
+
+
+
 buildroot-2016.05-fsimx6ul-V2.0 (19.08.2016)
 --------------------------------------------
 Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, efusA7UL,

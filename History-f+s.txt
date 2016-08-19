@@ -1,6 +1,20 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2016.05-fsimx6ul-V2.0 (19.08.2016)
+--------------------------------------------
+Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, efusA7UL,
+                  CubeA7UL, efusA9X
+Not tested:       BemA9X
+
+- Improve cubea7ul build
+- Move .Xauthority file to /var/run
+- Use uImage for kernel image again on F&S boards
+- Bring fsimx6{ul,sx}_std_defconfig in sync with fsimx6_std_defconfig
+- Add fbdev sink to F&S defconfigs with gstreamer-1.0
+
+
+
 buildroot-2016.05-fsimx6-V3.0 (08.08.2016)
 ------------------------------------------
 Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9

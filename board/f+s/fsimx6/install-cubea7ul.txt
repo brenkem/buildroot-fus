@@ -14,9 +14,9 @@ setenv recoversize #recoversize#
 saveenv
 # Store recovery image in RAM to recovery volume
 echo "---- Store recovery image ----"
-ubi write 82000000 recovery $recoversize
+ubi write 81000000 recovery $recoversize
 # And also to rootfs volume as initial system, then reboot
 echo "---- Store rootfs image ----"
-ubi write 88000000 rootfs $recoversize
+ubi write 81000000 rootfs $recoversize
 echo "---- Installation COMPLETE! ----"
 reset

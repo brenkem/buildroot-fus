@@ -26,7 +26,7 @@ CAIRO_CONF_OPTS = \
 	--enable-trace=no \
 	--enable-interpreter=no
 
-CAIRO_DEPENDENCIES = xlib_libXdamage host-pkgconf fontconfig pixman
+CAIRO_DEPENDENCIES = host-pkgconf fontconfig pixman
 
 # Just the bare minimum to make other host-* packages happy
 HOST_CAIRO_CONF_OPTS = \
@@ -105,7 +105,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_XORG7),y)
 CAIRO_CONF_OPTS += --enable-xlib --enable-xcb --with-x
-CAIRO_DEPENDENCIES += xlib_libX11 xlib_libXext
+CAIRO_DEPENDENCIES += xlib_libXdamage xlib_libX11 xlib_libXext
 else
 CAIRO_CONF_OPTS += --disable-xlib --disable-xcb --without-x
 endif

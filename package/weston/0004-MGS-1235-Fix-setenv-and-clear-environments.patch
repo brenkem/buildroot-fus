@@ -1,0 +1,42 @@
+From 331c39648cf027c2f84efc92df888a6e1fdb6268 Mon Sep 17 00:00:00 2001
+Message-Id: <331c39648cf027c2f84efc92df888a6e1fdb6268.1476965418.git.keller@fs-net.de>
+In-Reply-To: <1bbe4f4c985819c8f8ead54288ca1cc8a4b7f51f.1476965418.git.keller@fs-net.de>
+References: <1bbe4f4c985819c8f8ead54288ca1cc8a4b7f51f.1476965418.git.keller@fs-net.de>
+From: Hartmut Keller <keller@fs-net.de>
+Date: Wed, 19 Oct 2016 15:47:50 +0200
+Subject: [PATCH 04/12] MGS-1235 : Fix setenv and clear environments
+
+When setenv is set with parameter null causing crash.
+Fixed with unsetenv to restore to previous state
+
+Date: Nov 17, 2015
+Signed-off-by: Prabhu <prabhu.sundararaj@freescale.com>
+---
+ src/compositor-fbdev.c |   11 ++++++++++-
+ 1 files changed, 10 insertions(+), 1 deletions(-)
+
+diff --git a/src/compositor-fbdev.c b/src/compositor-fbdev.c
+index de3d5a8..6448cd9 100644
+--- a/src/compositor-fbdev.c
++++ b/src/compositor-fbdev.c
+@@ -534,7 +534,16 @@ fbdev_output_create(struct fbdev_backend *backend,
+ 			fprintf(stderr, "failed to create window\n");
+ 			 return 0;
+ 		}
+-		setenv("FB_FRAMEBUFFER_0", fbenv, 1);
++		/* restore the previous value*/
++		if(fbenv != NULL)
++		{
++			setenv("FB_FRAMEBUFFER_0", fbenv, 1);
++		}
++		else
++		{
++			unsetenv("FB_FRAMEBUFFER_0");
++		}
++
+ 
+ 		if (gal2d_renderer->output_create(&output->base,
+ 					output->display,
+-- 
+1.7.4.4
+

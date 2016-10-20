@@ -4,13 +4,18 @@
 #
 ################################################################################
 
-WESTON_VERSION = 1.10.0
+WESTON_VERSION = 1.11.0
 WESTON_SITE = http://wayland.freedesktop.org/releases
 WESTON_SOURCE = weston-$(WESTON_VERSION).tar.xz
 WESTON_LICENSE = MIT
 WESTON_LICENSE_FILES = COPYING
-# For 0002-build-add-check-for-clock_gettime-in-librt.patch
+
+ifeq ($(BR2_PACKAGE_IMX_GPU_VIV),y)
 WESTON_AUTORECONF = YES
+WESTON_CONF_ENV = \
+	COMPOSITOR_CFLAGS="-I$(STAGING_DIR)/usr/include/pixman-1 -DLINUX=1 -DEGL_API_FB -DEGL_API_WL" \
+	COMPOSITOR_LIBS="-lGLESv2 -lEGL -lGAL -lwayland-server -lxkbcommon -lpixman-1" \
+endif
 
 WESTON_DEPENDENCIES = host-pkgconf wayland wayland-protocols \
 	libxkbcommon pixman libpng jpeg mtdev udev cairo libinput \
@@ -18,9 +23,6 @@ WESTON_DEPENDENCIES = host-pkgconf wayland wayland-protocols \
 
 WESTON_CONF_OPTS = \
 	--with-dtddir=$(STAGING_DIR)/usr/share/wayland \
-	--disable-xwayland \
-	--disable-x11-compositor \
-	--disable-wayland-compositor \
 	--disable-headless-compositor \
 	--disable-colord \
 	--disable-setuid-install
@@ -102,6 +104,22 @@ WESTON_CONF_OPTS += --enable-rpi-compositor \
 else
 WESTON_CONF_OPTS += --disable-rpi-compositor
 endif # BR2_PACKAGE_WESTON_RPI
+
+ifeq ($(BR2_PACKAGE_WESTON_X11),y)
+WESTON_CONF_OPTS += \
+	--enable-x11-compositor \
+	WESTON_NATIVE_BACKEND=x11-backend.so
+WESTON_DEPENDENCIES += libxcb xlib_libX11
+else
+WESTON_CONF_OPTS += --disable-x11-compositor
+endif
+
+ifeq ($(BR2_PACKAGE_WESTON_XWAYLAND),y)
+WESTON_CONF_OPTS += --enable-xwayland
+WESTON_DEPENDENCIES += cairo libepoxy libxcb xlib_libX11 xlib_libXcursor
+else
+WESTON_CONF_OPTS += --disable-xwayland
+endif
 
 ifeq ($(BR2_PACKAGE_LIBVA),y)
 WESTON_CONF_OPTS += --enable-vaapi-recorder

@@ -30,7 +30,8 @@ if BR2_PACKAGE_IMX_GPU_VIV
 config BR2_PACKAGE_IMX_GPU_VIV_OUTPUT
 	string
 	default "x11" if BR2_PACKAGE_XORG7
-	default "fb" if !BR2_PACKAGE_XORG7
+	default "wl" if !BR2_PACKAGE_XORG7 && BR2_PACKAGE_WAYLAND
+	default "fb" if !BR2_PACKAGE_XORG7 && !BR2_PACKAGE_WAYLAND
 
 config BR2_PACKAGE_PROVIDES_LIBEGL
 	default "imx-gpu-viv"

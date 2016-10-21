@@ -1,6 +1,23 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2016.05-fsvybrid-V2.2 (21.10.2016)
+--------------------------------------------
+Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, efusA7UL,
+                  CubeA7UL, efusA9X, armStoneA5, PicoCOMA5, NetDCUA5,
+		  CUBEA5, AGATEWAY, HGATEWAY
+Not tested:       BemA9X
+
+- Add fsimx6sx_qt5_defconfig
+- Fix installation procedure for CubeA7UL
+- In Cairo, only include xlib_libXdamage in case of XORG7
+- Improve F&S defconfigs based on NXP SoCs (add ltrace, strace, remove file)
+- On fsvybrid, switch from mdev to eudev to allow using evdev in X11
+- On fsvybrid, use evdev for touches now (better multitouch support)
+- On fsvybrid, remove input-event-daemon like on all other F&S configs
+
+
+
 buildroot-2016.05-fsimx6sx-V2.0 (20.08.2016)
 --------------------------------------------
 

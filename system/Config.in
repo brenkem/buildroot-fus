@@ -128,6 +128,21 @@ config BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_EUDEV
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_MMU # eudev
 	select BR2_PACKAGE_EUDEV
+	help
+	  Use this only if you have a Linux kernel >= 3.7. For older kernels
+	  you might prefer eudev version 1.x because firmware loading
+	  support for these old kernels was dropped in later eudev versions.
+
+config BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_EUDEV1
+	bool "Dynamic using devtmpfs + eudev-1.x (for Linux kernel < 3.7)"
+	depends on BR2_USE_WCHAR
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_USE_MMU # eudev1
+	select BR2_PACKAGE_EUDEV1
+	help
+	  If you have a Linux kernel < 3.7 and use devices with firmwares,
+	  you might prefer eudev version 1.x because firmware loading
+	  support for these old kernels was dropped in later eudev versions.
 
 comment "eudev needs a toolchain w/ wchar, dynamic library"
 	depends on BR2_USE_MMU

@@ -1,0 +1,42 @@
+config BR2_PACKAGE_EUDEV1
+	bool "eudev-1.10"
+	depends on BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_EUDEV1
+	depends on BR2_USE_MMU # uses fork()
+	depends on BR2_USE_WCHAR # util-linux
+	depends on !BR2_STATIC_LIBS # kmod
+	depends on !BR2_PACKAGE_EUDEV
+	select BR2_PACKAGE_HAS_UDEV
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBBLKID
+	select BR2_PACKAGE_KMOD
+	help
+	  Userspace device daemon. This is a standalone version,
+	  independent of systemd. It is a fork maintained by Gentoo.
+
+	  eudev requires a Linux kernel >= 2.6.34: it relies on devtmpfs
+	  and inotify.
+
+	  eudev-1.10 is the last version with support for firmware loading,
+	  newer eudev version do not support this kind of loading anymore.
+	  So if you use a Linux kernel before 3.7 with devices that need a
+	  firmware, you might prefer this older version.
+
+	  https://wiki.gentoo.org/wiki/Project:Eudev
+
+if BR2_PACKAGE_EUDEV1
+
+config BR2_PACKAGE_PROVIDES_UDEV
+	default "eudev1"
+
+config BR2_PACKAGE_EUDEV1_RULES_GEN
+	bool "enable rules generator"
+	help
+	  Enable persistent rules generator
+
+config BR2_PACKAGE_EUDEV1_ENABLE_HWDB
+	bool "enable hwdb installation"
+	default y
+	help
+	  Enables hardware database installation to /etc/udev/hwdb.d
+
+endif

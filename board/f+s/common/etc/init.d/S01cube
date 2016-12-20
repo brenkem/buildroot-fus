@@ -1,5 +1,5 @@
 #!/bin/sh
-# Start CUBEA7UL environment
+# Start Cube environment
 
 login_tty=/dev/login_tty
 
@@ -31,7 +31,7 @@ if [ ${dostop} -ne 0 ] ; then
 	/bin/rm ${login_tty}
     fi
 
-    echo "CUBEA7UL environment stopped"
+    echo "Cube environment stopped"
 fi
 
 if [ ${dostart} -ne 0 ] ; then
@@ -48,5 +48,5 @@ if [ ${dostart} -ne 0 ] ; then
 	ln -s /dev/${con} ${login_tty}
     fi
 
-    echo "CUBEA7UL environment started"
+    echo "Cube environment started"
 fi

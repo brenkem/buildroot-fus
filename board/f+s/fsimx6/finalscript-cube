@@ -6,10 +6,11 @@ BOARD=board/f+s/fsimx6
 MKIMAGE=mkimage
 CP="/bin/cp -f"
 MKDIR="/bin/mkdir -p"
-platform=cubea7ul
+platform=cube
+dtb_files="cubea7ul.dtb cube2.0.dtb"
 
 tput smso
-echo ">>>   Doing final CUBEA7UL setup"
+echo ">>>   Doing final CUBE setup"
 tput rmso
 
 # Create additional mountpoints /data and /export
@@ -32,7 +33,14 @@ ${CP} ${COMMON}/etc/init.d/S02leds ${TARGET}/etc/init.d
 # Copy the kernel and the devicetree
 mkdir -p ${TARGET}/boot
 ${CP} output/images/uImage ${TARGET}/boot
-${CP} output/images/${platform}.dtb ${TARGET}/boot
+for dtb in $dtb_files
+do
+    ${CP} output/images/${dtb} ${TARGET}/boot
+done
+
+# Copy the F&S aliases file
+mkdir -p ${TARGET}/etc/profile.d
+${CP} ${COMMON}/etc/profile.d/fsalias.sh ${TARGET}/etc/profile.d
 
 # Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
 if [ -L "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];

@@ -33,6 +33,10 @@ ${CP} ${COMMON}/etc/init.d/S02leds ${TARGET}/etc/init.d
 #mkdir -p ${TARGET}/boot
 #${CP} output/images/uImage ${TARGET}/boot
 
+# Copy the F&S aliases file
+mkdir -p ${TARGET}/etc/profile.d
+${CP} ${COMMON}/etc/profile.d/fsalias.sh ${TARGET}/etc/profile.d
+
 # Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
 if [ -L "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];
 then

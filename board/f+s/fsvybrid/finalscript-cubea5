@@ -29,6 +29,10 @@ ${CP} ${COMMON}/etc/mdev.conf ${TARGET}/etc
 ${CP} ${COMMON}/etc/init.d/S01${platform} ${TARGET}/etc/init.d
 ${CP} ${COMMON}/etc/init.d/S02leds ${TARGET}/etc/init.d
 
+# Copy the wrapper script fsgetty
+mkdir -p ${TARGET}/sbin
+${CP} ${COMMON}/sbin/fsgetty ${TARGET}/sbin
+
 # Copy the kernel
 #mkdir -p ${TARGET}/boot
 #${CP} output/images/uImage ${TARGET}/boot

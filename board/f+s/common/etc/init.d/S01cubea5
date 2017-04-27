@@ -2,6 +2,7 @@
 # Start CUBEA5 environment
 
 login_tty=/dev/login_tty
+default_tty=ttymxc1
 
 dostart=0
 dostop=0
@@ -42,11 +43,11 @@ if [ ${dostart} -ne 0 ] ; then
     # Remove update.scr or it will be triggered again on next boot
     /bin/rm -f /data/update.scr
 
-    # Set the login_tty
+    # Create symbolic link to login_tty (used by inittab)
     if [ -e /sys/bdinfo/login_tty ] ; then
-	con=$(cat /sys/bdinfo/login_tty)
-	ln -s /dev/${con} ${login_tty}
+	default_tty=$(cat /sys/bdinfo/login_tty)
     fi
+    ln -s /dev/$default_tty $login_tty
 
     echo "CUBEA5 environment started"
 fi

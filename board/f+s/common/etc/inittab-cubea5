@@ -23,10 +23,14 @@
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS
 
-# Put a getty on the login_tty. /etc/init.d/S01cubea5 creates this as a
-# symbolic link to the device given in /sys/bdinfo/login_tty, usually the
-# serial port; we also set the speed that is given in /sys/bdinfo/login_speed
-login_tty::respawn:/sbin/getty -L login_tty $(/bin/cat /sys/bdinfo/login_speed) vt100
+# Put a getty on the login_tty. login_tty is a symbolic link to the
+# device given in /sys/bdinfo/login_tty. This link is created by
+# /etc/init.d/S01cubea5. /sbin/fsgetty is a script that simply starts
+# the real /sbin/getty if the login_tty is a valid string. Otherwise it
+# stays sleeping in an endless loop, because if it would return here, it
+# would respawn immediately, and fail again and again, causing lots of
+# annoying syslog messages.
+login_tty::respawn:/sbin/fsgetty
 
 # Stuff to do for the 3-finger salute
 ::ctrlaltdel:/sbin/reboot

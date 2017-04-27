@@ -2,9 +2,7 @@
 # Set up F&S environment
 
 login_tty=/dev/login_tty
-login_speed=/tmp/login_speed
 default_tty=ttymxc0
-default_speed=115200
 
 dostart=0
 dostop=0
@@ -24,32 +22,26 @@ case "$1" in
 	echo $"Usage: $0 {start|stop|restart}"
 esac
 
-if [ ${dostop} -ne 0 ] ; then
+if [ $dostop -ne 0 ] ; then
     # Remove symbolic link from login_tty
-    if [ -L ${login_tty} ] ; then
-	/bin/rm ${login_tty}
+    if [ -L $login_tty ] ; then
+	/bin/rm $login_tty
     fi
-    # Remove login_speed file in /tmp
-    if [ -e ${login_speed} ] ; then
-	/bin/rm ${login_speed}
-    fi
+
     echo "F&S environment stopped"
 fi
 
-if [ ${dostart} -ne 0 ] ; then
+if [ $dostart -ne 0 ] ; then
     # Create symbolic link to login_tty (used by inittab)
     if [ -e /sys/bdinfo/login_tty ] ; then
 	default_tty=$(cat /sys/bdinfo/login_tty)
     fi
-    ln -s /dev/${default_tty} ${login_tty}
-    # Create login_speed file in /tmp (used by inittab)
-    if [ -e /sys/bdinfo/login_speed ] ; then
-	default_speed=$(cat /sys/bdinfo/login_speed)
-    fi
-    echo ${default_speed} > ${login_speed}
+    ln -s /dev/$default_tty $login_tty
+
     # check if alsactl and file asound.state are available then load config
     if [ -e /usr/sbin/alsactl ] && [ -e /var/lib/alsa/asound.state ] ; then
 	alsactl restore
     fi
+
     echo "F&S environment started"
 fi

@@ -19,6 +19,7 @@ COMMON=board/f+s/common
 FS_ARCH=${FS_ARCH:-fsimx6}
 FS_CONFIG=${FS_CONFIG:-minimal}
 FS_SETUP=${FS_SETUP:-$COMMON/etc/init.d/S01fssetup}
+FS_GETTY=${FS_GETTY:-$COMMON/sbin/fsgetty}
 BOARD=${BOARD:-board/f+s/$FS_ARCH}
 INITTAB=${INITTAB:-$COMMON/etc/inittab}
 
@@ -33,6 +34,10 @@ ${CP} $INITTAB ${TARGET}/etc/inittab
 
 # Copy the start script to set up the board environment
 ${CP} $FS_SETUP ${TARGET}/etc/init.d
+
+# Copy the wrapper script fsgetty
+mkdir -p ${TARGET}/sbin
+${CP} $FS_GETTY ${TARGET}/sbin
 
 # If mdev is used, copy the mdev.conf file and activate mdev in inittab
 if grep ^BR2_ROOTFS_DEVICE_CREATION_DYNAMIC_MDEV=y $BR2_CONFIG > /dev/null; then

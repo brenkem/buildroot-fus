@@ -1,0 +1,9 @@
+diff -Naur a/matchbox-session b/matchbox-session
+--- a/matchbox-session	2017-04-19 08:00:16.417702212 +0200
++++ b/matchbox-session	2017-04-19 08:01:02.220295100 +0200
+@@ -21,4 +21,5 @@
+ 
+ matchbox-desktop &
+ matchbox-panel  --orientation south &
++mb-applet-launcher matchbox-keyboard.png matchbox-keyboard &
+ exec matchbox-window-manager $@

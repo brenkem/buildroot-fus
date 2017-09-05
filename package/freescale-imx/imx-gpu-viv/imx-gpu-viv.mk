@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_GPU_VIV_VERSION = 5.0.11.p8.3-hfp
+IMX_GPU_VIV_VERSION = 5.0.11.p8.4-hfp
 IMX_GPU_VIV_SITE = $(FREESCALE_IMX_SITE)
 IMX_GPU_VIV_SOURCE = imx-gpu-viv-$(IMX_GPU_VIV_VERSION).bin
 
@@ -34,8 +34,6 @@ endef
 # Make sure these commands are idempotent.
 define IMX_GPU_VIV_BUILD_CMDS
 	$(SED) 's/defined(LINUX)/defined(__linux__)/g' $(@D)/gpu-core/usr/include/*/*.h
-	$(RM) $(@D)/gpu-core/usr/lib/libGAL.fb.so
-	$(RM) $(@D)/gpu-core/usr/lib/libVIVANTE.fb.so
 	ln -sf libGL.so.1.2 $(@D)/gpu-core/usr/lib/libGL.so
 	ln -sf libGL.so.1.2 $(@D)/gpu-core/usr/lib/libGL.so.1
 	ln -sf libGL.so.1.2 $(@D)/gpu-core/usr/lib/libGL.so.1.2.0

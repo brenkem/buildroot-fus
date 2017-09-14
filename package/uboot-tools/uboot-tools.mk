@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-UBOOT_TOOLS_VERSION = 2017.01
+UBOOT_TOOLS_VERSION = 2017.03
 UBOOT_TOOLS_SOURCE = u-boot-$(UBOOT_TOOLS_VERSION).tar.bz2
 UBOOT_TOOLS_SITE = ftp://ftp.denx.de/pub/u-boot
-UBOOT_TOOLS_LICENSE = GPLv2+
+UBOOT_TOOLS_LICENSE = GPL-2.0+
 UBOOT_TOOLS_LICENSE_FILES = Licenses/gpl-2.0.txt
 UBOOT_TOOLS_INSTALL_STAGING = YES
 
@@ -20,6 +20,11 @@ UBOOT_TOOLS_MAKE_OPTS = CROSS_COMPILE="$(TARGET_CROSS)" \
 	CFLAGS="$(TARGET_CFLAGS)" \
 	LDFLAGS="$(TARGET_LDFLAGS)" \
 	STRIP=$(TARGET_STRIP)
+
+# This option was added through an additional patch
+# and allows the disabling of a host python swig
+# detect which as of 2017.3 assumes the host systems swig.
+UBOOT_TOOLS_MAKE_OPTS += CONFIG_TOOLS_PYTHON_WRAPPER_DISABLE=y
 
 ifeq ($(BR2_PACKAGE_UBOOT_TOOLS_FIT_SUPPORT),y)
 UBOOT_TOOLS_MAKE_OPTS += CONFIG_FIT=y
@@ -86,6 +91,10 @@ endef
 HOST_UBOOT_TOOLS_MAKE_OPTS = HOSTCC="$(HOSTCC)" \
 	HOSTCFLAGS="$(HOST_CFLAGS)" \
 	HOSTLDFLAGS="$(HOST_LDFLAGS)"
+
+# Workaround to disable building the host python libfdt module. See comment
+# above when setting the target uboot-tools make options.
+HOST_UBOOT_TOOLS_MAKE_OPTS += CONFIG_TOOLS_PYTHON_WRAPPER_DISABLE=y
 
 ifeq ($(BR2_PACKAGE_HOST_UBOOT_TOOLS_FIT_SUPPORT),y)
 HOST_UBOOT_TOOLS_MAKE_OPTS += CONFIG_FIT=y

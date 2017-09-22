@@ -21,12 +21,6 @@ LINUX_TARBALL = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION))
 LINUX_SITE = $(patsubst %/,%,$(dir $(LINUX_TARBALL)))
 LINUX_SOURCE = $(notdir $(LINUX_TARBALL))
 BR_NO_CHECK_HASH_FOR += $(LINUX_SOURCE)
-else ifeq ($(LINUX_VERSION),localdir)
-# F&S extension: do not download anything
-LINUX_SOURCE =
-else ifeq ($(BR2_LINUX_KERNEL_CUSTOM_LOCAL),y)
-LINUX_SITE = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_LOCAL_PATH))
-LINUX_SITE_METHOD = local
 else ifeq ($(BR2_LINUX_KERNEL_CUSTOM_GIT),y)
 LINUX_SITE = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_REPO_URL))
 LINUX_SITE_METHOD = git
@@ -208,18 +202,6 @@ define LINUX_APPLY_LOCAL_PATCHES
 endef
 
 LINUX_POST_PATCH_HOOKS += LINUX_APPLY_LOCAL_PATCHES
-
-# When compiling from the local directory, we copy the local directory
-# to $(LINUX_DIR), but we will use hard links if possible, soft links
-# otherwise. This is quick and uses no (or nearly no) additional disk
-# space. We also omit a potential .git directory to avoid any risk for
-# the repository. After copying the files, remove any existing
-# generated files (e.g. *.o) by calling make distclean.
-ifeq ($(LINUX_VERSION),localdir)
-LINUX_EXTRACT_CMDS = \
-	linux/localdir_cp $(BR2_LINUX_KERNEL_CUSTOM_DIR_LOCATION) $(LINUX_DIR) \
-	&& $(TARGET_MAKE_ENV) $(MAKE1) $(LINUX_MAKE_FLAGS) -C $(@D) distclean
-endif
 
 # Older linux kernels use deprecated perl constructs in timeconst.pl
 # that were removed for perl 5.22+ so it breaks on newer distributions
@@ -430,7 +412,7 @@ define LINUX_INSTALL_TARGET_CMDS
 	$(LINUX_INSTALL_HOST_TOOLS)
 endef
 
-# Include all our extensions and tools definitions.
+# Include all our extensions.
 #
 # Note: our package infrastructure uses the full-path of the last-scanned
 # Makefile to determine what package we're currently defining, using the
@@ -441,7 +423,6 @@ endef
 # the current Makefile, we are OK. But this is a hard requirement: files
 # included here *must* be in the same directory!
 include $(sort $(wildcard linux/linux-ext-*.mk))
-include $(sort $(wildcard linux/linux-tool-*.mk))
 
 LINUX_PATCH_DEPENDENCIES += $(foreach ext,$(LINUX_EXTENSIONS),\
 	$(if $(BR2_LINUX_KERNEL_EXT_$(call UPPERCASE,$(ext))),$(ext)))
@@ -449,27 +430,6 @@ LINUX_PATCH_DEPENDENCIES += $(foreach ext,$(LINUX_EXTENSIONS),\
 LINUX_PRE_PATCH_HOOKS += $(foreach ext,$(LINUX_EXTENSIONS),\
 	$(if $(BR2_LINUX_KERNEL_EXT_$(call UPPERCASE,$(ext))),\
 		$(call UPPERCASE,$(ext))_PREPARE_KERNEL))
-
-# Install Linux kernel tools in the staging directory since some tools
-# may install shared libraries and headers (e.g. cpupower). The kernel
-# image is NOT installed in the staging directory.
-LINUX_INSTALL_STAGING = YES
-
-LINUX_DEPENDENCIES += $(foreach tool,$(LINUX_TOOLS),\
-	$(if $(BR2_LINUX_KERNEL_TOOL_$(call UPPERCASE,$(tool))),\
-		$($(call UPPERCASE,$(tool))_DEPENDENCIES)))
-
-LINUX_POST_BUILD_HOOKS += $(foreach tool,$(LINUX_TOOLS),\
-	$(if $(BR2_LINUX_KERNEL_TOOL_$(call UPPERCASE,$(tool))),\
-		$(call UPPERCASE,$(tool))_BUILD_CMDS))
-
-LINUX_POST_INSTALL_STAGING_HOOKS += $(foreach tool,$(LINUX_TOOLS),\
-	$(if $(BR2_LINUX_KERNEL_TOOL_$(call UPPERCASE,$(tool))),\
-		$(call UPPERCASE,$(tool))_INSTALL_STAGING_CMDS))
-
-LINUX_POST_INSTALL_TARGET_HOOKS += $(foreach tool,$(LINUX_TOOLS),\
-	$(if $(BR2_LINUX_KERNEL_TOOL_$(call UPPERCASE,$(tool))),\
-		$(call UPPERCASE,$(tool))_INSTALL_TARGET_CMDS))
 
 # Checks to give errors that the user can understand
 

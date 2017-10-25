@@ -4,12 +4,13 @@
 
 BOARD=board/f+s/fsimx6
 platform=cube
+OUTPUT=output/images
 script=install-$platform
+rootfs=${OUTPUT}/rootfs.ubifs
 
 MKIMAGE=mkimage
 RM="/bin/rm -f"
 
-rootfs=output/images/rootfs.ubifs
 if [ ! -f "$rootfs" ]
     then
     echo "$rootfs not found"
@@ -21,7 +22,7 @@ recoversize=$(printf "%x" $recoverdec)
 
 echo "Building install script, recoversize=0x$recoversize (=$recoverdec Bytes)"
 sed -e "s/#recoversize#/$recoversize/" ${BOARD}/$script.txt \
-    > ${BOARD}/$script.tmp
+    > ${OUTPUT}/$script.tmp
 ${MKIMAGE} -A arm -O u-boot -T script -C none -n "$platform install script" \
-    -d ${BOARD}/$script.tmp $script.scr
-${RM} ${BOARD}/$script.tmp
+    -d ${OUTPUT}/$script.tmp ${OUTPUT}/$script.scr
+${RM} ${OUTPUT}/$script.tmp

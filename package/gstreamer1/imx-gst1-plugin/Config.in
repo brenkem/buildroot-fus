@@ -5,18 +5,21 @@ comment "imx-gst1-plugin needs an (e)glibc toolchain"
 	depends on BR2_arm
 	depends on !BR2_TOOLCHAIN_USES_GLIBC
 
+comment "imx-gst1-plugin depends on BR2_PACKAGE_FREESCALE_IMX"
+	depends on !BR2_PACKAGE_FREESCALE_IMX
+
 config BR2_PACKAGE_IMX_GST1_PLUGIN
 	bool "imx-gst1-plugin"
 	depends on BR2_LINUX_KERNEL
 	depends on BR2_arm # Only relevant for i.MX
 	depends on BR2_TOOLCHAIN_USES_GLIBC # imx-codec
+	depends on BR2_PACKAGE_FREESCALE_IMX
 	select BR2_PACKAGE_GST1_PLUGINS_BASE
 	select BR2_PACKAGE_IMX_VPUWRAP
 	select BR2_PACKAGE_IMX_LIB
 	select BR2_PACKAGE_IMX_VPU
 	select BR2_PACKAGE_IMX_PARSER
 	select BR2_PACKAGE_IMX_CODEC
-	select BR2_PACKAGE_FREESCALE_IMX
 	help
 	  GStreamer-1.0 plugins for hardware-accelerated audio and video
 	  parsers and codecs on i.MX platforms. It requires a kernel that

@@ -1,9 +1,11 @@
-diff -Naur a/matchbox-session b/matchbox-session
---- a/matchbox-session	2017-04-19 08:00:16.417702212 +0200
-+++ b/matchbox-session	2017-04-19 08:01:02.220295100 +0200
-@@ -21,4 +21,5 @@
+diff -Naur matchbox-common-0.9.1-old/matchbox-session matchbox-common-0.9.1-new/matchbox-session
+--- matchbox-common-0.9.1-old/matchbox-session	2004-12-01 12:22:30.000000000 +0100
++++ matchbox-common-0.9.1-new/matchbox-session	2017-11-17 19:49:59.000000000 +0100
+@@ -20,5 +20,6 @@
+ # dont exist. 
  
  matchbox-desktop &
- matchbox-panel  --orientation south &
+-matchbox-panel  --orientation south &
++matchbox-panel  --orientation south --no-session --default-apps mb-applet-menu-launcher,mb-applet-clock &
 +mb-applet-launcher matchbox-keyboard.png matchbox-keyboard &
  exec matchbox-window-manager $@

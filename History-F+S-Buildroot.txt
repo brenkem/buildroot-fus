@@ -1,6 +1,19 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2016.05-fsimx6sx-V2.1 (08.01.2018)
+--------------------------------------------
+Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+                  QBlissA9, QBlissA9r2, efusA7UL, CubeA7UL, Cube2.0,
+                  PicoCOM1.2, GAR1, efusA9X, PicoCOMA9X, CONT1
+Not tested:       armStoneA5, NetDCUA5, PicoCOMA5, CUBEA5, AGATEWAY,
+                  HGATEWAY
+
+- Add package silex-wlan-fs for F&S boards
+- Activate silex-wlan-fs package on fsimx6sx and fsimx6ul
+
+
+
 buildroot-2016.05-fsimx6-V3.1 (20.11.2017)
 ------------------------------------------
 Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,

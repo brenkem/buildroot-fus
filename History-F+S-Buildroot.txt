@@ -1,6 +1,19 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2016.05-fsimx6ul-V2.1 (21.02.2018)
+--------------------------------------------
+Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+                  QBlissA9, QBlissA9r2, efusA7UL, CubeA7UL, Cube2.0,
+                  PicoCOM1.2, GAR1, efusA9X, PicoCOMA9X, CONT1
+Not tested:       armStoneA5, NetDCUA5, PicoCOMA5, CUBEA5, AGATEWAY,
+                  HGATEWAY
+
+- Add Wayland/Weston support to cairo and imx-gpu-viv
+- Add efusa7ull device tree to all fsimx6ul defconfigs
+
+
+
 buildroot-2016.05-fsimx6sx-V2.1 (08.01.2018)
 --------------------------------------------
 Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,

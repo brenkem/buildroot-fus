@@ -1,6 +1,75 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2016.05-fsimx6ul-V2.1 (21.02.2018)
+--------------------------------------------
+Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+                  QBlissA9, QBlissA9r2, efusA7UL, CubeA7UL, Cube2.0,
+                  PicoCOM1.2, GAR1, efusA9X, PicoCOMA9X, CONT1
+Not tested:       armStoneA5, NetDCUA5, PicoCOMA5, CUBEA5, AGATEWAY,
+                  HGATEWAY
+
+- Add Wayland/Weston support to cairo and imx-gpu-viv
+- Add efusa7ull device tree to all fsimx6ul defconfigs
+
+
+
+buildroot-2016.05-fsimx6sx-V2.1 (08.01.2018)
+--------------------------------------------
+Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+                  QBlissA9, QBlissA9r2, efusA7UL, CubeA7UL, Cube2.0,
+                  PicoCOM1.2, GAR1, efusA9X, PicoCOMA9X, CONT1
+Not tested:       armStoneA5, NetDCUA5, PicoCOMA5, CUBEA5, AGATEWAY,
+                  HGATEWAY
+
+- Add package silex-wlan-fs for F&S boards
+- Activate silex-wlan-fs package on fsimx6sx and fsimx6ul
+
+
+
+buildroot-2016.05-fsimx6-V3.1 (20.11.2017)
+------------------------------------------
+Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+                  QBlissA9, QBlissA9r2, efusA7UL, CubeA7UL, Cube2.0,
+                  PicoCOM1.2, GAR1, efusA9X, PicoCOMA9X, CONT1
+Not tested:       BemA9X, armStoneA5, NetDCUA5, PicoCOMA5, CUBEA5,
+                  AGATEWAY, HGATEWAY
+
+- Add basic support for wayland and weston on i.MX6
+- Fix weston gal2d-renderer
+- Add EGL/GLESV2 support to weston on i.MX6
+- Mount tmpfs on /run on CubeA5 and CubeA7UL
+- Use eudev-1.10 for fsvybrid
+- Add support for Cube2.0
+- Add F&S default aliases to CUBEA5
+- Remove unused board/f+s/fsimx6/inittab file
+- Add netdcua9dl/q devicetrees to fsimx6_min/std_defconfig
+- Add Audio Chip configuration support
+- Add keyboard icon to taskbar
+- Add german keyboard layout
+- Reduce Cube2.0/CubeA7UL default configuration
+- Add fsgetty for Cube2.0/CubeA7UL/CUBEA5
+- Actually install recovery partition on Cube2.0/CubeA7UL
+- Add fsgetty for all F&S boards and modules
+- Improve fsvybrid defconfig DT/Kernel
+- Add wget support for fsimx6, fsimx6sx, fsimx6ul
+- Include QBlissA9qdl and QBlissA9r2qdl names in fsimx6_std_defconfig
+- Add fsimx6ul_qt5_defconfig
+- Add support for wget in fsvybrid
+- Fix sdkdir problems in xdriver-xf86-input-{evdev,mouse}
+- Go to busybox config 1.24.2, add FAT tools to F&S defconfigs
+- Add additional packages to qt5_defconfigs required for Qt5 debugging
+- S35x11: Do not start X if no framebuffer is available
+- Add new busybox config for additional F&S platforms
+- Move install-cube*.scr to output/images directory
+- Remove unused qblissa9qt_defconfig
+- Add missing device trees to some F&S defconfigs
+- Add openssl binaries to some F&S configs, remove unneeded applications
+- Add xrandr to fsimx6/sx/ul_std_defconfig
+- Do not use a session for matchbox
+
+
+
 buildroot-2016.05-fsvybrid-V2.2 (21.10.2016)
 --------------------------------------------
 Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, efusA7UL,
@@ -134,7 +203,7 @@ buildroot-2014.02-fsimx6-V2.0 (21.04.2015)
 ------------------------------------------
 Supported Boards: armStoneA9, QBlissA9, PicoMODA9, efusA9
 Not tested:       armStoneA5, armStoneA8, NetDCUA5, NetDCU14, PicoMOD7A,
-                  PicoCOMA5, PicoCOM4, CUBEA5, AGATEWAY, HGATEWAY, 
+                  PicoCOMA5, PicoCOM4, CUBEA5, AGATEWAY, HGATEWAY,
 
 - Rebase to buildroot-2013.05
 - Join GIT trees from fsimx6 buildroot with multiplatform buildroot

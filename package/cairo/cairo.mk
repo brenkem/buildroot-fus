@@ -77,6 +77,10 @@ else
 CAIRO_CONF_OPTS += --disable-ft
 endif
 
+ifeq ($(BR2_PACKAGE_WAYLAND),y)
+CAIRO_DEPENDENCIES += wayland
+endif
+
 ifeq ($(BR2_PACKAGE_LIBGLIB2),y)
 CAIRO_CONF_OPTS += --enable-gobject
 CAIRO_DEPENDENCIES += libglib2

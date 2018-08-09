@@ -56,6 +56,16 @@ define IMX_GPU_VIV_FIXUP_FB_HEADERS
 endef
 endif
 
+ifeq ($(IMX_GPU_VIV_LIB_TARGET),wl)
+define IMX_GPU_VIV_FIXUP_FB_HEADERS
+	$(SED) '39i\
+		#if !defined(EGL_API_X11) && !defined(EGL_API_DFB) && !defined(EGL_API_FB) \n\
+		#define EGL_API_FB \n\
+		#define EGL_API_WL \n\
+		#endif' $(STAGING_DIR)/usr/include/EGL/eglvivante.h
+endef
+endif
+
 ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_G2D),y)
 define IMX_GPU_VIV_INSTALL_G2D_STAGING
 	cp -dpfr $(@D)/g2d/usr/include/* $(STAGING_DIR)/usr/include/

@@ -324,14 +324,14 @@ LINUX_FIRMWARE_FILES += bnx2x/*
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_CXGB4_T4),y)
-# cxgb4/t4fw.bin is a symlink to cxgb4/t4fw-1.16.26.0.bin
-LINUX_FIRMWARE_FILES += cxgb4/t4fw-1.16.26.0.bin cxgb4/t4fw.bin
+# cxgb4/t4fw.bin is a symlink to cxgb4/t4fw-1.16.45.0.bin
+LINUX_FIRMWARE_FILES += cxgb4/t4fw-1.16.45.0.bin cxgb4/t4fw.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.chelsio_firmware
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_CXGB4_T5),y)
-# cxgb4/t5fw.bin is a symlink to cxgb4/t5fw-1.16.26.0.bin
-LINUX_FIRMWARE_FILES += cxgb4/t5fw-1.16.26.0.bin cxgb4/t5fw.bin
+# cxgb4/t5fw.bin is a symlink to cxgb4/t5fw-1.16.45.0.bin
+LINUX_FIRMWARE_FILES += cxgb4/t5fw-1.16.45.0.bin cxgb4/t5fw.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.chelsio_firmware
 endif
 
@@ -412,6 +412,14 @@ LINUX_FIRMWARE_FILES += \
 	brcm/brcmfmac43602-pcie.ap.bin brcm/brcmfmac43602-pcie.bin \
 	brcm/brcmfmac43430-sdio.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.broadcom_bcm43xx
+endif
+
+# ql2xxx
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QLOGIC_2XXX),y)
+LINUX_FIRMWARE_FILES += \
+	ql2100_fw.bin ql2200_fw.bin ql2300_fw.bin ql2322_fw.bin \
+	ql2400_fw.bin ql2500_fw.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.qla2xxx
 endif
 
 ifneq ($(LINUX_FIRMWARE_FILES),)

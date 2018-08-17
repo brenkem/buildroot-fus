@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_GPU_VIV_VERSION = 5.0.11.p8.6-hfp
+IMX_GPU_VIV_VERSION = 6.2.2.p0-aarch32
 IMX_GPU_VIV_SITE = $(FREESCALE_IMX_SITE)
 IMX_GPU_VIV_SOURCE = imx-gpu-viv-$(IMX_GPU_VIV_VERSION).bin
 
@@ -82,18 +82,9 @@ define IMX_GPU_VIV_FIXUP_PKGCONFIG
 endef
 endif
 
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),x11)
-define IMX_GPU_VIV_FIXUP_PKGCONFIG
-	for lib in egl gbm glesv1_cm glesv2 vg; do \
-		ln -sf $${lib}_x11.pc $(@D)/gpu-core/usr/lib/pkgconfig/$${lib}.pc
-	done
-endef
-endif
-
 define IMX_GPU_VIV_INSTALL_STAGING_CMDS
 	cp -r $(@D)/gpu-core/usr/* $(STAGING_DIR)/usr
 	$(IMX_GPU_VIV_FIXUP_FB_HEADERS)
-	$(IMX_GPU_VIV_INSTALL_G2D_STAGING)
 	$(IMX_GPU_VIV_FIXUP_PKGCONFIG)
 	for lib in egl gbm glesv1_cm glesv2 vg; do \
 		$(INSTALL) -m 0644 -D \
@@ -102,31 +93,10 @@ define IMX_GPU_VIV_INSTALL_STAGING_CMDS
 	done
 endef
 
-ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_APITRACE),y)
-IMX_GPU_VIV_DEPENDENCIES += libpng
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),x11)
-define IMX_GPU_VIV_INSTALL_APITRACE
-	cp -dpfr $(@D)/apitrace/x11/usr/bin/* $(TARGET_DIR)/usr/bin/
-	cp -dpfr $(@D)/apitrace/x11/usr/lib/* $(TARGET_DIR)/usr/lib/
-endef
-else
-define IMX_GPU_VIV_INSTALL_APITRACE
-	cp -dpfr $(@D)/apitrace/non-x11/usr/bin/* $(TARGET_DIR)/usr/bin/
-	cp -dpfr $(@D)/apitrace/non-x11/usr/lib/* $(TARGET_DIR)/usr/lib/
-endef
-endif
-endif
-
 ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_EXAMPLES),y)
 define IMX_GPU_VIV_INSTALL_EXAMPLES
 	mkdir -p $(TARGET_DIR)/usr/share/examples/
 	cp -r $(@D)/gpu-demos/opt/* $(TARGET_DIR)/usr/share/examples/
-endef
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_G2D),y)
-define IMX_GPU_VIV_INSTALL_G2D
-	cp -dpfr $(@D)/g2d/usr/lib/* $(TARGET_DIR)/usr/lib/
 endef
 endif
 
@@ -140,9 +110,7 @@ endif
 # Note that this is _required_, else ldconfig may create symlinks
 # to the wrong library
 define IMX_GPU_VIV_INSTALL_TARGET_CMDS
-	$(IMX_GPU_VIV_INSTALL_APITRACE)
 	$(IMX_GPU_VIV_INSTALL_EXAMPLES)
-	$(IMX_GPU_VIV_INSTALL_G2D)
 	$(IMX_GPU_VIV_INSTALL_GMEM_INFO)
 	cp -a $(@D)/gpu-core/usr/lib $(TARGET_DIR)/usr
 	for lib in EGL GAL VIVANTE GLESv2 VDK; do \

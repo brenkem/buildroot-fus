@@ -10,18 +10,6 @@ WESTON_SOURCE = weston-$(WESTON_VERSION).tar.xz
 WESTON_LICENSE = MIT
 WESTON_LICENSE_FILES = COPYING
 
-ifeq ($(BR2_PACKAGE_IMX_GPU_VIV),y)
-WESTON_AUTORECONF = YES
-WESTON_CONF_ENV = \
-	COMPOSITOR_CFLAGS="-I$(STAGING_DIR)/usr/include/pixman-1 -DLINUX=1 -DEGL_API_FB -DEGL_API_WL" \
-	FB_COMPOSITOR_CFLAGS="-DLINUX=1 -DEGL_API_FB -DEGL_API_WL" \
-	SIMPLE_EGL_CLIENT_CFLAGS="-DLINUX -DEGL_API_FB -DEGL_API_WL" \
-	EGL_TESTS_CFLAGS="-DLINUX -DEGL_API_FB -DEGL_API_WL" \
-	CLIENT_CFLAGS="-I$(STAGING_DIR)/usr/include/cairo -I$(STAGING_DIR)/usr/include/pixman-1 -DLINUX -DEGL_API_FB -DEGL_API_WL" \
-	COMPOSITOR_LIBS="-lGLESv2 -lEGL -lGAL -lwayland-server -lxkbcommon -lpixman-1" \
-	FB_COMPOSITOR_LIBS="-lGLESv2 -lEGL -lwayland-server -lxkbcommon"
-endif
-
 WESTON_DEPENDENCIES = host-pkgconf wayland wayland-protocols \
 	libxkbcommon pixman libpng jpeg udev cairo libinput libdrm \
 	$(if $(BR2_PACKAGE_WEBP),webp)
@@ -62,8 +50,7 @@ else
 WESTON_CONF_OPTS += --disable-weston-launch
 endif
 
-# Needs wayland-egl, which normally only mesa provides
-ifeq ($(BR2_PACKAGE_HAS_LIBEGL)$(BR2_PACKAGE_HAS_LIBGLES),yy)
+ifeq ($(BR2_PACKAGE_HAS_LIBEGL_WAYLAND),y)
 WESTON_CONF_OPTS += --enable-egl
 WESTON_DEPENDENCIES += libegl
 else

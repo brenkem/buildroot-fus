@@ -1,0 +1,9 @@
+comment "F&S board support for Sterling WLAN needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_STERLING_WLAN_FS
+	bool "F&S board support for Sterling WLAN"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Add build and addkernel modules and firmware files to support the
+	  Sterling WLAN on F&S boards and modules.

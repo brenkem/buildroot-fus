@@ -1,0 +1,20 @@
+Nur in a: .blacklist.map.
+Nur in a: .gitignore.
+diff -upr a/laird-backport-5.0.0.22/Makefile.real b/laird-backport-5.0.0.22/Makefile.real
+--- a/laird-backport-5.0.0.22/Makefile.real	2018-10-25 15:37:51.014617439 +0200
++++ b/laird-backport-5.0.0.22/Makefile.real	2018-10-25 15:40:04.232226283 +0200
+@@ -92,14 +92,8 @@ install: modules
+ 	@$(MAKE) -C $(KLIB_BUILD) M=$(BACKPORT_DIR)			\
+ 		INSTALL_MOD_DIR=$(KMODDIR) $(KMODPATH_ARG)		\
+ 		modules_install
+-	@./scripts/blacklist.sh $(KLIB)/ $(KLIB)/$(KMODDIR)
+-	@./scripts/compress_modules.sh $(KLIB)/$(KMODDIR)
+-	@./scripts/check_depmod.sh
+-	@/sbin/depmod -a
+-	@./scripts/update-initramfs.sh $(KLIB)
+ 	@echo
+ 	@echo Your backported driver modules should be installed now.
+-	@echo Reboot.
+ 	@echo
+ 
+ .PHONY: modules_install

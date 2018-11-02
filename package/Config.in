@@ -433,6 +433,7 @@ endmenu
 	source "package/fmtools/Config.in"
 	source "package/freescale-imx/Config.in"
 	source "package/silex-wlan-fs/Config.in"
+	source "package/sterling-wlan-fs/Config.in"
 	source "package/fxload/Config.in"
 	source "package/gadgetfs-test/Config.in"
 	source "package/gpm/Config.in"

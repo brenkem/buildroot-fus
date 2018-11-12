@@ -36,5 +36,5 @@ if grep ^BR2_PACKAGE_XSERVER_XORG_SERVER=y $BR2_CONFIG > /dev/null; then
     # Copy enhanced profile (with DISPLAY and XAUTHORITY)
     ${CP} ${COMMON}/etc/profile.d/xserver.sh ${TARGET}/etc/profile.d
     # Copy start script for XServer
-    ${CP} ${COMMON}/etc/init.d/S35x11 ${TARGET}/etc/init.d
+    ${CP} ${COMMON}/etc/init.d/S40xorg ${TARGET}/etc/init.d
 fi

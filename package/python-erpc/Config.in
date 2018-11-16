@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_ERPC
+	bool "python-erpc"
+	select BR2_PACKAGE_HOST_PYTHON_SERIAL
+	help
+     eRPC (Embedded RPC) is an open source Remote Procedure Call (RPC) system
+     for multichip embedded systems and heterogeneous multicore SoCs.
+
+	 https://github.com/EmbeddedRPC/erpc

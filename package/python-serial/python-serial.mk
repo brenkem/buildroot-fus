@@ -22,3 +22,4 @@ PYTHON_SERIAL_POST_EXTRACT_HOOKS = PYTHON_SERIAL_REMOVE_AIO_PY
 endif
 
 $(eval $(python-package))
+$(eval $(host-python-package))

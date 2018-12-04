@@ -161,13 +161,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2018.08 manual generated on 2018-09-06 20:13:50 UTC from
-git revision 339d550e92
+Buildroot 2018.11 manual generated on 2018-12-01 22:09:01 UTC from
+git revision 9089a9ff30
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-339d550e92ac15de8668f32d66d16f198137006c] file in the Buildroot
+9089a9ff307045bb5fd42ab76ad0a739b5221416] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2018 The Buildroot developers
@@ -1528,17 +1528,26 @@ host/. The simplest way to use it is to add output/host/bin/ to your
 PATH environment variable and then to use ARCH-linux-gcc,
 ARCH-linux-objdump, ARCH-linux-ld, etc.
 
-It is possible to relocate the toolchain, this allows to distribute
-the toolchain to other developers to build applications for your
-target. To achieve this:
+Alternatively, Buildroot can also export the toolchain and the
+development files of all selected packages, as an SDK, by running the
+command make sdk. This generates a tarball of the content of the host
+directory output/host/, named <TARGET-TUPLE>_sdk-buildroot.tar.gz
+(which can be overriden by setting the environment variable
+BR2_SDK_PREFIX) and located in the output directory output/images/.
 
-  * run make sdk, which prepares the toolchain to be relocatable;
-  * tarball the contents of the output/host directory;
-  * distribute the resulting tarball.
+This tarball can then be distributed to application developers, when
+they want to develop their applications that are not (yet) packaged
+as a Buildroot package.
 
-Once the toolchain is installed to the new location, the user must
-run the relocate-sdk.sh script to make sure all paths are updated
-with the new location.
+Upon extracting the SDK tarball, the user must run the script
+relocate-sdk.sh (located at the top directory of the SDK), to make
+sure all paths are updated with the new location.
+
+Alternatively, if you just want to prepare the SDK without generating
+the tarball (e.g. because you will just be moving the host directory,
+or will be generating the tarball on your own), Buildroot also allows
+you to just prepare the SDK with make prepare-sdk without actually
+generating a tarball.
 
 8.12.2. Using gdb in Buildroot
 
@@ -1909,6 +1918,7 @@ choice is up to you.
 |
 +-- Config.in (if using a br2-external tree)
 +-- external.mk (if using a br2-external tree)
++-- external.desc (if using a br2-external tree)
 
 Details on the files shown above are given further in this chapter.
 
@@ -3455,9 +3465,11 @@ is as follows:
 
  1. The type of option: bool, string… with the prompt
  2. If needed, the default value(s)
- 3. Any dependency of the depends on form
- 4. Any dependency of the select form
- 5. The help keyword and help text.
+ 3. Any dependencies on the target in depends on form
+ 4. Any dependencies on the toolchain in depends on form
+ 5. Any dependencies on other packages in depends on form
+ 6. Any dependency of the select form
+ 7. The help keyword and help text.
 
 You can add other sub-options into a if BR2_PACKAGE_LIBFOO…endif
 statement to configure particular things in your software. You can
@@ -3824,6 +3836,13 @@ When possible, you must add a third file, named libfoo.hash, that
 contains the hashes of the downloaded files for the libfoo package.
 The only reason for not adding a .hash file is when hash checking is
 not possible due to how the package is downloaded.
+
+When a package has a version selection choice, then the hash file may
+be stored in a subdirectory named after the version, e.g. package/
+libfoo/1.2.3/libfoo.hash. This is especially important if the
+different versions have different licensing terms, but they are
+stored in the same file. Otherwise, the hash file should stay in the
+package’s directory.
 
 The hashes stored in that file are used to validate the integrity of
 the downloaded files and of the license files.
@@ -5091,8 +5110,9 @@ with an example :
 10: PERL_FOO_BAR_DEPENDENCIES = perl-strictures
 11: PERL_FOO_BAR_LICENSE = Artistic or GPL-1.0+
 12: PERL_FOO_BAR_LICENSE_FILES = LICENSE
-13:
-14: $(eval $(perl-package))
+13: PERL_FOO_BAR_DISTNAME = Foo-Bar
+14:
+15: $(eval $(perl-package))
 
 On line 7, we declare the version of the package.
 
@@ -5107,7 +5127,10 @@ On line 11 and 12, we give licensing details about the package (its
 license on line 11, and the file containing the license text on line
 12).
 
-Finally, on line 14, we invoke the perl-package macro that generates
+On line 13, the name of the distribution as needed by the script
+utils/scancpan (in order to regenerate/upgrade these package files).
+
+Finally, on line 15, we invoke the perl-package macro that generates
 all the Makefile rules that actually allow the package to be built.
 
 Most of these data can be retrieved from https://metacpan.org/. So,
@@ -7058,6 +7081,22 @@ Use the output of get-developers to send your patches:
 
 $ git send-email --to buildroot@buildroot.org --cc bob --cc alice outgoing/*
 
+Alternatively, get-developers -e can be used directly with the
+--cc-cmd argument to git send-email to automatically CC the affected
+developers:
+
+$ git send-email --to buildroot@buildroot.org \
+      --cc-cmd './utils/get-developers -e' origin/master
+
+git can be configured to automatically do this out of the box with:
+
+$ git config sendemail.to buildroot@buildroot.org
+$ git config sendemail.ccCmd "$(pwd)/utils/get-developers -e"
+
+And then just do:
+
+$ git send-email origin/master
+
 Note that git should be configured to use your mail account. To
 configure git, see man git-send-email or google it.
 
@@ -7225,6 +7264,8 @@ DEVELOPERS file for various tasks:
 
   * When passing one or several patches as command line argument,
     get-developer will return the appropriate git send-email command.
+    If the -e option is passed, only the email addresses are printed
+    in a format suitable for git send-email --cc-cmd.
   * When using the -a <arch> command line option, get-developer will
     return the list of developers in charge of the given
     architecture.

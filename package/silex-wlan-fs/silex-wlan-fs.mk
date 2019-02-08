@@ -6,7 +6,7 @@
 #
 ################################################################################
 
-SILEX_WLAN_FS_VERSION = v4.1_01272017-1
+SILEX_WLAN_FS_VERSION = v4.1_01272017-2
 SILEX_WLAN_FS_SITE = $(TOPDIR)/package/silex-wlan-fs
 SILEX_WLAN_FS_SOURCE = silex-wlan-fs-$(SILEX_WLAN_FS_VERSION).tar.bz2
 SILEX_WLAN_FS_SITE_METHOD = file

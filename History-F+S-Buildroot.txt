@@ -1,6 +1,42 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-fsimx7ulp-B2019.02-pre (25.02.2019)
+---------------------------------------------
+Supported Boards: PicoCoreMX7ULP
+Not tested:       armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+                  QBlissA9, QBlissA9r2, efusA7UL, CubeA7UL, Cube2.0,
+                  PicoCOM1.2, GAR1, efusA9X, PicoCOMA9X, CONT1
+                  armStoneA5, NetDCUA5, PicoCOMA5, CUBEA5, AGATEWAY,
+                  HGATEWAY
+
+- Fix invalid pointer in passwd
+- Add fsimx7ulp_min_defconfig
+- Fsimx7ulp: Remove xf86-input-tslib, set xserver to 1.17.4
+- Fix python-erpc package
+- Change Kernel load address for i.MX6 CPUs
+- Renamed device tree name from picocorea9x to picocoremx6sx
+- Add fsimx7ulp_qt5_defconfig
+- Fsimx6ul_qt5_defconfig: correct imx-platform
+- Fsimx6ul_qt5_defconfig: set linuxfb as default platform
+- Update to Buildroot 2018.11
+- Fsimx6ul_std_defconfig: correct imx-platform
+- Add erpc python package for AMP-example
+- build device tree: added picocorea9x
+- Set kernel version to 4.9.88 in fsimx6* defconfigs
+- Fix xserver startup issue in /etc/init.d/
+- Add fsimx7ulp_std_defconfig
+- Add package sterling-wlan-fs for F&S boards
+- Update version of imx packages for kernel 4.9.88
+- Remove tslib from all imx6, imx6sx, imx6ul defconfigs
+- Fsimx6ul: Remove xf86-input-tslib, set xserver to 1.17.4
+- shrink qt5 rootfs to a usable size (soloX)
+- Add XDRIVER_XF86_VIDEO_IMX_VIV to fsimx6_std_defconfig
+- Correct version of imx packages (firmware,g2d,gpu)
+- Update Buildroot from 2016.05 to 2018.08
+
+
+
 buildroot-2016.05-fsimx6ul-V2.1 (21.02.2018)
 --------------------------------------------
 Supported Boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,

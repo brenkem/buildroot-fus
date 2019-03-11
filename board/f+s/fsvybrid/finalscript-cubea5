@@ -35,7 +35,7 @@ ${CP} ${COMMON}/sbin/fsgetty ${TARGET}/sbin
 
 # Copy the kernel
 #mkdir -p ${TARGET}/boot
-#${CP} output/images/uImage ${TARGET}/boot
+#${CP} output/images/zImage ${TARGET}/boot
 
 # Copy the F&S aliases file
 mkdir -p ${TARGET}/etc/profile.d

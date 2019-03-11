@@ -36,7 +36,7 @@ ${CP} ${COMMON}/sbin/fsgetty ${TARGET}/sbin
 
 # Copy the kernel and the devicetree
 mkdir -p ${TARGET}/boot
-${CP} output/images/uImage ${TARGET}/boot
+${CP} output/images/zImage ${TARGET}/boot
 for dtb in $dtb_files
 do
     ${CP} output/images/${dtb} ${TARGET}/boot

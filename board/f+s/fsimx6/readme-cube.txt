@@ -1,11 +1,11 @@
-How to build and install rootfs for CUBEA7UL
---------------------------------------------
+How to build and install rootfs for CUBEA7UL/Cube2.0
+----------------------------------------------------
 
 Unpack linux sources to a directory:
 
-  tar xvf linux-4.1.15-fsimx6ul-Vx.y.tar.bz2
+  tar xvf linux-4.9.88-fsimx6ul-Vx.y.tar.bz2
 
-This creates directory linux-4.1.15-fsimx6ul-Vx.y, where x.y is the
+This creates directory linux-4.9.88-fsimx6ul-Vx.y, where x.y is the
 version number of the F&S release.
 
 Then unpack buildroot sources to a separate (!) directory:
@@ -19,23 +19,24 @@ release version.
 Buildroot expects the Linux sources in a directory "linux-fsimx6ul" next
 to the buildroot directory. So create the following symbolic link:
 
-  ln -s linux-4.1.15-fsimx6ul-Vx.y linux-fsimx6ul
+  ln -s linux-4.9.88-fsimx6ul-Vx.y linux-fsimx6ul
 
 Of course replace x.y in this call with the correct version number
 that was created in the first step above.
 
 (Remark: These steps above can be done automatically by using the
-script install-sources.sh provided in the top directory of the
+script setup-buildroot.sh provided in the top directory of the
 release.)
 
 Now switch to the buildroot directory, configure and build everything:
 
   cd buildroot-YYYY.MM-f+s-Vx.y
-  make cubea7ul_defconfig
+  make cube_defconfig
   make
 
-This will build all buildroot packages, including the kernel uImage,
-the kernel modules (in the rootfs) and the device tree cubea7ul.dtb.
+This will build all buildroot packages, including the kernel zImage,
+the kernel modules (in the rootfs) and the device trees cubea7ul.dtb
+and cube2.0.dtb.
 
 After building, the kernel image, device tree and rootfs images are
 available in:
@@ -44,7 +45,7 @@ available in:
 
 However the kernel and device tree images will also automatically be
 stored in directory /boot in the root filesystem. It will also
-automatically create the script image install-cubea7ul.scr in the top
+automatically create the script image install-cube.scr in the top
 directory of buildroot. This script matches the current root
 filesystem size.
 
@@ -53,13 +54,13 @@ need:
 
 - uboot.nb0 (the release version or a separately built version)
 - output/images/rootfs.ubifs
-- install-cubea7ul.scr
+- install-cube.scr
 
 MFG-Tool should execute the following steps:
 
  1. Erase the flash ('E')
  2. Load install-cubea7ul.scr to RAM @ 80300000 ('*')
- 3. Detect and verify install-cubea7ul.scr ('%')
+ 3. Detect and verify install-cube.scr ('%')
  4. Load rootfs.ubifs to RAM @ 81000000 ('*')
  5. Detect and verify rootfs.ubifs ('%')
  6. Load uboot.nb0 to RAM @ 80100000 ('*')
@@ -67,7 +68,7 @@ MFG-Tool should execute the following steps:
  8. Store U-Boot to flash ('f')
  9. Start U-Boot ('x')
 
-U-Boot will take over, executes install-cubea7ul.scr in RAM @ 80300000
+U-Boot will take over, executes install-cube.scr in RAM @ 80300000
 and this in turn stores the rootfs (incl. Kernel) on the board.
 
 

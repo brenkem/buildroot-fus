@@ -34,7 +34,7 @@ Now switch to the buildroot directory, configure and build everything:
   make cubea5_defconfig
   make
 
-This will build all buildroot packages, including the kernel uImage
+This will build all buildroot packages, including the kernel zImage
 and the kernel modules (in the rootfs).
 
 After building, the kernel image and rootfs images are available in:

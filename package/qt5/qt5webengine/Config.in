@@ -66,6 +66,9 @@ config BR2_PACKAGE_QT5WEBENGINE
 	select BR2_PACKAGE_XLIB_LIBXRANDR if BR2_PACKAGE_QT5BASE_XCB
 	select BR2_PACKAGE_XLIB_LIBXSCRNSAVER if BR2_PACKAGE_QT5BASE_XCB
 	select BR2_PACKAGE_XLIB_LIBXTST if BR2_PACKAGE_QT5BASE_XCB
+	# in buildroot 2019.02 with Qt5.12 qt5webengine needs alsa to compile
+	# activate alsa by default
+	select BR2_PACKAGE_QT5WEBENGINE_ALSA
 	help
 	  The Qt WebEngine module provides a web browser engine that
 	  makes it easy to embed content from the World Wide Web into

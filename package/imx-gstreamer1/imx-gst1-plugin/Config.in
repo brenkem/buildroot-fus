@@ -1,0 +1,88 @@
+comment "imx-gst1-plugin needs an imx-specific Linux kernel to be built"
+	depends on BR2_arm && !BR2_LINUX_KERNEL
+
+comment "imx-gst1-plugin needs an (e)glibc toolchain"
+	depends on BR2_arm
+	depends on !BR2_TOOLCHAIN_USES_GLIBC
+
+comment "imx-gst1-plugin depends on BR2_PACKAGE_FREESCALE_IMX"
+	depends on !BR2_PACKAGE_FREESCALE_IMX
+
+config BR2_PACKAGE_IMX_GST1_PLUGIN
+	bool "imx-gst1-plugin (needed for hardware acceleration)"
+	depends on BR2_LINUX_KERNEL
+	depends on BR2_arm # Only relevant for i.MX
+	depends on BR2_TOOLCHAIN_USES_GLIBC # imx-codec
+	depends on BR2_PACKAGE_FREESCALE_IMX
+	select BR2_PACKAGE_IMX_GST1_PLUGINS_BASE
+	select BR2_PACKAGE_IMX_GST1_PLUGINS_BAD
+	select BR2_PACKAGE_IMX_VPUWRAP
+	select BR2_PACKAGE_IMX_LIB
+	select BR2_PACKAGE_IMX_VPU
+	select BR2_PACKAGE_IMX_PARSER
+	select BR2_PACKAGE_IMX_CODEC
+	select BR2_PACKAGE_LIBDRM
+	help
+	  GStreamer-1.0 plugins for hardware-accelerated audio and video
+	  parsers and codecs on i.MX platforms. It requires a kernel that
+	  includes the i.MX specific headers to be built.
+
+	  To use the VPU, its firmware blob must be installed as well. This
+	  can be found in the firmware-imx package in the "Hardware handling"
+	  menu.
+
+	  This library is provided by Freescale as-is and does not have
+	  an upstream.
+
+if BR2_PACKAGE_IMX_GST1_PLUGIN
+choice
+	prompt "i.MX platform"
+	default BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6  if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX6Q
+	default BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6SX  if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX6S
+	default BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6UL  if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX6UL
+	default BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX7ULP  if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX7
+	default BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX8  if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M
+
+
+config BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6
+	bool "imx6"
+
+config BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX66QP
+	bool "imx6qp"
+
+config BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6SL
+	bool "imx6sl"
+
+config BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6SLL
+	bool "imx6sll"
+
+config BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6SX
+	bool "imx6sx"
+
+config BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6UL
+	bool "imx6ul/ull"
+
+config BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX7D
+	bool "imx7d"
+
+config BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX7ULP
+	bool "imx7ulp"
+
+config BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX8
+	bool "imx8"
+
+endchoice
+
+config BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM
+	string
+	default "MX6" if BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6
+	default "MX6QP" if BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX66QP
+	default "MX6SL" if BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6SL
+	default "MX6SLL" if BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6SLL
+	default "MX6SX" if BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6SX
+	default "MX6UL" if BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6UL
+	default "MX7D" if BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX7D
+	default "MX7ULP" if BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX7ULP
+	default "MX8" if BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX8
+
+endif

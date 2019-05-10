@@ -33,11 +33,18 @@ endef
 # libraries, but we only need one of them.
 
 # Upstream installs libraries into usr/lib/imx-mm, but the dynamic
-# loader only looks in usr/lib, so move the libraries there
+# loader only looks in usr/lib, so move the libraries there. However
+# keep usr/lib/imx-mm/audio-codec/wrap/*, these files are referenced
+# in gstreamer in usr/share/beep_registry*.cf.
 define IMX_CODEC_FIXUP_TARGET_PATH
-	find $(TARGET_DIR)/usr/lib/imx-mm -not -type d \
-		-exec mv {} $(TARGET_DIR)/usr/lib \;
-	rm -rf $(TARGET_DIR)/usr/lib/imx-mm
+	find $(TARGET_DIR)/usr/lib/imx-mm/audio-codec -maxdepth 1 \
+		-not -type d -exec mv {} $(TARGET_DIR)/usr/lib \;
+	echo "IMX audio codecs moved to /usr/lib" \
+		> $(TARGET_DIR)/usr/lib/imx-mm/audio-codec/README.txt
+	find $(TARGET_DIR)/usr/lib/imx-mm/video-codec -maxdepth 1 \
+		-not -type d -exec mv {} $(TARGET_DIR)/usr/lib \;
+	echo "IMX video codecs moved to /usr/lib" \
+		> $(TARGET_DIR)/usr/lib/imx-mm/video-codec/README.txt
 endef
 IMX_CODEC_POST_INSTALL_TARGET_HOOKS += IMX_CODEC_FIXUP_TARGET_PATH
 

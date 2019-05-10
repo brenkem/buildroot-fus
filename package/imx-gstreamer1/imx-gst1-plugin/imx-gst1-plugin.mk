@@ -17,8 +17,11 @@ IMX_GST1_PLUGIN_LICENSE_FILES = COPYING-LGPL-2.1 COPYING-LGPL-2
 IMX_GST1_PLUGIN_INSTALL_STAGING = YES
 IMX_GST1_PLUGIN_AUTORECONF = YES
 
-IMX_GST1_PLUGIN_DEPENDENCIES += host-pkgconf imx-gstreamer1 imx-gst1-plugins-base \
-	imx-gst1-plugins-bad imx-vpuwrap imx-lib imx-vpu imx-parser imx-codec libdrm
+IMX_GST1_PLUGIN_DEPENDENCIES += host-pkgconf imx-lib imx-parser imx-codec \
+	imx-gstreamer1 imx-gst1-plugins-base imx-gst1-plugins-bad libdrm
+ifeq ($(BR2_PACKAGE_FREESCALE_IMX_HAS_VPU),y)
+IMX_GST1_PLUGIN_DEPENDENCIES += imx-vpu imx-vpuwrap
+endif
 
 IMX_GST1_PLUGIN_CONF_ENV = \
 	PLATFORM=$(BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM) \

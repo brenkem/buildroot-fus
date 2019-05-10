@@ -347,14 +347,12 @@ GST1_PLUGINS_GOOD_CONF_OPTS += --disable-v4l2-probe
 endif
 
 ifeq ($(BR2_PACKAGE_XORG7),y)
-GST1_PLUGINS_GOOD_DEPENDENCIES += xlib_libX11 xlib_libXext xlib_libXv
-GST1_PLUGINS_GOOD_CONF_OPTS += \
-	--enable-x \
+GST1_PLUGINS_GOOD_DEPENDENCIES += xlib_libX11 xlib_libXext xlib_libXv \
 	$(if $(BR2_PACKAGE_XLIB_LIBXFIXES),xlib_libXfixes) \
 	$(if $(BR2_PACKAGE_XLIB_LIBXDAMAGE),xlib_libXdamage)
+GST1_PLUGINS_GOOD_CONF_OPTS += --enable-x
 else
-GST1_PLUGINS_GOOD_CONF_OPTS += \
-	--disable-x
+GST1_PLUGINS_GOOD_CONF_OPTS += --disable-x
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_CAIRO),y)

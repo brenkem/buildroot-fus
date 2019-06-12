@@ -237,6 +237,12 @@ config BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIE8897
 	help
 	  Firmware files for the Marvell Wifi-Ex 8897 module on PCI-E.
 
+config BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_SDSD8997
+	bool "Marvell Wifi-Ex 8997 SD and BT SD"
+	help
+	  Firmware files for the Marvell Wifi-Ex 8997 module on SDIO and BT
+	  also on SDIO.
+
 config BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIEUSB8997
 	bool "Marvell Wifi-Ex 8997 PCI-E and BT USB"
 	help

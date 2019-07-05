@@ -1,3 +1,189 @@
+2019.05, released June 2nd, 2019
+
+	Various fixes.
+
+	Toolchain: Ensure pre-built Andes toolchains can only be
+	selected when x86 32bit support is available on the host.
+	Disallow PowerPC SPE ABI for GCC >= 8.x, as it is no longer
+	supported.
+
+	Infra: pkg-config: Use a dedicated timestamp file rather than
+	.config as that gets touched by linux-4.19+, causing repeated
+	builds.
+
+	Add C-SKY support to our config.sub (gnuconfig)
+
+	Updated/fixed packages: dosfstools, botan, brotli, dropbear,
+	flare-engine, gst1-plugins-bad, libhtp, libnss, libopenssl,
+	linuxptp, matchbox-panel, mender, mutt, netsurf,
+	network-manager, opencv3, openjdk, openmpi, php,
+	python-cython, qt5multimedia, qtwayland, qt5webkit-examples,
+	supertux, suricata, tpm2-totp, v4l2loopback, wireshark,
+	wpewebkit
+
+2019.05-rc3, released May 25th, 2019
+
+	Fixes all over the tree.
+
+	check-bin-arch: Ignore /usr/lib/grub, similar to how /lib/grub
+	is ignored.
+
+	check-package: Warn about utf-8 characters in .mk files
+
+	Linux: Default to 5.1.x series
+
+	Updated/fixed packages: assimp, atop, chocolate-doom, cjson,
+	ddrescue, dhcp, ffmpeg, gerbera, glibmm, gpsd, gst-ffmpeg,
+	intel-microcode, jasper, keepalived, kismet, libcpprestsdk,
+	libcurl, libssh2, libupnp18, luarocks, mono-gtksharp3, opus,
+	postgresql, pcsc-lite, python, tslib, webkitgtk,
+	wpebackend-fdo, wpewebkit
+
+2019.05-rc2, released May 15th, 2019
+
+	Fixes all over the tree.
+
+	Updated/fixed packages: bind, bullet, ca-certificates,
+	collectd, cracklib, dhcp, gdb, libinput, libtorrent-rasterbar,
+	linknx, lynx, mono, netsurf, optee-os, postgresql, qt5enginio,
+	qt5multimedia, rpm, samba4, sqlite, strace, uclibc, woff2
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11841: grub-efi.cfg not used when building EFI disk image
+
+2019.05-rc1, Released May 8th, 2019
+
+	Fixes all over the tree and new features.
+
+	Architecture: Andes 32-bit (nds32) support added.
+
+	Only build host-lzip / host-xz when really needed by packages,
+	not just when not available on the build host.
+
+	Toolchain: Glibc bumped to 2.29, musl bumped to 1.1.22,
+	binutils 2.32 added, 2.28/2.29 removed, default changed to
+	2.31.1.
+
+	fs: Set FAKEROOTDONTTRYCHOWN environment variable to not
+	forward {f,l,}chown calls to libc when running under fakeroot
+	to fix issues when building in restricted environments
+	(E.G. user namespace with bubblewrap).
+
+	Linux: Also build default make target to ensure extra files
+	like the gdb scripts enabled by CONFIG_GDB_SCRIPTS are also
+	built. Notice: This may mean that extra host utilities like
+	uboot-mkimage are needed.
+
+	Infrastructure: show-info and <pkg>-show-info make targets
+	added to output package metadata in JSON format for external
+	use.
+
+	pkg-generic: Only tweak .la files needing it to ensure they
+	are not included in subsequent package file lists.
+
+	test-pkg: Generate a basic package config if none is
+	specified.
+
+	Gettext-tiny package added as an lightweight replacement for
+	GNU gettext for situations where NLS support is not needed.
+
+	New defconfigs: Andes AE3XX, Freescale imx8mpico / imx8qxpmek
+	/ T2080 QDS RDB, Licheepi zero, Orangepi R1
+
+	Removed defconfigs: Olimx A20 Olinuxino Lime legacy
+
+	New packages: bats-core, bayer2rgb-neon, brickd, cog, dacapo,
+	enet, gettext-tiny, gli, gst1-plugins-bayer2rgb-neon,
+	imx-sc-firmware, intel-mediadriver, intel-mediasdk, libcamera,
+	libhtp, libp11, libwpe, lua-binaryheap, lua-gd, lua-lunitx,
+	mender-artifact, most, oniguruma, openjdk, openjdk-bin,
+	opensbi, optee-benchmark, optee-client, optee-examples,
+	optee-os, optee-test, paho-mqtt-cpp, python-aioblescan,
+	python-aioconsole, python-aiohttp-cors, python-aiomonitor,
+	python-backcall, python-jedi, python-parso, python-pyjwt,
+	python-terminaltables, suricata, tpm2-totp, uftp,
+	wpebackend-fdo, wpewebkit
+
+	Removed packages: libump, lunit, sunxi-mali
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11716: Typo on website, saying latest release is 2018.2.11
+	#11756: package/syslinux: MBR's don't fit because of binutils..
+	#11761: Building custom kernel 5.1-rc3 or later breaks on objtool
+	#11816: Only selected coreutils binaries are installed
+
+2019.02.2, Released April 29th, 2019
+
+	Important / security related fixes.
+
+	Only build host-lzip / host-xz when really needed by packages,
+	not just when not available on the build host.
+
+	fs: Set FAKEROOTDONTTRYCHOWN environment variable to not
+	forward {f,l,}chown calls to libc when running under fakeroot
+	to fix issues when building in restricted environments
+	(E.G. user namespace with bubblewrap).
+
+	Linux: Also build default make target to ensure extra files
+	like the gdb scripts enabled by CONFIG_GDB_SCRIPTS are also
+	built. Notice: This may mean that extra host utilities like
+	uboot-mkimage are needed.
+
+	Defconfigs: ASUS tinker and Amarula vyasa rk3822: Support
+	larger kernel images, Atmel SAM5D27, SAM5D2,3,4 xplained:
+	Increase rootfs size to fit utilities, Raspberry Pi 64bit:
+	Include overlays in sdcard image
+
+	Updated/fixed packages: android-tools, apache, bind, binutils,
+	busybox, civetweb, cjson, copas, davfs2, docker-cli,
+	docker-containerd, docker-engine, dovecot, dovecot-pigeonhole,
+	freerdp, gerbera, ghostscript, git, gnutls, go, gst-omx,
+	gst1-plugins-base, gst1-plugins-ugly, haproxy, hostapd,
+	ipsec-tools, libfreefare, libfuse, libkrb5, libpng, libxml2,
+	libxslt, linknx, linux, linux-firmware, linux-tools, live555,
+	lldp, lrzsz, lynx, madplay, make, minicom, mongodb, msmtp,
+	musl, mutt, neon, netsnmp, numactl, opus, perl, php,
+	postgresql, pure-ftpd, python-urllib3, python3, qt5base,
+	rapidxml, rpm, rsyslog, ruby, runc, samba4, sane-backends,
+	softether, stunnel, sysklogd, syslinux, syslog-ng,
+	systemd-bootchart, thttpd, thrift, tiff, tor, tpm2-tools,
+	tpm2-tss, webkitgtk, yaffs2utils, wget, wpa_supplicant, wsapi,
+	xapp_xfd, xapp_xload, xlib_libXpm, xserver_xorg-server, xz,
+	znc
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11756: package/syslinux: MBR's don't fit because of binutils..
+	#11761: Building custom kernel 5.1-rc3 or later breaks on objtool
+
+2019.02.1, Released March 29th, 2019
+
+	Important / security related fixes.
+
+	pkg-generic: Only tweak .la files needing it to ensure they
+	are not included in subsequent package file lists.
+
+	test-pkg: Generate a basic package config if none is
+	specified.
+
+	Updated/fixed packages: asterisk, avahi, bash, beecrypt,
+	binutils, busybox, clamav, cups, efl, eigen, fetchmail, file,
+	flashrom, fltk, gerbera, git, glibc, gnuradio, go,
+	gst-plugins-bad, intel-gmmlib, jq, kexec, kf5-modemmanager-qt,
+	leveldb, libcurl, libdrm, libftdi1, libglib2, libiio, libpcap,
+	libseccomp, libssh2, log4cplus, lvm2, mariadb, mender,
+	mongodb, mosquitto, musl, nodejs, ntp, openjpeg, owfs, php,
+	pure-ftpd, putty, python-aiojobs, qt5webkit, rdesktop, samba4,
+	sunxi-tools, supertux, swupdate, tpm2-abrmd, tpm2-tss,
+	wavemon, wireshark, vsftpd, xapp_xdm, xen,
+	xdriver_xf86-video-fbdev, xlib_libXdmcp
+
+	Issues resolved (http://bugs.uclibc.org):
+
+	#11716: Typo on website, saying latest release is 2018.2.11
+
 2019.02, released March 4th, 2019
 
 	Minor fixes.
@@ -209,6 +395,18 @@
 	#11616: 2018.02.09 fails to build libzlib with full RELRO..
 	#11656: Custom device tree and u-boot boot.scr not integrated..
 	#11666: Touchscreen with (Py)Qt5 should use tslib instead of evdev
+
+2018.11.4, Released March 28th, 2019
+
+	Important / security related fixes.
+
+	Updated/fixed packages: avahi, beecrypt, binutils, botan,
+	busybox, clamav, cups, devmem2, efl, fetchmail, file, fltk,
+	gcc, gdb, git, go, gst-plugins-bad, iproute2, jq,
+	kf5-modemmanager-qt, leveldb, libopenssl, libraw, libseccomp,
+	libsoxr, libssh2, mariadb, mosquitto, nodejs, ntp, openjpeg,
+	perl, php, putty, qt5webkit, rdesktop, runc, samba4, swupdate,
+	systemd, tor, vsftpd, wireshark, xapp_xdm, xen, xlib_libXdmcp
 
 2018.11.3, Released February 23th, 2019
 
@@ -1020,6 +1218,17 @@
 	#10896: /bin/sh not in /etc/shells
 	#10961: Grub2 fails to build for x86_64 when BR2_SSP_ALL is
 		enabled
+
+2018.02.12, Released March 29th, 2019
+
+	Important / security related fixes.
+
+	Updated/fixed packages: avahi, beecrypt, busybox, clamav,
+	cups, devmem2, fetchmail, file, fltk, gcc, gdb, git, jq,
+	leveldb, libopenssl, libraw, libseccomp, libssh2,
+	libunistring, mariadb, mosquitto, nodejs, ntp, openjpeg, perl,
+	php, putty, qt5webkit, rdesktop, systemd, wireshark, vsftpd,
+	xapp_xdm, xlib_libXdmcp
 
 2018.02.11, Released February 23th, 2019
 

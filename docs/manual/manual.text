@@ -161,13 +161,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2019.05 manual generated on 2019-06-02 08:04:17 UTC from
-git revision 8d4e26da08
+Buildroot 2019.05.1 manual generated on 2019-07-07 20:33:33 UTC from
+git revision 5b4e32cae8
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-8d4e26da08dcdfeb16dc980d1b34ab750a00abe5] file in the Buildroot
+5b4e32cae812225fa909d755d7e09588ce0b92da] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2019 The Buildroot developers
@@ -1864,6 +1864,15 @@ WEBKITGTK_OVERRIDE_SRCDIR_RSYNC_EXCLUSIONS = \
         --exclude JSTests --exclude ManualTests --exclude PerformanceTests \
         --exclude WebDriverTests --exclude WebKitBuild --exclude WebKitLibraries \
         --exclude WebKit.xcworkspace --exclude Websites --exclude Examples
+
+By default, Buildroot skips syncing of VCS artifacts (e.g., the .git
+and .svn directories). Some packages prefer to have these VCS
+directories available during build, for example for automatically
+determining a precise commit reference for version information. To
+undo this built-in filtering at a cost of a slower speed, add these
+directories back:
+
+LINUX_OVERRIDE_SRCDIR_RSYNC_EXCLUSIONS = --include .git
 
 Chapter 9. Project-specific customization
 
@@ -7249,7 +7258,7 @@ the problem is complex, it is OK to add more paragraphs. All paragraphs
 should be wrapped at 72 characters.
 
 A paragraph that explains the root cause of the problem. Again, more
-than on paragraph is OK.
+than one paragraph is OK.
 
 Finally, one or more paragraphs that explain how the problem is solved.
 Don't hesitate to explain complex solutions in detail.

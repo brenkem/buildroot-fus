@@ -13,6 +13,3 @@ config BR2_PACKAGE_PROVIDES_GETTEXT
 	default "gettext-tiny"
 
 endif
-
-config BR2_PACKAGE_PROVIDES_HOST_GETTEXT
-	default "host-gettext-tiny" if !BR2_SYSTEM_ENABLE_NLS

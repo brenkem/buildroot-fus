@@ -161,13 +161,13 @@ List of Examples
 
 ---------------------------------------------------------------------
 
-Buildroot 2019.02 manual generated on 2019-03-04 21:52:47 UTC from
-git revision b9674056fb
+Buildroot 2019.05 manual generated on 2019-06-02 08:04:17 UTC from
+git revision 8d4e26da08
 
 The Buildroot manual is written by the Buildroot developers. It is
 licensed under the GNU General Public License, version 2. Refer to
 the COPYING [http://git.buildroot.org/buildroot/tree/COPYING?id=
-b9674056fbe8d37c1b11ad524075f21dc5deaa15] file in the Buildroot
+8d4e26da08dcdfeb16dc980d1b34ab750a00abe5] file in the Buildroot
 sources for the full text of this license.
 
 Copyright © 2004-2019 The Buildroot developers
@@ -1056,17 +1056,18 @@ Notes. If ccache is enabled, running make clean or distclean does not
 empty the compiler cache used by Buildroot. To delete it, refer to
 Section 8.12.3, “Using ccache in Buildroot”.
 
-Dumping the internal make variables: One can dump all the variables
-known to make, along with their values:
+Dumping the internal make variables: One can dump the variables known
+to make, along with their values:
 
- $ make -s printvars
- VARIABLE=value_of_variable
- ...
+ $ make -s printvars VARS='VARIABLE1 VARIABLE2'
+ VARIABLE1=value_of_variable
+ VARIABLE2=value_of_variable
 
 It is possible to tweak the output using some variables:
 
   * VARS will limit the listing to variables which names match the
-    specified make-pattern
+    specified make-patterns - this must be set else nothing is
+    printed
   * QUOTED_VARS, if set to YES, will single-quote the value
   * RAW_VARS, if set to YES, will print the unexpanded value
 
@@ -1793,10 +1794,21 @@ clean.
 Therefore, Buildroot provides a specific mechanism for this use case:
 the <pkg>_OVERRIDE_SRCDIR mechanism. Buildroot reads an override
 file, which allows the user to tell Buildroot the location of the
-source for certain packages. By default this override file is named
-local.mk and located in the top directory of the Buildroot source
-tree, but a different location can be specified through the
-BR2_PACKAGE_OVERRIDE_FILE configuration option.
+source for certain packages.
+
+The default location of the override file is $(CONFIG_DIR)/local.mk,
+as defined by the BR2_PACKAGE_OVERRIDE_FILE configuration option. $
+(CONFIG_DIR) is the location of the Buildroot .config file, so
+local.mk by default lives side-by-side with the .config file, which
+means:
+
+  * In the top-level Buildroot source directory for in-tree builds
+    (i.e., when O= is not used)
+  * In the out-of-tree directory for out-of-tree builds (i.e., when O
+    = is used)
+
+If a different location than these defaults is required, it can be
+specified through the BR2_PACKAGE_OVERRIDE_FILE configuration option.
 
 In this override file, Buildroot expects to find lines of the form:
 
@@ -5880,13 +5892,17 @@ be built.
 17.17.2. golang-package reference
 
 In their Config.in file, packages using the golang-package
-infrastructure should depend on BR2_PACKAGE_HOST_GO_ARCH_SUPPORTS and
-BR2_PACKAGE_HOST_GO_CGO_LINKING_SUPPORTS because Buildroot will
-automatically add a dependency on host-go to such packages.
+infrastructure should depend on
+BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS because Buildroot will
+automatically add a dependency on host-go to such packages. If you
+need CGO support in your package, you must add a dependency on
+BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS.
 
 The main macro of the Go package infrastructure is golang-package. It
-is similar to the generic-package macro. Only target packages are
-supported with golang-package.
+is similar to the generic-package macro. The ability to build host
+packages is also available, with the host-golang-package macro. Host
+packages built by host-golang-package macro should depend on
+BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS.
 
 Just like the generic infrastructure, the Go infrastructure works by
 defining a number of variables before calling the golang-package.

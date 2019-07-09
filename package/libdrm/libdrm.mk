@@ -4,12 +4,10 @@
 #
 ################################################################################
 
-#LIBDRM_VERSION = 2.4.97
+#LIBDRM_VERSION = 2.4.98
 #LIBDRM_SOURCE = libdrm-$(LIBDRM_VERSION).tar.bz2
 #LIBDRM_SITE = https://dri.freedesktop.org/libdrm
 # IMX needs special variant from NXP
-#LIBDRM_VERSION = rel_imx_4.9.88_2.0.0_ga
-#LIBDRM_SOURCE = libdrm-imx-2.4.84.tar.gz
 LIBDRM_VERSION = rel_imx_4.14.78_1.0.0_ga
 LIBDRM_SOURCE = libdrm-imx-2.4.91.tar.gz
 LIBDRM_SITE = https://source.codeaurora.org/external/imx/libdrm-imx
@@ -80,12 +78,6 @@ ifeq ($(BR2_PACKAGE_LIBDRM_ETNAVIV),y)
 LIBDRM_CONF_OPTS += --enable-etnaviv-experimental-api
 else
 LIBDRM_CONF_OPTS += --disable-etnaviv-experimental-api
-endif
-
-ifeq ($(BR2_PACKAGE_LIBDRM_VIVANTE),y)
-LIBDRM_CONF_OPTS += --enable-vivante-experimental-api
-else
-LIBDRM_CONF_OPTS += --disable-vivante-experimental-api
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_EXYNOS),y)

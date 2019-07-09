@@ -11,7 +11,7 @@ ifeq ($(BINUTILS_VERSION),)
 ifeq ($(BR2_arc),y)
 BINUTILS_VERSION = arc-2018.09-release
 else
-BINUTILS_VERSION = 2.29.1
+BINUTILS_VERSION = 2.31.1
 endif
 endif # BINUTILS_VERSION
 
@@ -91,9 +91,7 @@ HOST_BINUTILS_CONF_OPTS = \
 
 # binutils run configure script of subdirs at make time, so ensure
 # our TARGET_CONFIGURE_ARGS are taken into consideration for those
-define BINUTILS_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_ARGS) $(MAKE) $(BINUTILS_MAKE_OPTS) -C $(@D)
-endef
+BINUTILS_MAKE_ENV = $(TARGET_CONFIGURE_ARGS)
 
 # We just want libbfd, libiberty and libopcodes,
 # not the full-blown binutils in staging

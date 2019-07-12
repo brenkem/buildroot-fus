@@ -7,7 +7,7 @@ MKIMAGE=mkimage
 CP="/bin/cp -f"
 MKDIR="/bin/mkdir -p"
 platform=cube
-dtb_files="cubea7ul.dtb cube2.0.dtb"
+dtb_files="cubea7ul.dtb cube2.0.dtb cube2.0ull.dtb"
 
 tput smso
 echo ">>>   Doing final CUBE setup"

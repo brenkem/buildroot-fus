@@ -2,8 +2,8 @@ state.imxsgtl5000 {
 	control.1 {
 		iface MIXER
 		name 'PCM Playback Volume'
-		value.0 192
-		value.1 192
+		value.0 163
+		value.1 163
 		comment {
 			access 'read write'
 			type INTEGER
@@ -46,8 +46,8 @@ state.imxsgtl5000 {
 	control.5 {
 		iface MIXER
 		name 'Headphone Playback Volume'
-		value.0 103
-		value.1 103
+		value.0 108
+		value.1 108
 		comment {
 			access 'read write'
 			type INTEGER
@@ -113,8 +113,8 @@ state.WM9715 {
 	control.1 {
 		iface MIXER
 		name 'Speaker Playback Volume'
-		value.0 31
-		value.1 31
+		value.0 24
+		value.1 24
 		comment {
 			access 'read write'
 			type INTEGER
@@ -135,8 +135,8 @@ state.WM9715 {
 	control.3 {
 		iface MIXER
 		name 'Headphone Playback Volume'
-		value.0 31
-		value.1 31
+		value.0 24
+		value.1 24
 		comment {
 			access 'read write'
 			type INTEGER
@@ -147,7 +147,7 @@ state.WM9715 {
 	control.4 {
 		iface MIXER
 		name 'Headphone Playback Switch'
-		value false
+		value true
 		comment {
 			access 'read write'
 			type BOOLEAN
@@ -157,8 +157,8 @@ state.WM9715 {
 	control.5 {
 		iface MIXER
 		name 'PCM Playback Volume'
-		value.0 23
-		value.1 23
+		value.0 24
+		value.1 24
 		comment {
 			access 'read write'
 			type INTEGER
@@ -209,7 +209,7 @@ state.WM9715 {
 	control.10 {
 		iface MIXER
 		name 'Mono Playback Volume'
-		value 31
+		value 24
 		comment {
 			access 'read write'
 			type INTEGER
@@ -220,7 +220,7 @@ state.WM9715 {
 	control.11 {
 		iface MIXER
 		name 'Mono Playback Switch'
-		value false
+		value true
 		comment {
 			access 'read write'
 			type BOOLEAN
@@ -610,7 +610,7 @@ state.WM9715 {
 	control.47 {
 		iface MIXER
 		name 'Capture Switch'
-		value false
+		value true
 		comment {
 			access 'read write'
 			type BOOLEAN
@@ -633,8 +633,8 @@ state.WM9715 {
 	control.49 {
 		iface MIXER
 		name 'Capture Volume'
-		value.0 0
-		value.1 0
+		value.0 48
+		value.1 48
 		comment {
 			access 'read write'
 			type INTEGER

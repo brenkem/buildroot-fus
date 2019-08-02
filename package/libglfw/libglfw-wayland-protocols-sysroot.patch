@@ -1,0 +1,11 @@
+diff -rupN libglfw-3.2.1.org/CMake/modules/FindWaylandProtocols.cmake libglfw-3.2.1/CMake/modules/FindWaylandProtocols.cmake
+--- libglfw-3.2.1.org/CMake/modules/FindWaylandProtocols.cmake	2016-08-18 13:32:27.000000000 +0200
++++ libglfw-3.2.1/CMake/modules/FindWaylandProtocols.cmake	2016-10-25 16:31:17.989141078 +0200
+@@ -9,6 +9,7 @@ if (_pkgconfig_failed)
+     message(FATAL_ERROR "Missing wayland-protocols pkgdatadir")
+ endif()
+ 
++set(WaylandProtocols_PKGDATADIR "${PKG_CONFIG_SYSROOT_DIR}${WaylandProtocols_PKGDATADIR}")
+ string(REGEX REPLACE "[\r\n]" "" WaylandProtocols_PKGDATADIR "${WaylandProtocols_PKGDATADIR}")
+ 
+ find_package_handle_standard_args(WaylandProtocols

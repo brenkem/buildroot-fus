@@ -1,0 +1,23 @@
+diff -Naur qt5webengine-5.12.2-old/src/3rdparty/chromium/build/config/linux/pkg_config.gni qt5webengine-5.12.2-new/src/3rdparty/chromium/build/config/linux/pkg_config.gni
+--- qt5webengine-5.12.2-old/src/3rdparty/chromium/build/config/linux/pkg_config.gni	2019-03-07 10:23:57.000000000 +0100
++++ qt5webengine-5.12.2-new/src/3rdparty/chromium/build/config/linux/pkg_config.gni	2019-09-16 17:19:26.662725746 +0200
+@@ -103,11 +103,15 @@
+     pkgresult = exec_script(pkg_config_script, args, "value")
+     cflags = pkgresult[1]
+ 
+-    # We want the system include paths to use -isystem instead of -I to suppress
+-    # warnings in those headers.
+     foreach(include, pkgresult[0]) {
+-      include_relativized = rebase_path(include, root_build_dir)
+-      cflags += [ "-isystem$include_relativized" ]
++      if (use_sysroot) {
++        # We want the system include paths to use -isystem instead of -I to
++        # suppress warnings in those headers.
++        include_relativized = rebase_path(include, root_build_dir)
++        cflags += [ "-isystem$include_relativized" ]
++      } else {
++        cflags += [ "-I$include" ]
++      }
+     }
+ 
+     if (!defined(invoker.ignore_libs) || !invoker.ignore_libs) {

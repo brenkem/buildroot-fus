@@ -1,0 +1,11 @@
+comment "F&S board support for Silex WLAN/BT needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_SILEX_WLANBT_FS
+	bool "F&S board support for Silex WLAN/Bluetooth"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Add a kernel module to support the Silex WLAN on F&S boards and
+	  modules. Please also enable BR2_PACKAGE_SILEX_WLANBT_FS_FIRMWARE
+	  that contains the necessary firmware files.
+

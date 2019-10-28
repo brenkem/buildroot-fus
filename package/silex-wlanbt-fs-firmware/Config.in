@@ -1,0 +1,7 @@
+config BR2_PACKAGE_SILEX_WLANBT_FS_FIRMWARE
+	bool "Firmware files for Silex WLAN/Bluetooth"
+	depends on BR2_PACKAGE_SILEX_WLANBT_FS
+	default y
+	help
+	  Add firmware files to support the Silex WLAN/Bluetooth on F&S
+	  boards and modules.

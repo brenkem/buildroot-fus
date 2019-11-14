@@ -76,6 +76,14 @@ config BR2_PACKAGE_BUSYBOX_WATCHDOG
 	  Install the watchdog daemon startup script,
 	  that just start at the boot the busybox watchdog daemon.
 
+config BR2_PACKAGE_BUSYBOX_TELNETD
+	bool "Install the telnet daemon startup script"
+	help
+	  Install the telnet daemon startup script, if the telnetd
+	  applet is enabled in Busybox. This will automatically start
+	  the telnet daemon at boot. Please note that this is a security
+	  risk.
+
 if BR2_PACKAGE_BUSYBOX_WATCHDOG
 
 config BR2_PACKAGE_BUSYBOX_WATCHDOG_PERIOD

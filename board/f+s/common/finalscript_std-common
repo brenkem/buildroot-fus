@@ -46,4 +46,7 @@ if grep ^BR2_PACKAGE_WESTON=y $BR2_CONFIG > /dev/null; then
     # Setup weston environment
     mkdir -p ${TARGET}/etc/profile.d
     ${CP} ${COMMON}/etc/profile.d/weston.sh ${TARGET}/etc/profile.d
+    # Install weston.ini
+    mkdir -p ${TARGET}/etc/xdg/weston
+    ${CP} ${COMMON}/etc/xdg/weston/weston.ini ${TARGET}/etc/xdg/weston
 fi

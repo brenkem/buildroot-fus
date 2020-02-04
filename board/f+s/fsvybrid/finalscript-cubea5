@@ -7,6 +7,7 @@ MKIMAGE=mkimage
 CP="/bin/cp -f"
 MKDIR="/bin/mkdir -p"
 platform=cubea5
+dtb_files="cubea5.dtb"
 
 tput smso
 echo ">>>   Doing final CUBEA5 setup"
@@ -33,9 +34,13 @@ ${CP} ${COMMON}/etc/init.d/S02leds ${TARGET}/etc/init.d
 mkdir -p ${TARGET}/sbin
 ${CP} ${COMMON}/sbin/fsgetty ${TARGET}/sbin
 
-# Copy the kernel
-#mkdir -p ${TARGET}/boot
-#${CP} output/images/zImage ${TARGET}/boot
+# Copy the kernel and the devicetree
+mkdir -p ${TARGET}/boot
+${CP} output/images/zImage ${TARGET}/boot
+for dtb in $dtb_files
+do
+    ${CP} output/images/${dtb} ${TARGET}/boot
+done
 
 # Copy the F&S aliases file
 mkdir -p ${TARGET}/etc/profile.d

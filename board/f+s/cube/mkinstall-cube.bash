@@ -1,8 +1,8 @@
 #!/bin/bash
-# Build install/update/recover scripts for CubeA7UL/Cube2.0
+# Build install/update/recover scripts for CubeA5/CubeA7UL/Cube2.0
 #
 
-BOARD=board/f+s/fsimx6
+BOARD=board/f+s/cube
 platform=cube
 OUTPUT=output/images
 script=install-$platform

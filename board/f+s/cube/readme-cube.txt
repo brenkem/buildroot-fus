@@ -3,42 +3,43 @@ How to build and install rootfs for CUBEA7UL/Cube2.0
 
 Unpack linux sources to a directory:
 
-  tar xvf linux-4.9.88-fsimx6ul-Vx.y.tar.bz2
+  tar xvf linux-4.9.88-cube-Byyyy.mm.tar.bz2
 
-This creates directory linux-4.9.88-fsimx6ul-Vx.y, where x.y is the
-version number of the F&S release.
+This creates directory linux-4.9.88-cube-Byyyy.mm, where yyyy.mm is the
+year and month of the F&S release. The B indicates a Buildroot based
+release.
 
 Then unpack buildroot sources to a separate (!) directory:
 
-  tar xvf buildroot-YYYY.MM-f+s-Vx.y.tar.bz2
+  tar xvf buildroot-YYYY.MM-f+s-Byyyy.mm.tar.bz2
 
-This creates the directory buildroot-YYYY.MM-f+s-Vx.y where YYYY.MM is
-the buildroot version the F&S release is based on, and x.y is again the
-release version.
+This creates the directory buildroot-YYYY.MM-f+s-Byyyy.mm where YYYY.MM is
+the buildroot version the F&S release is based on, and Byyyy.mmm is again
+the F&S release version as above.
 
-Buildroot expects the Linux sources in a directory "linux-fsimx6ul" next
+Buildroot expects the Linux sources in a directory "linux-cube" next
 to the buildroot directory. So create the following symbolic link:
 
-  ln -s linux-4.9.88-fsimx6ul-Vx.y linux-fsimx6ul
+  ln -s linux-4.9.88-cube-Byyyy.mm linux-cube
 
-Of course replace x.y in this call with the correct version number
+Of course replace yyyy.mm in this call with the correct version number
 that was created in the first step above.
 
 (Remark: These steps above can be done automatically by using the
-script setup-buildroot.sh provided in the top directory of the
+script setup-buildroot provided in the top directory of the
 release.)
 
 Now switch to the buildroot directory, configure and build everything:
 
-  cd buildroot-YYYY.MM-f+s-Vx.y
+  cd buildroot-YYYY.MM-f+s-Byyyy.mm
   make cube_defconfig
   make
 
 This will build all buildroot packages, including the kernel zImage,
-the kernel modules (in the rootfs) and the device trees cubea7ul.dtb
-and cube2.0.dtb.
+the kernel modules (in the rootfs) and the device trees cubea7ul.dtb,
+cube2.0.dtb and cubea5.dtb.
 
-After building, the kernel image, device tree and rootfs images are
+After building, the kernel image, device trees and rootfs images are
 available in:
 
   output/images/
@@ -52,19 +53,21 @@ filesystem size.
 Now copy everything to the place where MFG-Tool can find it. You'll
 need:
 
-- uboot.nb0 (the release version or a separately built version)
+- uboot-fsvybrid.nb0 or uboot-fsimx6ul.nb0 (either the release version
+  or a separately built version)
 - output/images/rootfs.ubifs
 - install-cube.scr
 
 MFG-Tool should execute the following steps:
 
  1. Erase the flash ('E')
- 2. Load install-cubea7ul.scr to RAM @ 80300000 ('*')
+ 2. Load install-cube.scr to RAM @ 80300000 ('*')
  3. Detect and verify install-cube.scr ('%')
  4. Load rootfs.ubifs to RAM @ 81000000 ('*')
  5. Detect and verify rootfs.ubifs ('%')
- 6. Load uboot.nb0 to RAM @ 80100000 ('*')
- 7. Detect and verify uboot.nb0 ('%')
+ 6. Load either uboot-fsvybrid.nb0 or uboot-fsimx6ul.nb0 to
+    RAM @ 80100000 ('*')
+ 7. Detect and verify U-Boot ('%')
  8. Store U-Boot to flash ('f')
  9. Start U-Boot ('x')
 
@@ -76,14 +79,14 @@ Tips
 ----
 
 Buildroot will copy the linux source code from directory
-../linux-fsimx6ul (next to buildroot) to buildroot's subdirectory
+../linux-cube (next to buildroot) to buildroot's subdirectory
 output/build/linux-custom. To avoid any problems when doing this, you
-should keep the original directory ../linux-fsimx6ul always clean,
-i.e. do not start a separate build there. Any modificiations should be
-done in output/build/linux-custom. But be aware that this directory
-will be deleted when you call "make clean" or similar targets. So copy
-back your source code modifications from output/build/linux-custom to
-../linux-fsimx6ul from time to time.
+should keep the original directory ../linux-cube always clean,
+i.e. do not start a separate build there. However modificiations to
+the source code can (and should) be done there. They will be copied
+again to output/build/linux-custom when the kernel is rebuilt. Be
+aware that all modifications in output/build/linux-custom will be
+deleted when you call "make clean" or similar targets.
 
 You can configure the kernel directly from Buildroot with:
 
@@ -94,8 +97,7 @@ Then call
   make
 
 again to rebuild the kernel and the root filesystem. If you change
-source code in output/build/linux-custom, you can force rebuilding
-linux again by calling
+source code, you can force rebuilding linux again by calling
 
   make linux-rebuild
 

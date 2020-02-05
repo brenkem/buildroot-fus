@@ -2,12 +2,11 @@
 
 TARGET="$1"
 COMMON=board/f+s/common
-BOARD=board/f+s/fsimx6
+BOARD=board/f+s/cube
 MKIMAGE=mkimage
 CP="/bin/cp -f"
 MKDIR="/bin/mkdir -p"
 platform=cube
-dtb_files="cubea7ul.dtb cube2.0.dtb cube2.0ull.dtb"
 
 tput smso
 echo ">>>   Doing final CUBE setup"
@@ -26,21 +25,13 @@ ${CP} ${COMMON}/etc/inittab-${platform} ${TARGET}/etc/inittab
 # Copy the enhanced mdev configuration file
 ${CP} ${COMMON}/etc/mdev.conf ${TARGET}/etc
 
-# Copy the CUBEA7UL/CUBE2.0 specific start scripts
+# Copy the CubeA5/CubeA7UL/Cube2.0 specific start scripts
 ${CP} ${COMMON}/etc/init.d/S01${platform} ${TARGET}/etc/init.d
 ${CP} ${COMMON}/etc/init.d/S02leds ${TARGET}/etc/init.d
 
 # Copy the wrapper script fsgetty
 mkdir -p ${TARGET}/sbin
 ${CP} ${COMMON}/sbin/fsgetty ${TARGET}/sbin
-
-# Copy the kernel and the devicetree
-mkdir -p ${TARGET}/boot
-${CP} output/images/zImage ${TARGET}/boot
-for dtb in $dtb_files
-do
-    ${CP} output/images/${dtb} ${TARGET}/boot
-done
 
 # Copy the F&S aliases file
 mkdir -p ${TARGET}/etc/profile.d

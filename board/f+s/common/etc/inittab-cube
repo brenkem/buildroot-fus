@@ -13,11 +13,11 @@
 
 # Startup the system
 null::sysinit:/bin/mount -t proc proc /proc
-#::sysinit:/bin/mount -t tmpfs -o size=64k,mode=0755 tmpfs /dev
-#::sysinit:/bin/mount -o remount,rw / # REMOUNT_ROOTFS_RW
+#null::sysinit:/bin/mount -t tmpfs -o size=64k,mode=0755 tmpfs /dev
+#null::sysinit:/bin/mount -o remount,rw / # REMOUNT_ROOTFS_RW
 null::sysinit:/bin/mkdir -p /dev/pts
 null::sysinit:/bin/mkdir -p /dev/shm
-#null::sysinit:/bin/echo /sbin/mdev > /proc/sys/kernel/hotplug
+#null::sysinit:/bin/echo /sbin/mdev > /proc/sys/kernel/hotplug # USE_MDEV
 null::sysinit:/bin/mount -a
 null::sysinit:/bin/hostname -F /etc/hostname
 # now run any rc scripts

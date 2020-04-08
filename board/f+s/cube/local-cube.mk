@@ -1,1 +1,1 @@
-LINUX_OVERRIDE_SRCDIR = ../linux-fsimx6ul/
+LINUX_OVERRIDE_SRCDIR = ../linux-cube/

@@ -1,31 +1,32 @@
 How to build and install rootfs for CubeA5/Cube2.0
 --------------------------------------------------
 
-Both versions are built with one set of sources. Even if the
-architecture only mentions fsimx6ul, which refers to the i.MX6UL CPU
-of Cube2.0, it will also build the Vybrid version needed for CubeA5.
+All Cube versions are built with one set of sources. This covers
+Cube2.0 (i.MX6UL) as well as CubeA5 and AGATEWAY (Vybrid). NBoot and
+U-Boot need sepearet binaries, but the binaries for Linux kernel and
+root filesystem can be used on all these boards.
 
 Unpack linux sources to a directory:
 
-  tar xvf linux-4.9.88-fsimx6ul-Byyyy.mm.tar.bz2
+  tar xvf linux-4.9.88-cube-Byyyy.mm.tar.bz2
 
-This creates directory linux-4.9.88-fsimx6ul-Byyyy.mm, where yyyy.mm
-is the year and month of the F&S release. The B indicates a Buildroot
+This creates directory linux-4.9.88-cube-Byyyy.mm, where yyyy.mm is
+the year and month of the F&S release. The B indicates a Buildroot
 based release.
 
 Then unpack buildroot sources to a separate (!) directory:
 
-  tar xvf buildroot-YYYY.MM-fsimx6ul-Byyyy.mm.tar.bz2
+  tar xvf buildroot-YYYY.MM-cube-Byyyy.mm.tar.bz2
 
-This creates the directory buildroot-YYYY.MM-fsimx6ul-Byyyy.mm where
+This creates the directory buildroot-YYYY.MM-cube-Byyyy.mm where
 YYYY.MM is the buildroot version the F&S release is based on, and
 Byyyy.mmm is again the F&S release version as above.
 
-Buildroot expects the Linux sources in a directory "linux-fsimx6ul"
+Buildroot expects the Linux sources in a directory "linux-cube"
 next to the buildroot directory. So create the following symbolic
 link:
 
-  ln -s linux-4.9.88-fsimx6ul-Byyyy.mm linux-fsimx6ul
+  ln -s linux-4.9.88-cube-Byyyy.mm linux-cube
 
 Of course replace yyyy.mm in this call with the correct version
 reference that was created in the first step above.
@@ -36,13 +37,13 @@ release.)
 
 Now switch to the buildroot directory, configure and build everything:
 
-  cd buildroot-YYYY.MM-fsimx6ul-Byyyy.mm
+  cd buildroot-YYYY.MM-cube-Byyyy.mm
   make cube_defconfig
   make
 
 This will build all buildroot packages, including the kernel zImage,
 the kernel modules (in the rootfs) and the device trees cubea7ul.dtb,
-cube2.0.dtb and cubea5.dtb.
+cube2.0.dtb, cubea5.dtb and agateway.dtb.
 
 After building, the resulting images and the install script are
 available in:
@@ -82,9 +83,9 @@ Tips
 ----
 
 Buildroot will copy the linux source code from directory
-../linux-fsimx6ul (next to buildroot) to buildroot's subdirectory
+../linux-cube (next to buildroot) to buildroot's subdirectory
 output/build/linux-custom. To avoid any problems when doing this, you
-should keep the original directory ../linux-fsimx6ul always clean,
+should keep the original directory ../linux-cube always clean,
 i.e. do not start a separate configuration or build there. However
 modificiations to the source code can (and should) be done there. They
 will be copied again to output/build/linux-custom when the kernel is
@@ -110,7 +111,11 @@ to the call above or issue an additional "make" after the above
 command has finished.
 
 If you want to rebuild the Linux kernel completely from scratch by
-using the version in ../linux-fsimx6ul, just remove directory
+using the version in ../linux-cube, just remove directory
 output/build/linux-custom completely. (Again remember to save any
-modifications first!) Then the next build process will copy the whole
-source tree again and starts a fresh kernel build.
+modifications first!) This can either be done manually, or by calling
+
+  make linux-dirclean
+
+Then the next build process will copy the whole source tree again and
+starts a fresh kernel build.

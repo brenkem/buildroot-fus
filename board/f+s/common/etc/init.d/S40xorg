@@ -55,7 +55,7 @@ case "$1" in
 	echo "TSLIB_CALIBFILE=$TSLIB_CALIBFILE"
 
 	# Start the X-Server on VT02, redirect output and errors to log file
-	/usr/bin/startx /usr/bin/matchbox-session > $log_file 2>&1 -- vt02 &
+	XAUTHORITY=/var/run/.Xauthority /usr/bin/startx /usr/bin/matchbox-session > $log_file 2>&1 -- vt02 &
 	;;
 
     stop)

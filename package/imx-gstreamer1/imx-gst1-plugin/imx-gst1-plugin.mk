@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-IMX_GST1_PLUGIN_VERSION = rel_imx_4.9.88_2.0.0_ga
-IMX_GST1_PLUGIN_SOURCE = imx-gst1.0-plugin-4.3.5.tar.gz
+IMX_GST1_PLUGIN_VERSION = rel_imx_4.14.98_2.3.1_patch
+IMX_GST1_PLUGIN_SOURCE = imx-gst1.0-plugin-4.5.2.tar.gz
 IMX_GST1_PLUGIN_SITE = https://source.codeaurora.org/external/imx/imx-gst1.0-plugin
 IMX_GST1_PLUGIN_SITE_METHOD = git
 
@@ -49,6 +49,7 @@ define IMX_GST1_PLUGIN_VIDEODEV2
 	mkdir -p $(@D)/libs/linux
 	cp $(LINUX_DIR)/include/uapi/linux/videodev2.h $(@D)/libs/linux
 	cp $(LINUX_DIR)/include/linux/compiler.h $(@D)/libs/linux
+	cp $(LINUX_DIR)/include/linux/compiler_types.h $(@D)/libs/linux
 endef
 
 IMX_GST1_PLUGIN_POST_PATCH_HOOKS += IMX_GST1_PLUGIN_PATCH_M4 IMX_GST1_PLUGIN_VIDEODEV2

@@ -1,2 +1,3 @@
-sha256	dddadd164bede4793409ccfb636324dd73862c33458db66a5860f126bada25dc  imx-gpu-viv-6.2.4.p1.2-aarch32.bin
-sha256	27ed3f58681cef18f87ea20946cc89b2cef4848006064303d20583e6ed7aeec7  imx-gpu-viv-6.2.4.p1.2-aarch64.bin
+sha256  2804c3d7b8fdd0db6659735cc55b33e7fe749b823ccd9a5ee37b1ccf764ae928  imx-gpu-viv-6.2.4.p4.8-aarch32.bin
+sha256	72c5338003322a4ebf4d28e38f48b3014fcd116bd54d1b42924aa3be32888bd0  imx-gpu-viv-6.2.4.p4.8-aarch64.bin
+

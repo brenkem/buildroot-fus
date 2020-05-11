@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-IMX_GSTREAMER1_VERSION = rel_imx_4.9.88_2.0.0_ga
-IMX_GSTREAMER1_SOURCE = imx-gstreamer-1.12.2.tar.gz
+IMX_GSTREAMER1_VERSION = rel_imx_4.14.98_2.3.1_patch
+IMX_GSTREAMER1_SOURCE = imx-gstreamer-1.14.4.tar.gz
 IMX_GSTREAMER1_SITE = https://source.codeaurora.org/external/imx/gstreamer
 IMX_GSTREAMER1_SITE_METHOD = git
 IMX_GSTREAMER1_GIT_SUBMODULES = YES
 
-#IMX_GSTREAMER1_VERSION = 1.12.2
+#IMX_GSTREAMER1_VERSION = 1.14.4
 #IMX_GSTREAMER1_SOURCE = gstreamer-$(IMX_GSTREAMER1_VERSION).tar.xz
 #IMX_GSTREAMER1_SITE = https://gstreamer.freedesktop.org/src/gstreamer
 IMX_GSTREAMER1_INSTALL_STAGING = YES

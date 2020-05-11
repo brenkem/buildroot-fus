@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_VPUWRAP_VERSION = 4.3.5
+IMX_VPUWRAP_VERSION = 4.5.2
 IMX_VPUWRAP_SITE = $(FREESCALE_IMX_SITE)
 IMX_VPUWRAP_SOURCE = imx-vpuwrap-$(IMX_VPUWRAP_VERSION).bin
 IMX_VPUWRAP_INSTALL_STAGING = YES

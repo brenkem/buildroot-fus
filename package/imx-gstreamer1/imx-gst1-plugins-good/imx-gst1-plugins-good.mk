@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-IMX_GST1_PLUGINS_GOOD_VERSION = rel_imx_4.9.88_2.0.0_ga
-IMX_GST1_PLUGINS_GOOD_SOURCE = imx-gst-plugins-good-1.12.2.tar.gz
+IMX_GST1_PLUGINS_GOOD_VERSION = rel_imx_4.14.98_2.3.1_patch
+IMX_GST1_PLUGINS_GOOD_SOURCE = imx-gst-plugins-good-1.14.4.tar.gz
 IMX_GST1_PLUGINS_GOOD_SITE = https://source.codeaurora.org/external/imx/gst-plugins-good
 IMX_GST1_PLUGINS_GOOD_SITE_METHOD = git
 IMX_GST1_PLUGINS_GOOD_GIT_SUBMODULES = YES

@@ -1,0 +1,5 @@
+config BR2_PACKAGE_TOUCH_FIRMWARE
+	bool "touch-firmware"
+	help
+	  This package copies the corresponding touch firmware files into the
+	  /lib/firmware directory.

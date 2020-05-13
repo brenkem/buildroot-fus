@@ -5,7 +5,7 @@
 ################################################################################
 
 ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL),y)
-WESTON_VERSION = rel_imx_4.9.88_2.0.0_ga
+WESTON_VERSION = rel_imx_4.14.98_2.3.1_patch
 WESTON_SITE = https://source.codeaurora.org/external/imx/weston-imx
 WESTON_SITE_METHOD = git
 WESTON_AUTORECONF = YES

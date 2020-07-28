@@ -1,0 +1,7 @@
+#!/bin/sh
+
+COMMON=board/f+s/common
+FS_ARCH=fsimx8mm
+
+# Source-in common F+S setup for standard configuration
+. $COMMON/finalscript_min-common

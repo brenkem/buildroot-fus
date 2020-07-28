@@ -73,7 +73,7 @@ define IMX_GST1_PLUGINS_BAD_RUN_AUTOGEN
 endef
 IMX_GST1_PLUGINS_BAD_POST_PATCH_HOOKS += IMX_GST1_PLUGINS_BAD_RUN_AUTOGEN
 
-IMX_GST1_PLUGINS_BAD_DEPENDENCIES = imx-gst1-plugins-base imx-gstreamer1
+IMX_GST1_PLUGINS_BAD_DEPENDENCIES = imx-gst1-plugins-base imx-gstreamer1 libdrm
 
 ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
 # RPI has odd locations for several required headers.

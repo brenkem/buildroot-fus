@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_UUC_VERSION = d6afb27e55d73d7ad08cd2dd51c784d8ec9694dc
+IMX_UUC_VERSION = 79e9798eee9cd972d92ed2b18f170de856d153c9
 IMX_UUC_SITE = $(call github,NXPmicro,imx-uuc,$(IMX_UUC_VERSION))
 IMX_UUC_LICENSE = GPL-2.0+
 IMX_UUC_LICENSE_FILES = COPYING

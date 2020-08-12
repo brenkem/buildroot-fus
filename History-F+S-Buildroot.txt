@@ -3,6 +3,35 @@ BuildRoot History for F&S boards
 
 buildroot-2019.05.3-fsimx6-B2020.04 (21.04.2020)
 ------------------------------------------------
+Supported boards: PicoCoreMX8MM
+Not tested:       armStoneMX8M
+
+- Update history file to buildroot-2019.05.3-fsimx8mm-B2020.08
+- Enable 2D support for 64-bit architecture
+- Set PKG_CONFIG_SYSROOT_DIR to the build process
+- Enable FW images for iMX8MM plattform
+- Add config entries for iMX8MQ and iMX8MM
+- Bump imx-vpu-hantro to 1.14
+- Improve libdrm settings
+- Add install script for fsimx8mm
+- Bump mkimage to imx_4.14.98_2.3.0
+- Bump uuc for ramfs default configuration
+- Bump kobs-ng to support iMX8M(M,N)
+- Add udev rules to create touchscreen device
+- Add minimal configuration for fsim8mm with ramfs
+- Add configurations to build fsimx8mm with mmc support
+- Add minimal configuration for fsimx8mm
+- Improve fsimx8mm support
+- Add support for fsimx8mm
+- Update wayland/weston packages to work with kernel 4.14.98_2.3.1_patch
+- Support package touch_firmware in F&S defconfigs
+- Add package touch-firmware
+- Remove silex package build temporary from fsimx6sx/6ul defconfigs
+- Upgrade necessary packages to work with kernel version 4.14.98_2.3.1_patch
+- Improve XServer authority
+
+buildroot-2019.05.3-fsimx6-B2020.04 (21.04.2020)
+------------------------------------------------
 Supported boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
                   QBlissA9, QBlissA9r2, armStoneA5, Cube2.0, CubeA5,
                   AGATEWAY

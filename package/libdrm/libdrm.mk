@@ -8,7 +8,7 @@
 #LIBDRM_SOURCE = libdrm-$(LIBDRM_VERSION).tar.bz2
 #LIBDRM_SITE = https://dri.freedesktop.org/libdrm
 # IMX needs special variant from NXP
-LIBDRM_VERSION = 95645843f59495387a072d48374718f22e69d7a4
+LIBDRM_VERSION = rel_imx_4.14.98_2.3.1_patch
 LIBDRM_SOURCE = libdrm-imx-2.4.91.tar.gz
 LIBDRM_SITE = https://source.codeaurora.org/external/imx/libdrm-imx
 LIBDRM_SITE_METHOD = git

@@ -2,6 +2,17 @@
 
 COMMON=board/f+s/common
 FS_ARCH=fsimx8mm
+MKIMAGE=mkimage
+platform=${FS_ARCH}
 
 # Source-in common F+S setup for standard configuration
 . $COMMON/finalscript_std-common
+
+# Install rules to create /dev/input/touchscreen[0..] device
+mkdir -p ${TARGET}/etc/udev/rules.d
+${CP} ${COMMON}/etc/udev/rules.d/touchscreen.rules ${TARGET}/etc/udev/rules.d
+
+# Create update.scr and recover.scr from source texts
+${MKIMAGE} -A arm64 -O u-boot -T script -C none -n "$platform install script" \
+    -d ${BOARD}/install-$platform.txt ${TARGET}/install.scr
+

@@ -1,12 +1,13 @@
 BuildRoot History for F&S boards
 --------------------------------
 
-buildroot-2019.05.3-fsimx6-B2020.04 (21.04.2020)
+buildroot-2019.05.3-fsimx8mm-B2020.08 (11.08.2020)
 ------------------------------------------------
 Supported boards: PicoCoreMX8MM
 Not tested:       armStoneMX8M
 
 - Update history file to buildroot-2019.05.3-fsimx8mm-B2020.08
+- Move entry to create install script for fsimx8mm
 - Enable 2D support for 64-bit architecture
 - Set PKG_CONFIG_SYSROOT_DIR to the build process
 - Enable FW images for iMX8MM plattform

@@ -50,3 +50,17 @@ if grep ^BR2_PACKAGE_WESTON=y $BR2_CONFIG > /dev/null; then
     mkdir -p ${TARGET}/etc/xdg/weston
     ${CP} ${COMMON}/etc/xdg/weston/weston.ini ${TARGET}/etc/xdg/weston
 fi
+if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then
+	mkdir -p ${TARGET}/etc/rauc
+	if grep	^BR2_PACKAGE_FS_UPDATE_SOLUTION_NAND=y $BR2_CONFIG > /dev/null; then
+		${CP}  ${COMMON}/etc/rauc/system.conf.nand ${TARGET}/etc/rauc/system.conf
+		${CP}  ${COMMON}/etc/fw_env.config.nand ${TARGET}/etc/fw_env.config
+	elif grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION_MMC=y $BR2_CONFIG > /dev/null; then
+		${CP}  ${COMMON}/etc/rauc/system.conf.mmc ${TARGET}/etc/rauc/system.conf
+		${CP}  ${COMMON}/etc/fw_env.config.mmc ${TARGET}/etc/fw_env.config
+	fi
+	${CP}  ${COMMON}/etc/rauc/rauc.cert.pem ${TARGET}/etc/rauc
+	${CP}  ${COMMON}/etc/init.d/S02rauc ${TARGET}/etc/init.d/
+	chmod +x ${TARGET}/etc/init.d/S02rauc
+	${CP}  ${COMMON}/etc/sw_version ${TARGET}/etc/sw_version
+fi

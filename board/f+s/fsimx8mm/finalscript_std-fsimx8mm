@@ -9,3 +9,9 @@ FS_ARCH=fsimx8mm
 # Install rules to create /dev/input/touchscreen[0..] device
 mkdir -p ${TARGET}/etc/udev/rules.d
 ${CP} ${COMMON}/etc/udev/rules.d/touchscreen.rules ${TARGET}/etc/udev/rules.d
+
+if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then
+	${CP} ${COMMON}/etc/fstab-fsimx8mm ${TARGET}/etc/fstab
+	${CP} -r ${COMMON}/rw_fs/ ${TARGET}/
+fi
+

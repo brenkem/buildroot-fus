@@ -1,0 +1,14 @@
+config BR2_PACKAGE_PYTHON_AZURE_IOT_DEVICE
+	bool "python-azure-iot-device"
+	select BR2_PACKAGE_PYTHON_URLLIB3 # runtime
+	select BR2_PACKAGE_PYTHON_SIX # runtime
+	select BR2_PACKAGE_PYTHON_PAHO_MQTT # runtime
+	select BR2_PACKAGE_PYTHON_REQUESTS # runtime
+	select BR2_PACKAGE_PYTHON_REQUESTS_UNIXSOCKET # runtime
+	select BR2_PACKAGE_PYTHON_JANUS # runtime
+	select BR2_PACKAGE_PYTHON_PYSOCKS # runtime
+
+	help
+	  Microsoft Azure IoT Device Library.
+
+	  https://github.com/Azure/azure-iot-sdk-python/tree/master/azure-iot-device

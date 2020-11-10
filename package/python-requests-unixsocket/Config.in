@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_REQUESTS_UNIXSOCKET
+	bool "python-requests-unixsocket"
+	select BR2_PACKAGE_PYTHON_PBR # for building	
+
+	help
+	  Use requests to talk HTTP via a UNIX domain socket
+
+	  https://pypi.org/project/requests-unixsocket/

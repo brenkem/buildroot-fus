@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_ISODATE
+	bool "python-isodate"
+	select BR2_PACKAGE_PYTHON_SIX # runtime
+	help
+	  An ISO 8601 date/time/duration parser and formatter.
+
+	  https://github.com/gweis/isodate/

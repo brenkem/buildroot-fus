@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_MSREST
+	bool "python-msrest"
+	select BR2_PACKAGE_PYTHON_REQUESTS # runtime
+	select BR2_PACKAGE_PYTHON_REQUESTS_OAUTHLIB # runtime
+	select BR2_PACKAGE_PYTHON_ISODATE # runtime
+	select BR2_PACKAGE_PYTHON_CERTIFI # runtime
+	help
+	  AutoRest swagger generator Python client runtime.
+
+	  https://github.com/Azure/msrest-for-python

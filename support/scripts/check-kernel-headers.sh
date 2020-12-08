@@ -1,15 +1,14 @@
 #!/bin/sh
 
-BUILDDIR="${1}"
-SYSROOT="${2}"
+SYSROOT="${1}"
 # Make sure we have enough version components
-HDR_VER="${3}.0.0"
+HDR_VER="${2}.0.0"
 
 HDR_M="${HDR_VER%%.*}"
 HDR_V="${HDR_VER#*.}"
 HDR_m="${HDR_V%%.*}"
 
-EXEC="$(mktemp -p "${BUILDDIR}" -t .check-headers.XXXXXX)"
+EXEC="$(mktemp -t check-headers.XXXXXX)"
 
 # We do not want to account for the patch-level, since headers are
 # not supposed to change for different patchlevels, so we mask it out.

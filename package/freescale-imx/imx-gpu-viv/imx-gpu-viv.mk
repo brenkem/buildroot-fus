@@ -5,9 +5,9 @@
 ################################################################################
 
 ifeq ($(BR2_aarch64),y)
-IMX_GPU_VIV_VERSION = 6.2.4.p4.8-aarch64
+IMX_GPU_VIV_VERSION = 6.4.0.p1.0-aarch64
 else
-IMX_GPU_VIV_VERSION = 6.2.4.p4.8-aarch32
+IMX_GPU_VIV_VERSION = 6.4.0.p1.0-aarch32
 endif
 IMX_GPU_VIV_SITE = $(FREESCALE_IMX_SITE)
 IMX_GPU_VIV_SOURCE = imx-gpu-viv-$(IMX_GPU_VIV_VERSION).bin
@@ -42,9 +42,12 @@ endef
 # Make sure these commands are idempotent.
 define IMX_GPU_VIV_BUILD_CMDS
 	$(SED) 's/defined(LINUX)/defined(__linux__)/g' $(@D)/gpu-core/usr/include/*/*.h
-	ln -sf libGL.so.1.2 $(@D)/gpu-core/usr/lib/libGL.so
-	ln -sf libGL.so.1.2 $(@D)/gpu-core/usr/lib/libGL.so.1
-	ln -sf libGL.so.1.2 $(@D)/gpu-core/usr/lib/libGL.so.1.2.0
+	$(if $(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_X11)$(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL),
+		ln -sf libGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGL.so
+		ln -sf libGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGL.so.1
+		ln -sf libGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGL.so.1.2
+		ln -sf libGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libGL.so.1.2.0
+	)
 	ln -sf libEGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libEGL.so
 	ln -sf libEGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libEGL.so.1
 	ln -sf libEGL-$(IMX_GPU_VIV_LIB_TARGET).so $(@D)/gpu-core/usr/lib/libEGL.so.1.0
@@ -60,18 +63,7 @@ define IMX_GPU_VIV_FIXUP_FB_HEADERS
 	$(SED) '39i\
 		#if !defined(EGL_API_X11) && !defined(EGL_API_DFB) && !defined(EGL_API_FB) \n\
 		#define EGL_API_FB \n\
-		#endif' $(STAGING_DIR)/usr/include/EGL/eglvivante.h
 		#endif' $(STAGING_DIR)/usr/include/EGL/eglplatform.h
-endef
-endif
-
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),wl)
-define IMX_GPU_VIV_FIXUP_FB_HEADERS
-	$(SED) '39i\
-		#if !defined(EGL_API_X11) && !defined(EGL_API_DFB) && !defined(EGL_API_FB) \n\
-		#define EGL_API_FB \n\
-		#define EGL_API_WL \n\
-		#endif' $(STAGING_DIR)/usr/include/EGL/eglvivante.h
 endef
 endif
 

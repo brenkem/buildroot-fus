@@ -2,7 +2,7 @@ comment "imx-gpu-g2d needs a glibc toolchain with armhf enabled"
 	depends on BR2_arm
 	depends on !BR2_TOOLCHAIN_USES_GLIBC || !BR2_ARM_EABIHF
 
-comment "imx-gpu-g2d needs a glibc toolchain with armhf enabled"
+comment "imx-gpu-g2d needs a glibc toolchain"
 	depends on BR2_aarch64
 	depends on !BR2_TOOLCHAIN_USES_GLIBC
 

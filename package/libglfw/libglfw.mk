@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-LIBGLFW_VERSION = 3.2.1
+LIBGLFW_VERSION = 3.3
 LIBGLFW_SITE = $(call github,glfw,glfw,$(LIBGLFW_VERSION))
 LIBGLFW_INSTALL_STAGING = YES
-LIBGLFW_LICENSE = zlib
-LIBGLFW_LICENSE_FILES = COPYING.txt
+LIBGLFW_LICENSE = Zlib
+LIBGLFW_LICENSE_FILES = LICENSE.md
 
 LIBGLFW_DEPENDENCIES = libgl
 LIBGLFW_CONF_OPTS += \
@@ -22,6 +22,7 @@ LIBGLFW_DEPENDENCIES += \
 ifeq ($(BR2_PACKAGE_XLIB_LIBXI),y)
 LIBGLFW_DEPENDENCIES += xlib_libXi
 endif
+
 ifeq ($(BR2_PACKAGE_XLIB_LIBXXF86VM),y)
 LIBGLFW_DEPENDENCIES += xlib_libXxf86vm
 endif

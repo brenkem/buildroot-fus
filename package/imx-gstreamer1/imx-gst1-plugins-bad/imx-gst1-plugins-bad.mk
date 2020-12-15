@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-IMX_GST1_PLUGINS_BAD_VERSION = rel_imx_4.14.98_2.3.1_patch
-IMX_GST1_PLUGINS_BAD_SOURCE = imx-gst-plugins-bad-1.14.4.tar.gz
+IMX_GST1_PLUGINS_BAD_VERSION = rel_imx_5.4.47_2.2.0
+IMX_GST1_PLUGINS_BAD_SOURCE = imx-gst-plugins-bad-1.16.2.tar.gz
 IMX_GST1_PLUGINS_BAD_SITE = https://source.codeaurora.org/external/imx/gst-plugins-bad
 IMX_GST1_PLUGINS_BAD_SITE_METHOD = git
 IMX_GST1_PLUGINS_BAD_GIT_SUBMODULES = YES

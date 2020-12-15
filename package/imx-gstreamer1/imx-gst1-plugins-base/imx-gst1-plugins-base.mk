@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-IMX_GST1_PLUGINS_BASE_VERSION = rel_imx_4.14.98_2.3.1_patch
-IMX_GST1_PLUGINS_BASE_SOURCE = imx-gst-plugins-base-1.14.4.tar.gz
+IMX_GST1_PLUGINS_BASE_VERSION = rel_imx_5.4.47_2.2.0
+IMX_GST1_PLUGINS_BASE_SOURCE = imx-gst-plugins-base-1.16.2.tar.gz
 IMX_GST1_PLUGINS_BASE_SITE = https://source.codeaurora.org/external/imx/gst-plugins-base
 IMX_GST1_PLUGINS_BASE_SITE_METHOD = git
 IMX_GST1_PLUGINS_BASE_GIT_SUBMODULES = YES

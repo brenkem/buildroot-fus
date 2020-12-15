@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-IMX_GSTREAMER1_VERSION = rel_imx_4.14.98_2.3.1_patch
-IMX_GSTREAMER1_SOURCE = imx-gstreamer-1.14.4.tar.gz
+IMX_GSTREAMER1_VERSION = rel_imx_5.4.47_2.2.0
+IMX_GSTREAMER1_SOURCE = imx-gstreamer-1.16.2.tar.gz
 IMX_GSTREAMER1_SITE = https://source.codeaurora.org/external/imx/gstreamer
 IMX_GSTREAMER1_SITE_METHOD = git
 IMX_GSTREAMER1_GIT_SUBMODULES = YES

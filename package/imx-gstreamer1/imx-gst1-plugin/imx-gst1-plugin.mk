@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-IMX_GST1_PLUGIN_VERSION = rel_imx_4.14.98_2.3.1_patch
-IMX_GST1_PLUGIN_SOURCE = imx-gst1.0-plugin-4.5.2.tar.gz
+IMX_GST1_PLUGIN_VERSION = rel_imx_5.4.47_2.2.0
+IMX_GST1_PLUGIN_SOURCE = imx-gst1.0-plugin-4.5.6.tar.gz
 IMX_GST1_PLUGIN_SITE = https://source.codeaurora.org/external/imx/imx-gst1.0-plugin
 IMX_GST1_PLUGIN_SITE_METHOD = git
 

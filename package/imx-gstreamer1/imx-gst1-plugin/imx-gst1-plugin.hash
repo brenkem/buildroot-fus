@@ -1,2 +1,2 @@
-# From Yocto meta-fsl-bsp-release/imx/meta-bsp/recipes-multimedia/gstreamer/imx-gst1.0-plugin_4.5.2.bb
-sha256	60850f98026dd11b04d6e4abb626cb195a2404d233e68fe81914313d056b8ea4  imx-gst1.0-plugin-4.5.2.tar.gz
+# From Yocto meta-fsl-bsp-release/imx/meta-bsp/recipes-multimedia/gstreamer/imx-gst1.0-plugin_4.5.6.bb
+sha256	60850f98026dd11b04d6e4abb626cb195a2404d233e68fe81914313d056b8ea4  imx-gst1.0-plugin-4.5.6.tar.gz

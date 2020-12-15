@@ -4,10 +4,17 @@
 #
 ################################################################################
 
-IMX_VPUWRAP_VERSION = 4.5.2
-IMX_VPUWRAP_SITE = $(FREESCALE_IMX_SITE)
-IMX_VPUWRAP_SOURCE = imx-vpuwrap-$(IMX_VPUWRAP_VERSION).bin
+IMX_VPUWRAP_VERSION = rel_imx_5.4.47_2.2.0
+IMX_VPUWRAP_SOURCE = $(IMX_VPUWRAP_VERSION).tar.gz
+IMX_VPUWRAP_SITE = https://github.com/NXP/imx-vpuwrap/archive
+
 IMX_VPUWRAP_INSTALL_STAGING = YES
+
+# configure is missing but autogen.sh script is available
+define IMX_VPUWRAP_RUN_AUTOGEN
+        cd $(@D) && PATH=$(BR_PATH) NOCONFIGURE=yes ./autogen.sh
+endef
+IMX_VPUWRAP_PRE_CONFIGURE_HOOKS += IMX_VPUWRAP_RUN_AUTOGEN
 
 IMX_VPUWRAP_MAKE_ENV = \
 	$(TARGET_MAKE_ENV) \
@@ -26,10 +33,6 @@ endif
 IMX_VPUWRAP_LICENSE = NXP Semiconductor Software License Agreement
 IMX_VPUWRAP_LICENSE_FILES = EULA COPYING
 IMX_VPUWRAP_REDISTRIBUTE = NO
-
-define IMX_VPUWRAP_EXTRACT_CMDS
-	$(call FREESCALE_IMX_EXTRACT_HELPER,$(IMX_VPUWRAP_DL_DIR)/$(IMX_VPUWRAP_SOURCE))
-endef
 
 define IMX_VPU_VPUWRAP_BUILD_CMDS
 	$(IMX_VPUWRAP_MAKE_ENV) $(MAKE1) -C $(@D)

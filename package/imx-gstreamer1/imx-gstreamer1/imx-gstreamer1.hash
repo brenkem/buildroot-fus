@@ -1,3 +1,3 @@
-# From Yocto L4.14.98_2.3.1_patch
-sha256 e67e381bcf22b78c11a9456868161651647deef9e8e426438b98fe4a649191bf imx-gstreamer-1.14.4.tar.gz
+# From Yocto
+sha256 b40520871e60f793f53b51905fbd0423e993e377e59980ecf8494a775358f2fc imx-gstreamer-1.16.2.tar.gz
 

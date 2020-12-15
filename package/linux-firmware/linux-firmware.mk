@@ -293,7 +293,7 @@ ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_SDSD8997),y)
 LINUX_FIRMWARE_FILES += mrvl/sdsd8997_combo_v4.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.Marvell
 define LINUX_FIRMWARE_MWIFIEX_SDSD8997_SET_LINK
-	ln -s sdsd8997_combo_v4.bin \
+	ln -sf sdsd8997_combo_v4.bin \
 	$(TARGET_DIR)/lib/firmware/mrvl/sd8997_uapsta.bin
 endef
 LINUX_FIRMWARE_POST_INSTALL_TARGET_HOOKS += \

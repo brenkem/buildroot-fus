@@ -1,2 +1,2 @@
-# From Yocto L4.14.98_2.3.1_patch
-sha256 91de874e201f34497ea8e4812002d603f04e276047256dd1d12ab83c35896625 imx-gst-plugins-base-1.14.4.tar.gz
+# From Yocto 
+sha256 3cd7bf0b5dc081f09f72e499ef63549a3f307a0ea899759010fd20c2719dab4f imx-gst-plugins-base-1.16.2.tar.gz

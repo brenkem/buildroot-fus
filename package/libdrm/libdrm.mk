@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-#LIBDRM_VERSION = 2.4.100
+#LIBDRM_VERSION = 2.4.98
 #LIBDRM_SOURCE = libdrm-$(LIBDRM_VERSION).tar.bz2
 #LIBDRM_SITE = https://dri.freedesktop.org/libdrm
 # IMX needs special variant from NXP
-LIBDRM_VERSION = rel_imx_4.14.98_2.3.1_patch
-LIBDRM_SOURCE = libdrm-imx-2.4.91.tar.gz
+LIBDRM_VERSION = rel_imx_5.4.47_2.2.0
+# LIBDRM_SOURCE = libdrm-imx-2.4.99.tar.gz
 LIBDRM_SITE = https://source.codeaurora.org/external/imx/libdrm-imx
 LIBDRM_SITE_METHOD = git
 LIBDRM_LICENSE = MIT

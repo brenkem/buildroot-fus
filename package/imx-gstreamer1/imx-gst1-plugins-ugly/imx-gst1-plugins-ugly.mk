@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_GST1_PLUGINS_UGLY_VERSION = 1.14.4
+IMX_GST1_PLUGINS_UGLY_VERSION = 1.16.2
 IMX_GST1_PLUGINS_UGLY_SOURCE = gst-plugins-ugly-$(IMX_GST1_PLUGINS_UGLY_VERSION).tar.xz
 IMX_GST1_PLUGINS_UGLY_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-ugly
 IMX_GST1_PLUGINS_UGLY_LICENSE_FILES = COPYING

@@ -5,7 +5,7 @@
 ################################################################################
 
 ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL),y)
-WAYLAND_PROTOCOLS_VERSION = rel_imx_4.14.98_2.3.1_patch
+WAYLAND_PROTOCOLS_VERSION = rel_imx_5.4.47_2.2.0
 WAYLAND_PROTOCOLS_SITE = https://source.codeaurora.org/external/imx/wayland-protocols-imx
 WAYLAND_PROTOCOLS_SITE_METHOD = git
 WAYLAND_PROTOCOLS_AUTORECONF = YES

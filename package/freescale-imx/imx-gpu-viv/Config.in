@@ -94,4 +94,16 @@ config BR2_PACKAGE_IMX_GPU_VIV_GMEM_INFO
 	  Copy the gmem_info tool to the target which provides
 	  information about GPU memory consumption.
 
+config BR2_PACKAGE_IMX_GPU_VIV_OPENVX
+bool "install vivante OpenVX libraries"
+	help
+	  Copy the vivante OpenVX libraries
+	  too the target
+
+config BR2_PACKAGE_IMX_GPU_VIV_NN
+bool "install vivante OpenVX libraries"
+	help
+	  Copy the vivante Neuronal Network libraries
+	  too the target
+
 endif

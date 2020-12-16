@@ -72,6 +72,18 @@ define FIRMWARE_IMX_INSTALL_IMAGE_DDR_FW
 endef
 endif
 
+ifeq ($(BR2_PACKAGE_FIRMWARE_IMX_DDR3L),y)
+FIRMWARE_IMX_DDRFW_DIR = $(@D)/firmware/ddr/synopsys
+
+define FIRMWARE_IMX_INSTALL_IMAGE_DDR_FW
+	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
+		ddr3_imem_1d,ddr3_dmem_1d,ddr3_1d_fw)
+	cat $(FIRMWARE_IMX_DDRFW_DIR)/ddr3_1d_fw.bin > \
+		$(BINARIES_DIR)/ddr3_fw.bin
+	ln -sf $(BINARIES_DIR)/ddr3_fw.bin $(BINARIES_DIR)/ddr_fw.bin
+endef
+endif
+
 #
 # HDMI firmware
 #

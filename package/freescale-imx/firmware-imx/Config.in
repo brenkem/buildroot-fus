@@ -67,6 +67,11 @@ config BR2_PACKAGE_FIRMWARE_IMX_DDR4
 	help
 	  Use DDR4 binaries (i.e.: ddr4_*_201810.bin).
 
+
+config BR2_PACKAGE_FIRMWARE_IMX_DDR3L
+	bool "DDR3L"
+	help
+	  Use DDR3 binaries (i.e.: ddr3_*.bin).
 endchoice # DDR training FW
 
 config BR2_PACKAGE_FIRMWARE_IMX_IMEM_LEN

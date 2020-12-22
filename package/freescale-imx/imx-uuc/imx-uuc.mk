@@ -23,6 +23,7 @@ define IMX_UUC_INSTALL_TARGET_CMDS
 	$(INSTALL) -D -m 755 $(@D)/ufb $(TARGET_DIR)/usr/bin/ufb
 	dd if=/dev/zero of=$(TARGET_DIR)/fat bs=1M count=1
 	$(HOST_DIR)/sbin/mkfs.vfat $(TARGET_DIR)/fat
+	$(INSTALL) -D -m 755 $(@D)/linuxrc $(TARGET_DIR)/linuxrc
 endef
 
 define IMX_UUC_INSTALL_INIT_SYSV

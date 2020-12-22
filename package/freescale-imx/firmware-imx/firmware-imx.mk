@@ -36,6 +36,16 @@ define FIRMWARE_IMX_PREPARE_DDR_FW
 		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(3)).bin
 endef
 
+define FIRMWARE_IMX_PREPARE_DDR_2D_FW
+	$(TARGET_OBJCOPY) -I binary -O binary \
+		--pad-to $(BR2_PACKAGE_FIRMWARE_IMX_IMEM_LEN) --gap-fill=0x0 \
+		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(1)).bin \
+		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(1))_pad.bin
+
+	cat $(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(1))_pad.bin > \
+		$(FIRMWARE_IMX_DDRFW_DIR)/$(strip $(2)).bin
+endef
+
 ifeq ($(BR2_PACKAGE_FIRMWARE_IMX_LPDDR4),y)
 FIRMWARE_IMX_DDRFW_DIR = $(@D)/firmware/ddr/synopsys
 
@@ -45,10 +55,11 @@ define FIRMWARE_IMX_INSTALL_IMAGE_DDR_FW
 	# which is done in post-image script.
 	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
 		lpddr4_pmu_train_1d_imem,lpddr4_pmu_train_1d_dmem,lpddr4_pmu_train_1d_fw)
-	$(call FIRMWARE_IMX_PREPARE_DDR_FW, \
-		lpddr4_pmu_train_2d_imem,lpddr4_pmu_train_2d_dmem,lpddr4_pmu_train_2d_fw)
+	$(call FIRMWARE_IMX_PREPARE_DDR_2D_FW, \
+		lpddr4_pmu_train_2d_imem,lpddr4_pmu_train_2d_fw)
 	cat $(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_1d_fw.bin \
-		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_2d_fw.bin > \
+		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_2d_fw.bin \
+		$(FIRMWARE_IMX_DDRFW_DIR)/lpddr4_pmu_train_2d_dmem.bin	> \
 		$(BINARIES_DIR)/lpddr4_pmu_train_fw.bin
 	ln -sf $(BINARIES_DIR)/lpddr4_pmu_train_fw.bin $(BINARIES_DIR)/ddr_fw.bin
 endef

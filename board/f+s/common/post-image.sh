@@ -81,6 +81,11 @@ main()
 	local GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
 	local GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
+	# Copy files that are only related to the persistent data partition and NOT rootfs.
+	# Data partition created of ${TARGET_DIR}/rw_fs/root.
+	cp board/f+s/common/application ${TARGET_DIR}/rw_fs/root/application/app_a.squashfs
+	cp board/f+s/common/application ${TARGET_DIR}/rw_fs/root/application/app_b.squashfs
+
 	sed -e "s/%FILES%/${FILES}/" \
 		-e "s/%IMXOFFSET%/${IMXOFFSET}/" \
 		-e "s/%UBOOTBIN%/${UBOOTBIN}/" \
@@ -95,7 +100,10 @@ main()
 		--outputpath "${BINARIES_DIR}" \
 		--config "${GENIMAGE_CFG}"
 
+	# Remove files to prevent from next building using the files in rootfs.
 	rm -f ${GENIMAGE_CFG}
+	rm -f ${TARGET_DIR}/rw_fs/root/application/app_a.squashfs
+	rm -f ${TARGET_DIR}/rw_fs/root/application/app_b.squashfs
 
 	exit $?
 }

@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_FS_UPDATER_LIB
+	bool "python-fs-updater-lib"
+
+	select BR2_PACKAGE_PYTHON_REQUESTS # runtime
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
+
+
+	help
+	  Libarary for the F&S Updater Client and Azure frontend.

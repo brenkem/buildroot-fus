@@ -1,0 +1,29 @@
+#!/bin/sh
+# Generic post-install script
+
+dostart=0
+dostop=0
+
+case "$1" in
+    start)
+        dostart=1
+        ;;
+    stop)
+        dostop=1
+        ;;
+    restart|reload)
+        dostop=1
+        dostart=1
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|restart}"
+esac
+
+if [[ ${dostop} -ne 0 ]] ; then
+	echo "Not implemented"
+fi
+
+if [[ ${dostart} -ne 0 ]] ; then
+	/rw_fs/dynamic_mounting.py
+
+fi

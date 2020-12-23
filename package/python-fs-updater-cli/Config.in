@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_FS_UPDATER_CLI
+	bool "python-fs-updater-cli"
+
+	select BR2_PACKAGE_PYTHON_FS_UPDATER_LIB # runtime
+
+	help
+	  The F&S Updater Client

@@ -36,6 +36,7 @@ config BR2_PACKAGE_FS_UPDATE_SOLUTION
 		select BR2_PACKAGE_HOST_GENEXT2FS
 		select BR2_PACKAGE_HOST_RAUC
 		select BR2_PACKAGE_HOST_SQUASHFS
+		select BR2_PACKAGE_PYTHON_FS_UPDATER_CLI
 
         help
           This is the F&S Updater - a developed solution

@@ -8,6 +8,9 @@ mountprefix=/mnt/rauc
 path=rauc.cert.pem
 use-bundle-signing-time=true
 
+[handlers]
+post-install=/etc/rauc/rauc_postinstall.sh
+
 [slot.rootfs.0]
 device=/dev/ubi0_0
 type=ubivol

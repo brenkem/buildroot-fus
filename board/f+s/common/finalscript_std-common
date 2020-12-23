@@ -51,7 +51,6 @@ if grep ^BR2_PACKAGE_WESTON=y $BR2_CONFIG > /dev/null; then
     ${CP} ${COMMON}/etc/xdg/weston/weston.ini ${TARGET}/etc/xdg/weston
 fi
 if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then
-	mkdir -p ${TARGET}/etc/rauc
 	mkdir -p ${TARGET}/rw_fs/root/upper/etc/
 	mkdir -p ${TARGET}/rw_fs/root/upper/mnt/
 	mkdir -p ${TARGET}/rw_fs/root/upper/usr/
@@ -62,6 +61,19 @@ if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then
 	mkdir -p ${TARGET}/rw_fs/root/work/root/
 	mkdir -p ${TARGET}/rw_fs/root/work/usr/
 
+	mkdir -p ${TARGET}/rw_fs/root/application/current
+
+	${CP} ${COMMON}/dynamic_mounting.py ${TARGET_DIR}/rw_fs/
+
+	${CP} ${COMMON}/etc/fw_version ${TARGET}/etc/
+
+	mkdir -p ${TARGET}/etc/rauc
+
+	${CP} ${COMMON}/etc/rauc/rauc_postinstall.sh ${TARGET}/etc/rauc/
+
+	${CP} ${COMMON}/etc/rauc/rauc.cert.pem ${TARGET}/etc/rauc
+	${CP} ${COMMON}/etc/init.d/S51rauc ${TARGET}/etc/init.d/
+
 	if grep	^BR2_PACKAGE_FS_UPDATE_SOLUTION_NAND=y $BR2_CONFIG > /dev/null; then
 		${CP}  ${COMMON}/etc/rauc/system.conf.nand ${TARGET}/etc/rauc/system.conf
 		${CP}  ${COMMON}/etc/fw_env.config.nand ${TARGET}/etc/fw_env.config
@@ -69,8 +81,4 @@ if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then
 		${CP}  ${COMMON}/etc/rauc/system.conf.mmc ${TARGET}/etc/rauc/system.conf
 		${CP}  ${COMMON}/etc/fw_env.config.mmc ${TARGET}/etc/fw_env.config
 	fi
-	${CP}  ${COMMON}/etc/rauc/rauc.cert.pem ${TARGET}/etc/rauc
-	${CP}  ${COMMON}/etc/init.d/S02rauc ${TARGET}/etc/init.d/
-	chmod +x ${TARGET}/etc/init.d/S02rauc
-	${CP}  ${COMMON}/etc/sw_version ${TARGET}/etc/sw_version
 fi

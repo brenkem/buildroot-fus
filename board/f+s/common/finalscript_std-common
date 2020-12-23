@@ -68,6 +68,7 @@ if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then
 	${CP} ${COMMON}/etc/fw_version ${TARGET}/etc/
 
 	mkdir -p ${TARGET}/etc/rauc
+    mkdir -p ${TARGET}/mnt/rauc/bundle
 
 	${CP} ${COMMON}/etc/rauc/rauc_postinstall.sh ${TARGET}/etc/rauc/
 

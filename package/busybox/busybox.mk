@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-BUSYBOX_VERSION = 1.32.0
-BUSYBOX_SITE = http://www.busybox.net/downloads
+BUSYBOX_VERSION = 1.33.0
+BUSYBOX_SITE = https://www.busybox.net/downloads
 BUSYBOX_SOURCE = busybox-$(BUSYBOX_VERSION).tar.bz2
 BUSYBOX_LICENSE = GPL-2.0, bzip2-1.0.4
 BUSYBOX_LICENSE_FILES = LICENSE archival/libarchive/bz/LICENSE
+BUSYBOX_CPE_ID_VENDOR = $(BUSYBOX_NAME)
 
 define BUSYBOX_HELP_CMDS
 	@echo '  busybox-menuconfig     - Run BusyBox menuconfig'
@@ -328,14 +329,12 @@ endef
 endif
 
 # Telnet support
-ifeq ($(BR2_PACKAGE_BUSYBOX_TELNETD),y)
 define BUSYBOX_INSTALL_TELNET_SCRIPT
 	if grep -q CONFIG_FEATURE_TELNETD_STANDALONE=y $(@D)/.config; then \
 		$(INSTALL) -m 0755 -D package/busybox/S50telnet \
 			$(TARGET_DIR)/etc/init.d/S50telnet ; \
 	fi
 endef
-endif
 
 # Add /bin/{a,hu}sh to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.

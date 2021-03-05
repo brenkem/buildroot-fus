@@ -2,6 +2,8 @@
 # -*- coding: iso-8859-15 -*-
 import configparser as cp
 import subprocess as sp
+from os import path
+from pathlib import Path
 
 class DynamicApplicationMounting(object):
     def __init__(self, img_path: str):
@@ -69,21 +71,21 @@ class DynamicApplicationMounting(object):
         """
         if read_only:
             if hasattr(self, 'lower_dir'):
-                options = "lowerdir={}".format(self.lower_dir)
+                options = f"lowerdir={self.lower_dir}"
                 mount_overlay_cmd = self.mount_cmd.format(type="overlay", basePath="overlay", options=options, path=merge_path)
             else:
                 raise(Exception("Lower directory is not defined"))
         else:
             if hasattr(self, 'lower_dir') and hasattr(self, 'upper_dir') and hasattr(self, 'work_dir'):
-                options = "lowerdir={},upperdir={},workdir={}".format(self.lower_dir, self.upper_dir, self.work_dir)
-                mount_overlay_cmd = self.mount_cmd.format(type="overayl", basePath="overlay", options=options, path=merge_path)
+                options = f"lowerdir={self.lower_dir},upperdir={self.upper_dir},workdir={self.work_dir}"
+                mount_overlay_cmd = self.mount_cmd.format(type="overlay", basePath="overlay", options=options, path=merge_path)
             else:
                 raise(Exception("work, upper or lower directory not defined"))
 
         handle = sp.Popen(mount_overlay_cmd, shell=True, stdout=sp.PIPE)
         handle.wait()
         if handle.returncode != 0:
-            raise(Exception("Mounting overlay failed: {}".format(mount_overlay_cmd)))
+            raise(Exception(f"Mounting overlay failed: {mount_overlay_cmd}"))
 
 class SelectApplication(object):
     def __init__(self):
@@ -111,11 +113,17 @@ class SelectApplication(object):
         self.mounpoint.mount_overlay(True, folder_filesystem)
 
     def mount_overlay_persistent_mem(self, lowerdir: str, upperdir: str, workdir: str, mergedir: str):
-        mount_cmd = "mount -t overlay overlay -o defaults,lowerdir={lowerdir},upperdir={upperdir},workdir={workdir} {mergedir}".format(lowerdir=lowerdir,upperdir=upperdir,workdir=workdir,mergedir=mergedir)
+        if path.exists(lowerdir) == False:
+            Path(lowerdir).mkdir(partents=True, exist_ok=True)
+        if path.exists(upperdir) == False:
+            Path(upperdir).mkdir(parents=True, exist_ok=True)
+        if path.exists(workdir) == False:
+            Path(workdir).mkdir(parents=True, exist_ok=True)
+        mount_cmd = f"mount -t overlay overlay -o defaults,lowerdir={lowerdir},upperdir={upperdir},workdir={workdir} {mergedir}"
         handle = sp.Popen(mount_cmd, shell=True)
         handle.wait()
         if handle.returncode != 0:
-            print("Error while mounting overlay: {}".format(mount_cmd))
+            print(f"Error while mounting overlay: {mount_cmd}")
 
 
 class ReadConfigFileU(object):
@@ -140,7 +148,6 @@ class ReadConfigFileU(object):
         for key, value in self.cp._sections.items():
             if key.startswith("PersistentMemory."):
                 try:
-                    print("peris")
                     self.select.mount_overlay_persistent_mem(value["lowerdir"], value["upperdir"], value["workdir"], value["mergedir"])
                 except:
                     print("Not correct values for persistent memory: {}".format(key))

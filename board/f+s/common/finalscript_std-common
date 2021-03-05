@@ -50,16 +50,9 @@ if grep ^BR2_PACKAGE_WESTON=y $BR2_CONFIG > /dev/null; then
     mkdir -p ${TARGET}/etc/xdg/weston
     ${CP} ${COMMON}/etc/xdg/weston/weston.ini ${TARGET}/etc/xdg/weston
 fi
-if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then
-	mkdir -p ${TARGET}/rw_fs/root/upper/etc/
-	mkdir -p ${TARGET}/rw_fs/root/upper/mnt/
-	mkdir -p ${TARGET}/rw_fs/root/upper/usr/
-	mkdir -p ${TARGET}/rw_fs/root/upper/root/
 
-	mkdir -p ${TARGET}/rw_fs/root/work/etc/
-	mkdir -p ${TARGET}/rw_fs/root/work/mnt/
-	mkdir -p ${TARGET}/rw_fs/root/work/root/
-	mkdir -p ${TARGET}/rw_fs/root/work/usr/
+if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then
+	${CP} ${COMMON}/sbin/preinit.sh ${TARGET}/sbin/preinit.sh
 
 	mkdir -p ${TARGET}/rw_fs/root/application/current
 
@@ -70,10 +63,11 @@ if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then
 	mkdir -p ${TARGET}/etc/rauc
     mkdir -p ${TARGET}/mnt/rauc/bundle
 
-	${CP} ${COMMON}/etc/rauc/rauc_postinstall.sh ${TARGET}/etc/rauc/
+	${CP} ${COMMON}/rauc/rauc.cert.pem ${TARGET}/etc/rauc
 
-	${CP} ${COMMON}/etc/rauc/rauc.cert.pem ${TARGET}/etc/rauc
-	${CP} ${COMMON}/etc/init.d/S51rauc ${TARGET}/etc/init.d/
+	install -m 0444 ${COMMON}/etc/udev/rules.d/99-fus-updater-usb-auto-mount.rules ${TARGET}/etc/udev/rules.d/
+	install -m 0444 ${COMMON}/usr/libexec/usb_fs_updater.sh ${TARGET}/usr/libexec/usb_fs_updater.sh
+	install -m 0555 ${COMMON}/sbin/preinit.sh ${TARGET}/sbin
 
 	if grep	^BR2_PACKAGE_FS_UPDATE_SOLUTION_NAND=y $BR2_CONFIG > /dev/null; then
 		${CP}  ${COMMON}/etc/rauc/system.conf.nand ${TARGET}/etc/rauc/system.conf

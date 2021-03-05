@@ -83,8 +83,10 @@ main()
 
 	# Copy files that are only related to the persistent data partition and NOT rootfs.
 	# Data partition created of ${TARGET_DIR}/rw_fs/root.
-	cp board/f+s/common/application ${TARGET_DIR}/rw_fs/root/application/app_a.squashfs
-	cp board/f+s/common/application ${TARGET_DIR}/rw_fs/root/application/app_b.squashfs
+	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_SOLUTION=y$" ${BR2_CONFIG}; then
+		cp board/f+s/common/application ${TARGET_DIR}/rw_fs/root/application/app_a.squashfs
+		cp board/f+s/common/application ${TARGET_DIR}/rw_fs/root/application/app_b.squashfs
+	fi
 
 	sed -e "s/%FILES%/${FILES}/" \
 		-e "s/%IMXOFFSET%/${IMXOFFSET}/" \
@@ -100,10 +102,30 @@ main()
 		--outputpath "${BINARIES_DIR}" \
 		--config "${GENIMAGE_CFG}"
 
-	# Remove files to prevent from next building using the files in rootfs.
-	rm -f ${GENIMAGE_CFG}
-	rm -f ${TARGET_DIR}/rw_fs/root/application/app_a.squashfs
-	rm -f ${TARGET_DIR}/rw_fs/root/application/app_b.squashfs
+	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_SOLUTION=y$" ${BR2_CONFIG}; then
+		# Remove files to prevent from next building using the files in rootfs.
+		rm -f ${GENIMAGE_CFG}
+		rm -f ${TARGET_DIR}/rw_fs/root/application/app_a.squashfs
+		rm -f ${TARGET_DIR}/rw_fs/root/application/app_b.squashfs
+
+		# Generate RAUC Update
+		if grep -Eq "^BR2_PACKAGE_FS_UPDATE_SOLUTION_NAND=y$" ${BR2_CONFIG}; then
+			export RAUC_MEM_TYPE="nand"
+			export RAUC_TEMPLATE=${PWD}"/board/f+s/common/rauc/rauc_nand_template"
+		elif grep -Eq "^BR2_PACKAGE_FS_UPDATE_SOLUTION_MMC=y$" ${BR2_CONFIG}; then
+			export RAUC_MEM_TYPE="emmc"
+			export RAUC_TEMPLATE=${PWD}"/board/f+s/common/rauc/rauc_mmc_template"
+		fi
+		#
+		export RAUC_BINARY=${HOST_DIR}/usr/bin/rauc
+		export RAUC_PATH_TO_OUTPUT=${BINARIES_DIR}
+
+		export RAUC_CERT=${PWD}"/board/f+s/common/rauc/rauc.cert.pem"
+		export RAUC_KEY=${PWD}"/board/f+s/common/rauc/rauc.key.pem"
+
+		export DEPLOY_DIR_IMAGE=${BINARIES_DIR}
+		/usr/bin/python3 ${PWD}/rauc_create_update.py
+	fi
 
 	exit $?
 }

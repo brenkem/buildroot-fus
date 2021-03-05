@@ -29,6 +29,13 @@ image data.ubifs {
 	mountpoint = "/rw_fs/root"
 }
 
+image uboot.vfat {
+	vfat {}
+	empty = "true"
+	name = "uboot"
+	size = 8M
+}
+
 image sdcard_rauc.img {
   hdimage {
 	extended-partition = 3
@@ -39,8 +46,17 @@ image sdcard_rauc.img {
     image = "%UBOOTBIN%"
     offset = %IMXOFFSET%
   }
+
+  partition UBootA {
+    offset = 8M
+	image = "uboot.vfat"
+  }
+
+  partition UBootB {
+    image = "uboot.vfat"
+  }
+
   partition bootA {
-   offset = 8M
    partition-type = 0xC
    bootable = "true"
    image = "boot.vfat"

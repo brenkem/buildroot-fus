@@ -7,5 +7,5 @@ tmpfs		/tmp		tmpfs		mode=1777	0	0
 tmpfs		/run		tmpfs		mode=0755,nosuid,nodev	0	0
 sysfs		/sys		sysfs		defaults	0	0
 # data partition
-/dev/mmcblk2p7 	/rw_fs/root	ext4		defaults	0	0
+/dev/mmcblk2p9 	/rw_fs/root	ext4		defaults	0	0
 /dev/ubi0_2 	/rw_fs/root	ubifs		defaults	0	0

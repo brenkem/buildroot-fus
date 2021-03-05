@@ -7,25 +7,22 @@ mountprefix=/mnt/rauc
 path=rauc.cert.pem
 use-bundle-signing-time=true
 
-[handlers]
-post-install=/etc/rauc/rauc_postinstall.sh
-
 [slot.rootfs.0]
-device=/dev/mmcblk2p5
+device=/dev/mmcblk2p7
 type=raw
 parent=boot.0
 
 [slot.rootfs.1]
-device=/dev/mmcblk2p6
+device=/dev/mmcblk2p8
 type=raw
 parent=boot.1
 
 [slot.boot.0]
-device=/dev/mmcblk2p1
-type=vfat
+device=/dev/mmcblk2p5
+type=raw
 bootname=A
 
 [slot.boot.1]
-device=/dev/mmcblk2p2
-type=vfat
+device=/dev/mmcblk2p6
+type=raw
 bootname=B

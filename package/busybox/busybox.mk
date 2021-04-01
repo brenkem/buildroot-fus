@@ -329,12 +329,14 @@ endef
 endif
 
 # Telnet support
-define BUSYBOX_INSTALL_TELNET_SCRIPT
-	if grep -q CONFIG_FEATURE_TELNETD_STANDALONE=y $(@D)/.config; then \
-		$(INSTALL) -m 0755 -D package/busybox/S50telnet \
-			$(TARGET_DIR)/etc/init.d/S50telnet ; \
-	fi
-endef
+ifeq ($(BR2_PACKAGE_BUSYBOX_TELNETD),y)
+	define BUSYBOX_INSTALL_TELNET_SCRIPT
+		if grep -q CONFIG_FEATURE_TELNETD_STANDALONE=y $(@D)/.config; then \
+			$(INSTALL) -m 0755 -D package/busybox/S50telnet \
+				$(TARGET_DIR)/etc/init.d/S50telnet ; \
+		fi
+	endef
+endif
 
 # Add /bin/{a,hu}sh to /etc/shells otherwise some login tools like dropbear
 # can reject the user connection. See man shells.

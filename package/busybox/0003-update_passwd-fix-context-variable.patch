@@ -36,5 +36,6 @@ index 7b67f30cd..a228075cc 100644
  }
  #else
  # define check_selinux_update_passwd(username) ((void)0)
---
+-- 
 2.29.2
+

@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-IMX_GST1_PLUGINS_BASE_VERSION = rel_imx_5.4.47_2.2.0
+IMX_GST1_PLUGINS_BASE_VERSION = rel_imx_5.4.70_2.3.2
 IMX_GST1_PLUGINS_BASE_SOURCE = imx-gst-plugins-base-1.16.2.tar.gz
 IMX_GST1_PLUGINS_BASE_SITE = https://source.codeaurora.org/external/imx/gst-plugins-base
 IMX_GST1_PLUGINS_BASE_SITE_METHOD = git
 IMX_GST1_PLUGINS_BASE_GIT_SUBMODULES = YES
 IMX_GST1_PLUGINS_BASE_INSTALL_STAGING = YES
-IMX_GST1_PLUGINS_BASE_LICENSE_FILES = COPYING.LIB
+IMX_GST1_PLUGINS_BASE_LICENSE_FILES = COPYING
 IMX_GST1_PLUGINS_BASE_LICENSE = LGPL-2.0+, LGPL-2.1+
 
 # gio_unix_2_0 is only used for tests

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_ALSA_PLUGINS_VERSION = 	rel_imx_5.4.47_2.2.0
+IMX_ALSA_PLUGINS_VERSION = 	rel_imx_5.4.70_2.3.2
 IMX_ALSA_PLUGINS_SITE = https://source.codeaurora.org/external/imx/imx-alsa-plugins
 IMX_ALSA_PLUGINS_SITE_METHOD = git
 IMX_ALSA_PLUGINS_LICENSE = GPL-2.0+

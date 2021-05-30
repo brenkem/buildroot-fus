@@ -1,3 +1,4 @@
 # From Yocto
-sha256 671a8788b7443edec34bc4cec5f0befc352fe5582b0d8f1ad74386b7f4a83bc6 imx-gst-plugins-bad-1.16.2.tar.gz
+sha256 49330895162f34d5267c4b2e0a49d61bd42cc50ac60b3aa3fa0cefdbcab0efd2 imx-gst-plugins-bad-1.16.2.tar.gz
+sha256 0b12e4d1cd5db5f8a0c04fc98a1d8c3acc533097b6198d6644420da78d460223 COPYING
 

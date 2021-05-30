@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_GST1_PLUGINS_BAD_VERSION = rel_imx_5.4.47_2.2.0
+IMX_GST1_PLUGINS_BAD_VERSION = rel_imx_5.4.70_2.3.2
 IMX_GST1_PLUGINS_BAD_SOURCE = imx-gst-plugins-bad-1.16.2.tar.gz
 IMX_GST1_PLUGINS_BAD_SITE = https://source.codeaurora.org/external/imx/gst-plugins-bad
 IMX_GST1_PLUGINS_BAD_SITE_METHOD = git
@@ -12,7 +12,7 @@ IMX_GST1_PLUGINS_BAD_GIT_SUBMODULES = YES
 IMX_GST1_PLUGINS_BAD_INSTALL_STAGING = YES
 # Additional plugin licenses will be appended to IMX_GST1_PLUGINS_BAD_LICENSE and
 # IMX_GST1_PLUGINS_BAD_LICENSE_FILES if enabled.
-IMX_GST1_PLUGINS_BAD_LICENSE_FILES = COPYING.LIB
+IMX_GST1_PLUGINS_BAD_LICENSE_FILES = COPYING
 IMX_GST1_PLUGINS_BAD_LICENSE := LGPL-2.0+, LGPL-2.1+
 
 #IMX_GST1_PLUGINS_BAD_AUTORECONF = YES

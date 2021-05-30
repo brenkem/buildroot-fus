@@ -69,7 +69,6 @@ endchoice
 config BR2_PACKAGE_IMX_GPU_VIV_OUTPUT
 	string
 	default "x11" if BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_X11
-	default "wl" if !BR2_PACKAGE_XORG7 && BR2_PACKAGE_WAYLAND
 	default "fb" if BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_FB
 	default "wayland" if BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL
 

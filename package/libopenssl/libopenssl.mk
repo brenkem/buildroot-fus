@@ -4,7 +4,6 @@
 #
 ################################################################################
 
-#LIBOPENSSL_VERSION = 1.1.1h
 LIBOPENSSL_VERSION = 1.1.1k
 LIBOPENSSL_SITE = https://www.openssl.org/source
 LIBOPENSSL_SOURCE = openssl-$(LIBOPENSSL_VERSION).tar.gz

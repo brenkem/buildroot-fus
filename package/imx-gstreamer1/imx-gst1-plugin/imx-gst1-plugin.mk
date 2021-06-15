@@ -17,10 +17,14 @@ IMX_GST1_PLUGIN_LICENSE_FILES = COPYING-LGPL-2.1 COPYING-LGPL-2
 IMX_GST1_PLUGIN_INSTALL_STAGING = YES
 IMX_GST1_PLUGIN_AUTORECONF = YES
 
-IMX_GST1_PLUGIN_DEPENDENCIES += host-pkgconf imx-lib imx-parser imx-codec \
+IMX_GST1_PLUGIN_DEPENDENCIES += host-pkgconf imx-parser imx-codec \
 	imx-gstreamer1 imx-gst1-plugins-base imx-gst1-plugins-bad libdrm
 ifeq ($(BR2_PACKAGE_FREESCALE_IMX_HAS_VPU),y)
 IMX_GST1_PLUGIN_DEPENDENCIES += imx-vpu imx-vpuwrap
+endif
+
+ifeq ($(BR2_arm),y)
+IMX_GST1_PLUGIN_DEPENDENCIES += imx-lib
 endif
 
 IMX_GST1_PLUGIN_CONF_ENV = \
@@ -44,15 +48,22 @@ define IMX_GST1_PLUGIN_PATCH_M4
 	mkdir -p $(@D)/m4
 endef
 
-# We need the newest videodev2.h, which in turn needs compiler.h
-define IMX_GST1_PLUGIN_VIDEODEV2
+
+define IMX_GST1_PLUGIN_IMX_HEADERS
 	mkdir -p $(@D)/libs/linux
+	# We need the newest videodev2.h, which in turn needs compiler.h
 	cp $(LINUX_DIR)/include/uapi/linux/videodev2.h $(@D)/libs/linux
 	cp $(LINUX_DIR)/include/linux/compiler.h $(@D)/libs/linux
 	cp $(LINUX_DIR)/include/linux/compiler_types.h $(@D)/libs/linux
+	# We need the ion header so ion support will be added to the build
+	# or else we run into segfaults when playing videos
+	cp $(LINUX_DIR)/drivers/staging/android/uapi/ion.h $(@D)/libs/linux
+	# We need the imx version of dma-buf.h for DMA_BUF_IOCTL_PHYS
+	cp $(LINUX_DIR)/include/uapi/linux/dma-buf.h $(@D)/libs/linux
+
 endef
 
-IMX_GST1_PLUGIN_POST_PATCH_HOOKS += IMX_GST1_PLUGIN_PATCH_M4 IMX_GST1_PLUGIN_VIDEODEV2
+IMX_GST1_PLUGIN_POST_PATCH_HOOKS += IMX_GST1_PLUGIN_PATCH_M4 IMX_GST1_PLUGIN_IMX_HEADERS
 
 IMX_GST1_PLUGIN_CONF_ENV += PKG_CONFIG_SYSROOT_DIR="$(STAGING_DIR)"
 

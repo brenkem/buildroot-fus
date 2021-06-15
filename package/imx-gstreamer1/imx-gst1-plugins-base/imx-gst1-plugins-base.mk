@@ -13,6 +13,10 @@ IMX_GST1_PLUGINS_BASE_INSTALL_STAGING = YES
 IMX_GST1_PLUGINS_BASE_LICENSE_FILES = COPYING
 IMX_GST1_PLUGINS_BASE_LICENSE = LGPL-2.0+, LGPL-2.1+
 
+# needs access to imx-specific kernel headers
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += linux
+IMX_GST1_PLUGINS_BASE_CONF_ENV += CPPFLAGS="$(TARGET_CPPFLAGS) -idirafter $(LINUX_DIR)/include/uapi -I$(@D)/libs"
+
 # gio_unix_2_0 is only used for tests
 IMX_GST1_PLUGINS_BASE_CONF_OPTS = \
 	--disable-examples \
@@ -213,5 +217,16 @@ IMX_GST1_PLUGINS_BASE_DEPENDENCIES += libvorbis
 else
 IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-vorbis
 endif
+
+define IMX_GST1_PLUGINS_BASE_IMX_HEADERS
+	mkdir -p $(@D)/libs/linux
+	# We need the ion header so ion support will be added to the build
+	# or else we run into segfaults when playing videos
+	cp $(LINUX_DIR)/drivers/staging/android/uapi/ion.h $(@D)/libs/linux
+	# We need the imx version of dma-buf.h for DMA_BUF_IOCTL_PHYS
+	cp $(LINUX_DIR)/include/uapi/linux/dma-buf.h $(@D)/libs/linux
+endef
+
+IMX_GST1_PLUGINS_BASE_POST_PATCH_HOOKS += IMX_GST1_PLUGINS_BASE_IMX_HEADERS
 
 $(eval $(autotools-package))

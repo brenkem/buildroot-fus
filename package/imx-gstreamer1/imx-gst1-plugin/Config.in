@@ -2,7 +2,7 @@ comment "imx-gst1-plugin needs an imx-specific Linux kernel to be built"
 	depends on BR2_arm && !BR2_LINUX_KERNEL
 
 comment "imx-gst1-plugin needs an (e)glibc toolchain"
-	depends on BR2_arm
+	depends on BR2_arm || BR2_aarch64
 	depends on !BR2_TOOLCHAIN_USES_GLIBC
 
 comment "imx-gst1-plugin depends on BR2_PACKAGE_FREESCALE_IMX"
@@ -11,14 +11,14 @@ comment "imx-gst1-plugin depends on BR2_PACKAGE_FREESCALE_IMX"
 config BR2_PACKAGE_IMX_GST1_PLUGIN
 	bool "imx-gst1-plugin (needed for hardware acceleration)"
 	depends on BR2_LINUX_KERNEL
-	depends on BR2_arm # Only relevant for i.MX
+	depends on BR2_arm || BR2_aarch64 # Only relevant for i.MX
 	depends on BR2_TOOLCHAIN_USES_GLIBC # imx-codec
 	depends on BR2_PACKAGE_FREESCALE_IMX
 	select BR2_PACKAGE_IMX_GST1_PLUGINS_BASE
 	select BR2_PACKAGE_IMX_GST1_PLUGINS_BAD
 	select BR2_PACKAGE_IMX_VPUWRAP if BR2_PACKAGE_FREESCALE_IMX_HAS_VPU
 	select BR2_PACKAGE_IMX_VPU if BR2_PACKAGE_FREESCALE_IMX_HAS_VPU
-	select BR2_PACKAGE_IMX_LIB
+	select BR2_PACKAGE_IMX_LIB if BR2_arm
 	select BR2_PACKAGE_IMX_PARSER
 	select BR2_PACKAGE_IMX_CODEC
 	select BR2_PACKAGE_LIBDRM
@@ -42,6 +42,7 @@ choice
 	default BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6UL  if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX6UL
 	default BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX7ULP  if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX7
 	default BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX8  if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M
+	default BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX8  if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM
 
 
 config BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM_MX6

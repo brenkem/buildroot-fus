@@ -13,17 +13,18 @@ image boot.vfat {
       %FILES%
     }
   }
-  size = 32M
+  size = 88M
 }
 
-image sdcard.img {
+image emmc-fsimx8mm.sysimg {
+
   hdimage {
   }
 
-  partition imx-boot {
+  partition u-boot {
     in-partition-table = "no"
     image = "%UBOOTBIN%"
-    offset = %IMXOFFSET%
+    offset = 2M
   }
 
   partition boot {

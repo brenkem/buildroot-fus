@@ -1,6 +1,55 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2021.02.2-fsimx8mm-B2021.06 (23.06.2021)
+------------------------------------------------
+Supported boards: PicoCoreMX8MM
+
+- Add packages and utillity for python-azure-iot-device
+- Latest Buildroot version of rauc
+- Add FS Updater package
+- Add FS Updater Solution scripts for FSIMX8MM architecture
+- Folder bug fix for FS Updater FSIMX8MM
+- Update to buildroot-2020.11
+- Update imx specific packages
+- Update arm trusted firmware
+- Update fsimx8mm defconfigs and busybox
+- Improve imx8 image generation
+- Improve fsimx8mm weston backend
+- Fix padding of lpddr4 ram trainigs binaries
+- Fix cpio-rootfs generation
+- Add FS-Updater for application and rootfs
+- Fixes for FS-Update
+- Fix RAUC squashfs mounting
+- RAUC Update to 1.5
+- Extend: dynamic_mounting.py
+- Change: Extend demo application with startup script
+- Change: Increase partition number of data partition (emmc)
+- Change: Add emmc fallback support fw_env.conf.mmc
+- Remove: S51rauc
+- Change: Path of default certificate changed
+- Remove: postinstall.sh
+- Change: Config
+- Add: board/f+s/common/rauc
+- Add: Support for automatic update via usb drive or sd card
+- Change: system.conf for rauc
+- Add: preinit.sh
+- Change: Several files that make the previous features available
+- Fix: busybox 1.33
+- fsimx6{sx,ul}_min_defconfig: Correctly load SDMA firmware
+- Update to libopenssl-1.1.1k
+- Update to buildroot-2021.02.2
+- Update fsimx8mm_wayland_defconfig
+- Update imx specific packages
+- Update bluez_utils package
+- Fix old hashes
+- Fix imx-gstreamer package
+- Improve fsimx8mm defconfigs
+- Improve sysimg (sdcard image) generation
+- Fixup History File
+
+
+
 buildroot-2019.05.3-fsimx8mm-B2020.08 (11.08.2020)
 ------------------------------------------------
 Supported boards: PicoCoreMX8MM

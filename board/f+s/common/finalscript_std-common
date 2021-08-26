@@ -26,18 +26,7 @@ ${CP} ${COMMON}/etc/profile.d/tslib.sh ${TARGET}/etc/profile.d
 mkdir -p ${TARGET}/var/lib/alsa
 ${CP} ${COMMON}/var/lib/alsa/asound.state ${TARGET}/var/lib/alsa
 
-# Copy the x11 start script and configuration files
-if grep ^BR2_PACKAGE_XSERVER_XORG_SERVER=y $BR2_CONFIG > /dev/null; then
-    # Copy X server configuration
-    mkdir -p ${TARGET}/etc/X11
-    ${CP} $XORG_CONF ${TARGET}/etc/X11/xorg.conf
-    mkdir -p ${TARGET}/${XORG_CONF_D}
-    ${CP} ${COMMON}/${XORG_CONF_D}/10-tslib.conf.off ${TARGET}/${XORG_CONF_D}
-    # Copy enhanced profile (with DISPLAY and XAUTHORITY)
-    ${CP} ${COMMON}/etc/profile.d/xserver.sh ${TARGET}/etc/profile.d
-    # Copy start script for XServer
-    ${CP} ${COMMON}/etc/init.d/S40xorg ${TARGET}/etc/init.d
-fi
+
 
 # Copy the weston start script
 if grep ^BR2_PACKAGE_WESTON=y $BR2_CONFIG > /dev/null; then
@@ -49,6 +38,12 @@ if grep ^BR2_PACKAGE_WESTON=y $BR2_CONFIG > /dev/null; then
     # Install weston.ini
     mkdir -p ${TARGET}/etc/xdg/weston
     ${CP} ${COMMON}/etc/xdg/weston/weston.ini ${TARGET}/etc/xdg/weston
+	# Activate xwayland if XSERVER is installed
+	if grep ^BR2_PACKAGE_WESTON_XWAYLAND=y $BR2_CONFIG > /dev/null; then
+	    # Copy enhanced profile (with DISPLAY and XAUTHORITY)
+	    ${CP} ${COMMON}/etc/profile.d/xserver.sh ${TARGET}/etc/profile.d
+		sed -i 's/#xwayland=true/xwayland=true/g' ${TARGET}/etc/xdg/weston/weston.ini
+	fi
 fi
 
 if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then

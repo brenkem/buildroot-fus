@@ -3,15 +3,14 @@
 # weston
 #
 ################################################################################
-
 ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL),y)
 WESTON_VERSION = rel_imx_5.4.70_2.3.2
 WESTON_SITE = https://source.codeaurora.org/external/imx/weston-imx
 WESTON_SITE_METHOD = git
 WESTON_AUTORECONF = YES
 else
-WESTON_VERSION = 6.0.0
-WESTON_SITE = http://wayland.freedesktop.org/releases
+WESTON_VERSION = 9.0.0
+WESTON_SITE = https://wayland.freedesktop.org/releases
 WESTON_SOURCE = weston-$(WESTON_VERSION).tar.xz
 endif
 WESTON_LICENSE = MIT
@@ -73,9 +72,16 @@ endif
 ifeq ($(BR2_PACKAGE_HAS_LIBEGL_WAYLAND)$(BR2_PACKAGE_HAS_LIBGLES),yy)
 WESTON_CONF_OPTS += -Drenderer-gl=true
 WESTON_DEPENDENCIES += libegl libgles
+ifeq ($(BR2_PACKAGE_PIPEWIRE)$(BR2_PACKAGE_WESTON_DRM),yy)
+WESTON_CONF_OPTS += -Dpipewire=true
+WESTON_DEPENDENCIES += pipewire
+else
+WESTON_CONF_OPTS += -Dpipewire=false
+endif
 else
 WESTON_CONF_OPTS += \
-	-Drenderer-gl=false
+	-Drenderer-gl=false \
+	-Dpipewire=false
 endif
 
 ifeq ($(BR2_PACKAGE_WESTON_RDP),y)
@@ -140,13 +146,6 @@ WESTON_CONF_OPTS += -Dtest-junit-xml=true
 WESTON_DEPENDENCIES += libxml2
 else
 WESTON_CONF_OPTS += -Dtest-junit-xml=false
-endif
-
-ifeq ($(BR2_PACKAGE_PIPEWIRE)$(BR2_PACKAGE_WESTON_DRM),yy)
-WESTON_CONF_OPTS += -Dpipewire=true
-WESTON_DEPENDENCIES += pipewire
-else
-WESTON_CONF_OPTS += -Dpipewire=false
 endif
 
 ifeq ($(BR2_PACKAGE_WESTON_DEMO_CLIENTS),y)

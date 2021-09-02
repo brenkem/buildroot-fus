@@ -30,6 +30,16 @@ linux_image()
 	fi
 }
 
+uboot_image()
+{
+	if grep -Eq "^BR2_TARGET_UBOOT_FORMAT_CUSTOM_NAME=\"uboot.nb0\"" ${BR2_CONFIG}; then
+		echo "uboot.nb0"
+	else
+		echo "u-boot-dtb.img"
+	fi
+}
+
+
 genimage_type()
 {
 	if grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M=y$" ${BR2_CONFIG}; then
@@ -56,7 +66,7 @@ genimage_type()
 main()
 {
 	local FILES="$(dtb_list) $(linux_image)"
-	local UBOOTBIN="u-boot-dtb.img"
+	local UBOOTBIN="$(uboot_image)"
 	local GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
 	local GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
@@ -70,7 +80,7 @@ main()
 	sed -e "s/%FILES%/${FILES}/" \
 		-e "s/%IMXOFFSET%/${IMXOFFSET}/" \
 		-e "s/%UBOOTBIN%/${UBOOTBIN}/" \
-		board/f+s/$5/$(genimage_type) > ${GENIMAGE_CFG}
+		board/f+s/$2/$(genimage_type) > ${GENIMAGE_CFG}
 
 	rm -rf "${GENIMAGE_TMP}"
 

@@ -41,12 +41,6 @@ image sdcard_rauc.img {
 	extended-partition = 3
   }
 
-  partition imx-boot {
-    in-partition-table = "no"
-    image = "%UBOOTBIN%"
-    offset = %IMXOFFSET%
-  }
-
   partition UBootA {
     offset = 8M
 	image = "uboot.vfat"
@@ -56,31 +50,32 @@ image sdcard_rauc.img {
     image = "uboot.vfat"
   }
 
-  partition bootA {
-   partition-type = 0xC
-   bootable = "true"
-   image = "boot.vfat"
-
+  partition boot_partA {
+	partition-type = 0xC
+    bootable = "true"
+	image = "boot.vfat"
   }
-  partition bootB {
-   partition-type = 0xC
-   bootable = "true"
-   image = "boot.vfat"
 
+  partition boot_partB {
+	partition-type = 0xC
+    bootable = "true"
+	image = "boot.vfat"
   }
-  partition rootfsA {
-    partition-type = 0x83
-    image = "rootfs.squashfs"
+
+  partition rootfs_partA {
+	partition-type = 0x83
+	image = "rootfs.squashfs"
 	size = 150M
   }
 
-  partition rootfsB {
-    partition-type = 0x83
-    image = "rootfs.squashfs"
+  partition rootfs_partB {
+	partition-type = 0x83
+	image = "rootfs.squashfs"
 	size = 150M
   }
 
-  partition data {
+  partition data_part {
+	partition-type = 0x83
 	image = "data.ext4"
   }
 }

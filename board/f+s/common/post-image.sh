@@ -35,7 +35,7 @@ genimage_type()
 	if grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M=y$" ${BR2_CONFIG}; then
 		echo "genimage.cfg.template_imx8"
 	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM=y$" ${BR2_CONFIG}; then
-		if grep -Eq "^BR2_PACKAGE_FS_UPDATE_SOLUTION=y$" ${BR2_CONFIG}; then
+		if grep -Eq "^BR2_PACKAGE_FS_UPDATE_CLI=y$" ${BR2_CONFIG}; then
 			echo "genimage.cfg.template.imx8mm.update"
 		else
 			echo "genimage.cfg.template.imx8mm.std"
@@ -62,13 +62,13 @@ main()
 
 	# Copy files that are only related to the persistent data partition and NOT rootfs.
 	# Data partition created of ${TARGET_DIR}/rw_fs/root.
-	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_SOLUTION=y$" ${BR2_CONFIG}; then
+	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_CLI=y$" ${BR2_CONFIG}; then
+		mkdir -p ${TARGET_DIR}/rw_fs/root/application/
 		cp board/f+s/common/application ${TARGET_DIR}/rw_fs/root/application/app_a.squashfs
 		cp board/f+s/common/application ${TARGET_DIR}/rw_fs/root/application/app_b.squashfs
 	fi
 
 	sed -e "s/%FILES%/${FILES}/" \
-		-e "s/%IMXOFFSET%/${IMXOFFSET}/" \
 		-e "s/%UBOOTBIN%/${UBOOTBIN}/" \
 		board/f+s/$5/$(genimage_type) > ${GENIMAGE_CFG}
 
@@ -81,21 +81,16 @@ main()
 		--outputpath "${BINARIES_DIR}" \
 		--config "${GENIMAGE_CFG}"
 
-	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_SOLUTION=y$" ${BR2_CONFIG}; then
+	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_LIB=y$" ${BR2_CONFIG}; then
 		# Remove files to prevent from next building using the files in rootfs.
 		rm -f ${GENIMAGE_CFG}
 		rm -f ${TARGET_DIR}/rw_fs/root/application/app_a.squashfs
 		rm -f ${TARGET_DIR}/rw_fs/root/application/app_b.squashfs
 
 		# Generate RAUC Update
-		if grep -Eq "^BR2_PACKAGE_FS_UPDATE_SOLUTION_NAND=y$" ${BR2_CONFIG}; then
-			export RAUC_MEM_TYPE="nand"
-			export RAUC_TEMPLATE=${PWD}"/board/f+s/common/rauc/rauc_nand_template"
-		elif grep -Eq "^BR2_PACKAGE_FS_UPDATE_SOLUTION_MMC=y$" ${BR2_CONFIG}; then
-			export RAUC_MEM_TYPE="emmc"
-			export RAUC_TEMPLATE=${PWD}"/board/f+s/common/rauc/rauc_mmc_template"
-		fi
-		#
+		export RAUC_TEMPLATE_MMC=${PWD}"/board/f+s/common/rauc/rauc_mmc_template"
+		export RAUC_TEMPLATE_NAND=${PWD}"/board/f+s/common/rauc/rauc_nand_template"
+
 		export RAUC_BINARY=${HOST_DIR}/usr/bin/rauc
 		export RAUC_PATH_TO_OUTPUT=${BINARIES_DIR}
 
@@ -103,10 +98,9 @@ main()
 		export RAUC_KEY=${PWD}"/board/f+s/common/rauc/rauc.key.pem"
 
 		export DEPLOY_DIR_IMAGE=${BINARIES_DIR}
-		/usr/bin/python3 ${PWD}/rauc_create_update.py
-	fi
+		/usr/bin/python3 ${PWD}/board/f+s/common/rauc_create_update.py
+	fi;
 
 	exit $?
 }
-
 main $@

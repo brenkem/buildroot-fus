@@ -62,10 +62,9 @@ main()
 
 	# Copy files that are only related to the persistent data partition and NOT rootfs.
 	# Data partition created of ${TARGET_DIR}/rw_fs/root.
-	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_CLI=y$" ${BR2_CONFIG}; then
-		mkdir -p ${TARGET_DIR}/rw_fs/root/application/
-		cp board/f+s/common/application ${TARGET_DIR}/rw_fs/root/application/app_a.squashfs
-		cp board/f+s/common/application ${TARGET_DIR}/rw_fs/root/application/app_b.squashfs
+	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_LIB=y$" ${BR2_CONFIG}; then
+		APP_NAME="app"${RANDOM}
+		mv ${TARGET_DIR}/app /tmp/${APP_NAME}
 	fi
 
 	sed -e "s/%FILES%/${FILES}/" \
@@ -84,8 +83,7 @@ main()
 	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_LIB=y$" ${BR2_CONFIG}; then
 		# Remove files to prevent from next building using the files in rootfs.
 		rm -f ${GENIMAGE_CFG}
-		rm -f ${TARGET_DIR}/rw_fs/root/application/app_a.squashfs
-		rm -f ${TARGET_DIR}/rw_fs/root/application/app_b.squashfs
+		mv /tmp/${APP_NAME} ${TARGET_DIR}/app
 
 		# Generate RAUC Update
 		export RAUC_TEMPLATE_MMC=${PWD}"/board/f+s/common/rauc/rauc_mmc_template"
@@ -98,6 +96,8 @@ main()
 		export RAUC_KEY=${PWD}"/board/f+s/common/rauc/rauc.key.pem"
 
 		export DEPLOY_DIR_IMAGE=${BINARIES_DIR}
+        export PYTHONPATH=${HOST_DIR}/
+
 		/usr/bin/python3 ${PWD}/board/f+s/common/rauc_create_update.py
 	fi;
 

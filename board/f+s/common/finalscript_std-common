@@ -22,6 +22,7 @@ XORG_CONF_D=usr/share/X11/xorg.conf.d
 # setup touch controller configuration
 mkdir -p ${TARGET}/etc/profile.d
 ${CP} ${COMMON}/etc/profile.d/tslib.sh ${TARGET}/etc/profile.d
+
 # setup sound configuration
 mkdir -p ${TARGET}/var/lib/alsa
 ${CP} ${COMMON}/var/lib/alsa/asound.state ${TARGET}/var/lib/alsa
@@ -58,6 +59,7 @@ if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
     if [[ -z "${FIRMWARE_VERSION}" ]]; then
         echo "Environment FIRMWARE_VERSION is not set"
         exit 3
+	fi
 	echo ${FIRMWARE_VERSION} > ${TARGET}/etc/fw_version
 
 	mkdir -p ${TARGET}/etc/rauc
@@ -87,7 +89,8 @@ if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
     if [[ -z "${APPLICATION_VERSION}" ]]; then
         echo "Environment APPLICATION_VERSION is not set"
         exit 3
-    fi;
+    fi
+
     ${CP} ${COMMON}/app/overlay.ini ${APPLICATION_ROOT_FOLDER}
     ${HOST_DIR}/usr/bin/python3 ${COMMON}/createSignedPackage.py -o ${OUTPUT_IMAGE_NAME} -rf ${APPLICATION_ROOT_FOLDER} -ptm ${STAGING_DIR_NATIVE}/usr/sbin/mksquashfs -v ${APPLICATION_VERSION} -kf ${APP_KEY}
 
@@ -95,3 +98,4 @@ if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
     ${CP} ${OUTPUT_IMAGE_NAME}_img ${TARGET}/rw_fs/root/application/app_a.squashfs
     ${CP} ${OUTPUT_IMAGE_NAME}_img ${TARGET}/rw_fs/root/application/app_b.squashfs
 fi
+

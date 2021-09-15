@@ -1,0 +1,7 @@
+config BR2_PACKAGE_HOST_PYTHON3_PYCRYPTODOMEX
+	bool "host pycryptodomex"
+	select BR2_PACKAGE_HOST_PYTHON3
+	help
+	  Cryptographic library for Python.
+
+	  http://www.pycryptodome.org

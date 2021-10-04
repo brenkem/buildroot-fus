@@ -55,3 +55,8 @@ then
     ld=`readlink ${TARGET}/lib/ld-linux-armhf.so.3`
     ln -s "${ld}" ${TARGET}/lib/ld-linux.so.3
 fi
+
+# Build the install.scr script and copy it to output/images.
+# Set $INSTALL_TXT_PATH in the arch-specific final script to
+# use your own install.txt
+./board/f+s/common/mkinstall.bash $INSTALL_TXT_PATH

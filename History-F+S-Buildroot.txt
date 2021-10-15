@@ -1,6 +1,27 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2021.02.2-fsimx6-B2021.10 (15.10.2021)
+------------------------------------------------
+Supported boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+QBlissA9, QBlissA9r2
+
+- Improve fsimx6ul* defconfigs to support new device tree gar3
+- Improve fsimx6sx* defconfigs to support new device tree vand3
+- Add BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIEUSB8997 for fsimx6* configs
+- Improve imx6 defconfigs
+- Improve imx-gpu arm32 packages
+- Add xwayland defconfig
+- Add g2d support to weston
+- Add fsimx6 Uboot building with Buildroot
+- Add building of emmc-sysimg for fsimx6
+- Add experimental fsimx6 etnaviv defconfig
+- Add default touchscreen calibration SX8654
+- Fix imx6 alsa sound
+- Add bulding of install.scr script with buildroot
+
+
+
 buildroot-2021.02.2-fsimx8mm-B2021.06 (23.06.2021)
 ------------------------------------------------
 Supported boards: PicoCoreMX8MM

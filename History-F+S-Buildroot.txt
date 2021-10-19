@@ -1,6 +1,14 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2021.02.2-fsimx6-B2021.10.1 (19.10.2021)
+--------------------------------------------------
+Supported boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+QBlissA9, QBlissA9r2
+
+
+
+
 buildroot-2021.02.2-fsimx6-B2021.10 (15.10.2021)
 ------------------------------------------------
 Supported boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,

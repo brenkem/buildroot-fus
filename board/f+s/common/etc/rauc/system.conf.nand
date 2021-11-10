@@ -1,4 +1,3 @@
-# /etc/rauc/system.conf
 [system]
 compatible=rauc-demo-mx8mm
 bootloader=uboot

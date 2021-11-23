@@ -63,7 +63,7 @@ if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
 	echo ${FIRMWARE_VERSION} > ${TARGET}/etc/fw_version
 
 	mkdir -p ${TARGET}/etc/rauc
-    mkdir -p ${TARGET}/mnt/rauc/bundle
+    mkdir -p ${TARGET}/mnt/rauc
 
 	${CP} ${COMMON}/rauc/rauc.cert.pem ${TARGET}/etc/rauc
 
@@ -81,7 +81,7 @@ fi
 # Prepare application image
 if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
 
-    MKSQUASHFS=${HOST_DIR}/sbin/mksquashfs
+    MKSQUASHFS=${HOST_DIR}/bin/mksquashfs
     APP_KEY=${COMMON}/rauc/rauc.key.pem
     OUTPUT_IMAGE_NAME=${BINARIES_DIR}/application
     APPLICATION_ROOT_FOLDER=${TARGET}/app
@@ -92,7 +92,7 @@ if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
     fi
 
     ${CP} ${COMMON}/app/overlay.ini ${APPLICATION_ROOT_FOLDER}
-    ${HOST_DIR}/usr/bin/python3 ${COMMON}/createSignedPackage.py -o ${OUTPUT_IMAGE_NAME} -rf ${APPLICATION_ROOT_FOLDER} -ptm ${STAGING_DIR_NATIVE}/usr/sbin/mksquashfs -v ${APPLICATION_VERSION} -kf ${APP_KEY}
+    ${HOST_DIR}/usr/bin/python3 ${COMMON}/createSignedPackage.py -o ${OUTPUT_IMAGE_NAME} -rf ${APPLICATION_ROOT_FOLDER} -ptm ${MKSQUASHFS} -v ${APPLICATION_VERSION} -kf ${APP_KEY}
 
     mkdir -p ${TARGET}/rw_fs/root/application/current
     ${CP} ${OUTPUT_IMAGE_NAME}_img ${TARGET}/rw_fs/root/application/app_a.squashfs

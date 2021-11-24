@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ifeq ($(BR2_PACKAGE_IMX_GPU_VIV),y)
+ifeq ($(BR2_PACKAGE_FREESCALE_IMX),y)
 # IMX needs special variant from NXP
 LIBDRM_VERSION = rel_imx_5.4.70_2.3.2
 LIBDRM_SITE = https://source.codeaurora.org/external/imx/libdrm-imx

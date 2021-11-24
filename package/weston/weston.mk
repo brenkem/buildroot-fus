@@ -3,7 +3,7 @@
 # weston
 #
 ################################################################################
-ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL),y)
+ifeq ($(BR2_PACKAGE_FREESCALE_IMX),y)
 WESTON_VERSION = rel_imx_5.4.70_2.3.2
 WESTON_SITE = https://source.codeaurora.org/external/imx/weston-imx
 WESTON_SITE_METHOD = git
@@ -46,12 +46,13 @@ else
 WESTON_CONF_OPTS += -Dimage-webp=false
 endif
 
-ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL),y)
+ifeq ($(BR2_PACKAGE_FREESCALE_IMX),y)
 ifeq ($(BR2_PACKAGE_IMX_GPU_G2D),y)
 WESTON_DEPENDENCIES += imx-gpu-g2d
 # --enable-imxg2d actually disables it, so no CONF_OPTS
 else
-WESTON_CONF_OPTS += -Ddisable-imxg2d
+WESTON_CONF_OPTS += -Dimxgpu=false
+WESTON_CONF_OPTS += -Drenderer-g2d=false
 endif
 endif
 

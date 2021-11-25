@@ -28,7 +28,7 @@ BR2_LINUX_KERNEL_CUSTOM_VERSION=y
 BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="5.4.70"
 BR2_LINUX_KERNEL_DEFCONFIG="fsimx6ul"
 BR2_LINUX_KERNEL_DTS_SUPPORT=y
-BR2_LINUX_KERNEL_INTREE_DTS_NAME="efusa7ul efusa7ull picocom1.2 picocoremx6ul picocoremx6ull picocoremx6ul100 picocoremx6ull100 gar1 gar2 gar3"
+BR2_LINUX_KERNEL_INTREE_DTS_NAME="efusa7ul efusa7ull picocom1.2 picocoma7 picocoma7ull picocoremx6ul picocoremx6ull picocoremx6ul100 picocoremx6ull100 gar1 gar2 gar3"
 BR2_PACKAGE_BUSYBOX_CONFIG="board/f+s/common/busybox-1.33.0.config"
 # BR2_PACKAGE_EUDEV_ENABLE_HWDB is not set
 BR2_PACKAGE_FREESCALE_IMX=y

@@ -53,6 +53,39 @@ genimage_type()
 	fi
 }
 
+gen_data_ext4()
+{
+	local root_dir=$(du -sb ${BINARIES_DIR}/app_dir | cut -f1)
+	rm "${BINARIES_DIR}/data.ext4"
+	${HOST_DIR}/sbin/mke2fs \
+	  -L '' \
+	  -N 0 \
+	  -O ^64bit \
+	  -d "${BINARIES_DIR}/app_dir" \
+	  -m 5 \
+	  -j \
+	  -r 1 \
+	  -t ext2 \
+	  "${BINARIES_DIR}/data.ext4" \
+	  ${root_dir} \
+	;
+}
+
+
+gen_data_ubifs()
+{
+	local root_dir=$(du -sb ${BINARIES_DIR}/app_dir | cut -f1)
+	rm "${BINARIES_DIR}/data.ubifs"
+	
+	${HOST_DIR}/sbin/mkfs.ubifs \
+	  -r "${BINARIES_DIR}/app_dir" \
+	  -m "0x800" \
+	  -e "0x1f000" \
+	  -c "2048" \
+	  -o "${BINARIES_DIR}/data.ubifs" \
+	;
+}
+
 main()
 {
 	local FILES="$(dtb_list) $(linux_image)"
@@ -60,12 +93,10 @@ main()
 	local GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
 	local GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
-	# Copy files that are only related to the persistent data partition and NOT rootfs.
-	# Data partition created of ${TARGET_DIR}/rw_fs/root.
 	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_LIB=y$" ${BR2_CONFIG}; then
-		APP_NAME="app"${RANDOM}
-		mv ${TARGET_DIR}/app /tmp/${APP_NAME}
-	fi
+		gen_data_ext4
+		gen_data_ubifs
+	fi;
 
 	sed -e "s/%FILES%/${FILES}/" \
 		-e "s/%UBOOTBIN%/${UBOOTBIN}/" \
@@ -81,9 +112,6 @@ main()
 		--config "${GENIMAGE_CFG}"
 
 	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_LIB=y$" ${BR2_CONFIG}; then
-		# Remove files to prevent from next building using the files in rootfs.
-		rm -f ${GENIMAGE_CFG}
-		mv /tmp/${APP_NAME} ${TARGET_DIR}/app
 
 		# Generate RAUC Update
 		export RAUC_TEMPLATE_MMC=${PWD}"/board/f+s/common/rauc/rauc_mmc_template"

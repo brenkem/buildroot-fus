@@ -16,19 +16,6 @@ image boot.vfat {
 	size = 64M
 }
 
-image data.ext4 {
-	ext4 {}
-	name = "data"
-	size = 200M
-	mountpoint = "/rw_fs/root"
-}
-
-image data.ubifs {
-	ubifs {}
-	size = 200M
-	mountpoint = "/rw_fs/root"
-}
-
 image uboot.vfat {
 	vfat {}
 	empty = "true"
@@ -77,6 +64,7 @@ image sdcard_rauc.img {
   partition data_part {
 	partition-type = 0x83
 	image = "data.ext4"
+	size = 70M
   }
 }
 

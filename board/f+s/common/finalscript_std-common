@@ -65,37 +65,22 @@ if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
 	mkdir -p ${TARGET}/etc/rauc
     mkdir -p ${TARGET}/mnt/rauc
 
-	${CP} ${COMMON}/rauc/rauc.cert.pem ${TARGET}/etc/rauc
+	install -d ${COMMON}/rauc/rauc.cert.pem ${TARGET}/etc/rauc
 
 	install -m 0444 ${COMMON}/etc/udev/rules.d/99-fus-updater-usb-auto-mount.rules ${TARGET}/etc/udev/rules.d/
 	install -m 0444 ${COMMON}/usr/libexec/usb_fs_updater.sh ${TARGET}/usr/libexec/usb_fs_updater.sh
 	install -m 0555 ${COMMON}/sbin/preinit.sh ${TARGET}/sbin
 
-	${CP}  ${COMMON}/etc/rauc/system.conf.nand ${TARGET}/etc/rauc/
-	${CP}  ${COMMON}/etc/fw_env.config.nand ${TARGET}/etc/
+	install -m 0444 ${COMMON}/etc/rauc/system.conf.nand ${TARGET}/etc/rauc/
+	install -m 0444  ${COMMON}/etc/fw_env.config.nand ${TARGET}/etc/
 
-	${CP}  ${COMMON}/etc/rauc/system.conf.mmc ${TARGET}/etc/rauc/
-	${CP}  ${COMMON}/etc/fw_env.config.mmc ${TARGET}/etc/
+	install -m 0444  ${COMMON}/etc/rauc/system.conf.mmc ${TARGET}/etc/rauc/
+	install -m 0444  ${COMMON}/etc/fw_env.config.mmc ${TARGET}/etc/
+
+	# Mandatory for application
+	mkdir -p ${TARGET}/app/etc
+	mkdir -p ${TARGET}/rw_fs
+	mkdir -p ${BINARIES_DIR}/app_dir/root/application/current
+
+	install -m 0444 ${COMMON}/app/overlay.ini ${TARGET}/app/
 fi
-
-# Prepare application image
-if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
-
-    MKSQUASHFS=${HOST_DIR}/bin/mksquashfs
-    APP_KEY=${COMMON}/rauc/rauc.key.pem
-    OUTPUT_IMAGE_NAME=${BINARIES_DIR}/application
-    APPLICATION_ROOT_FOLDER=${TARGET}/app
-
-    if [[ -z "${APPLICATION_VERSION}" ]]; then
-        echo "Environment APPLICATION_VERSION is not set"
-        exit 3
-    fi
-
-    ${CP} ${COMMON}/app/overlay.ini ${APPLICATION_ROOT_FOLDER}
-    ${HOST_DIR}/usr/bin/python3 ${COMMON}/createSignedPackage.py -o ${OUTPUT_IMAGE_NAME} -rf ${APPLICATION_ROOT_FOLDER} -ptm ${MKSQUASHFS} -v ${APPLICATION_VERSION} -kf ${APP_KEY}
-
-    mkdir -p ${TARGET}/rw_fs/root/application/current
-    ${CP} ${OUTPUT_IMAGE_NAME}_img ${TARGET}/rw_fs/root/application/app_a.squashfs
-    ${CP} ${OUTPUT_IMAGE_NAME}_img ${TARGET}/rw_fs/root/application/app_b.squashfs
-fi
-

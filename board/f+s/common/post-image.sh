@@ -53,50 +53,12 @@ genimage_type()
 	fi
 }
 
-gen_data_ext4()
-{
-	local root_dir=$(du -sb ${BINARIES_DIR}/app_dir | cut -f1)
-	rm "${BINARIES_DIR}/data.ext4"
-	${HOST_DIR}/sbin/mke2fs \
-	  -L '' \
-	  -N 0 \
-	  -O ^64bit \
-	  -d "${BINARIES_DIR}/app_dir" \
-	  -m 5 \
-	  -j \
-	  -r 1 \
-	  -t ext2 \
-	  "${BINARIES_DIR}/data.ext4" \
-	  ${root_dir} \
-	;
-}
-
-
-gen_data_ubifs()
-{
-	local root_dir=$(du -sb ${BINARIES_DIR}/app_dir | cut -f1)
-	rm "${BINARIES_DIR}/data.ubifs"
-	
-	${HOST_DIR}/sbin/mkfs.ubifs \
-	  -r "${BINARIES_DIR}/app_dir" \
-	  -m "0x800" \
-	  -e "0x1f000" \
-	  -c "2048" \
-	  -o "${BINARIES_DIR}/data.ubifs" \
-	;
-}
-
 main()
 {
 	local FILES="$(dtb_list) $(linux_image)"
 	local UBOOTBIN="u-boot-dtb.img"
 	local GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
 	local GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
-
-	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_LIB=y$" ${BR2_CONFIG}; then
-		gen_data_ext4
-		gen_data_ubifs
-	fi;
 
 	sed -e "s/%FILES%/${FILES}/" \
 		-e "s/%UBOOTBIN%/${UBOOTBIN}/" \

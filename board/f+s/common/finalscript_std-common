@@ -80,6 +80,7 @@ if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
 	# Mandatory for application
 	mkdir -p ${TARGET}/app/etc
 	mkdir -p ${TARGET}/rw_fs
+	rm -rf ${BINARIES_DIR}/app_dir
 	mkdir -p ${BINARIES_DIR}/app_dir/application/current
 
 	install -m 0444 ${COMMON}/app/overlay.ini ${TARGET}/app/

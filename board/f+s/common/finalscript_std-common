@@ -65,7 +65,7 @@ if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
 	mkdir -p ${TARGET}/etc/rauc
     mkdir -p ${TARGET}/mnt/rauc
 
-	install -d ${COMMON}/rauc/rauc.cert.pem ${TARGET}/etc/rauc
+	install -m 0444 ${COMMON}/rauc/rauc.cert.pem ${TARGET}/etc/rauc
 
 	install -m 0444 ${COMMON}/etc/udev/rules.d/99-fus-updater-usb-auto-mount.rules ${TARGET}/etc/udev/rules.d/
 	install -m 0444 ${COMMON}/usr/libexec/usb_fs_updater.sh ${TARGET}/usr/libexec/usb_fs_updater.sh

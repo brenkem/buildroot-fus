@@ -60,7 +60,7 @@ if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
         echo "Environment FIRMWARE_VERSION is not set"
         exit 3
 	fi
-	echo ${FIRMWARE_VERSION} > ${TARGET}/etc/fw_version
+	echo -n ${FIRMWARE_VERSION} > ${TARGET}/etc/fw_version
 
 	mkdir -p ${TARGET}/etc/rauc
     mkdir -p ${TARGET}/mnt/rauc

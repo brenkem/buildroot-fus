@@ -1,6 +1,22 @@
 #!/usr/bin/env bash
 
 #
+# freertos_sample_list extracts the list of files from folder
+# "output/images/fs-freertos-samples/"", then prints the corresponding list of
+# file names for the genimage configuration file
+#
+freertos_sample_list()
+{
+	if grep -Eq "^BR2_PACKAGE_FS_FREERTOS_SAMPLE=y$" ${BR2_CONFIG}; then
+		for img in ${BINARIES_DIR}/fs-freertos-samples/*; do
+			echo -n "\"fs-freertos-samples\/`basename $img`\", "
+		done
+	else
+		echo -n ""
+	fi
+}
+
+#
 # dtb_list extracts the list of DTB files from BR2_LINUX_KERNEL_INTREE_DTS_NAME
 # in ${BR_CONFIG}, then prints the corresponding list of file names for the
 # genimage configuration file
@@ -65,7 +81,7 @@ genimage_type()
 
 main()
 {
-	local FILES="$(dtb_list) $(linux_image)"
+	local FILES="$(dtb_list) $(freertos_sample_list) $(linux_image)"
 	local UBOOTBIN="$(uboot_image)"
 	local GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
 	local GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"

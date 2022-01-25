@@ -2,6 +2,7 @@
 
 COMMON=board/f+s/common
 FS_ARCH=fsimx7ulp
+MKIMAGE=mkimage
 
 # Source-in common F+S setup for standard configuration
 . $COMMON/finalscript_min-common

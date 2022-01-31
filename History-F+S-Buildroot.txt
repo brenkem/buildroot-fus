@@ -1,6 +1,19 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2019.05.3-fsimx6-B2020.04.1 (31.01.2022)
+--------------------------------------------------
+Supported boards: armStoneA9, armStoneA9r2, efusA9, efusA9r2, PicoMODA9,
+                  NetDCUA9, QBlissA9, QBlissA9r2, armStoneA5, Cube2.0, CubeA5,
+                  AGATEWAY
+Not tested:       efusA9X, PicoCOMA9X, PicoCoreMX6SX, PicoCoreMX7ULP,
+                  CONT1, efusA7UL, PicoCOM1.2, PicoCoreMX6UL, GAR1, GAR2,
+                  CubeA7UL, NetDCUA5, PicoCOMA5, HGATEWAY
+
+- Add support for efusA9r2
+
+
+
 buildroot-2019.05.3-fsimx6-B2020.04 (21.04.2020)
 ------------------------------------------------
 Supported boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,

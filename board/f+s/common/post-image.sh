@@ -35,7 +35,7 @@ genimage_type()
 	if grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M=y$" ${BR2_CONFIG}; then
 		echo "genimage.cfg.template_imx8"
 	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM=y$" ${BR2_CONFIG}; then
-		if grep -Eq "^BR2_PACKAGE_FS_UPDATE_CLI=y$" ${BR2_CONFIG}; then
+		if grep -Eq "^BR2_PACKAGE_FS_UPDATE_LIB=y$" ${BR2_CONFIG}; then
 			echo "genimage.cfg.template.imx8mm.update"
 		else
 			echo "genimage.cfg.template.imx8mm.std"
@@ -72,24 +72,6 @@ main()
 		--inputpath "${BINARIES_DIR}" \
 		--outputpath "${BINARIES_DIR}" \
 		--config "${GENIMAGE_CFG}"
-
-	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_LIB=y$" ${BR2_CONFIG}; then
-
-		# Generate RAUC Update
-		export RAUC_TEMPLATE_MMC=${PWD}"/board/f+s/common/rauc/rauc_mmc_template"
-		export RAUC_TEMPLATE_NAND=${PWD}"/board/f+s/common/rauc/rauc_nand_template"
-
-		export RAUC_BINARY=${HOST_DIR}/usr/bin/rauc
-		export RAUC_PATH_TO_OUTPUT=${BINARIES_DIR}
-
-		export RAUC_CERT=${PWD}"/board/f+s/common/rauc/rauc.cert.pem"
-		export RAUC_KEY=${PWD}"/board/f+s/common/rauc/rauc.key.pem"
-
-		export DEPLOY_DIR_IMAGE=${BINARIES_DIR}
-        export PYTHONPATH=${HOST_DIR}/
-
-		/usr/bin/python3 ${PWD}/board/f+s/common/rauc_create_update.py
-	fi;
 
 	exit $?
 }

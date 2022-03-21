@@ -15,6 +15,7 @@ WESTON_SOURCE = weston-$(WESTON_VERSION).tar.xz
 endif
 WESTON_LICENSE = MIT
 WESTON_LICENSE_FILES = COPYING
+WESTON_CPE_ID_VENDOR = wayland
 
 WESTON_DEPENDENCIES = host-pkgconf wayland wayland-protocols \
 	libxkbcommon pixman libpng jpeg udev cairo libinput libdrm

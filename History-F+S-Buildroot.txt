@@ -1,6 +1,31 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2021.02.10-fsimx6ul-B2022.04 (12.04.2022)
+---------------------------------------------------
+Supported boards: efusA7UL PicoCOM1.2 PicoCoreMX6UL PicoCoreMX6UL100 PicoCOMA7
+
+- Improve post-image.sh dtb list recognition
+- Improve package libdrm, wayland-protocols and weston
+- Improve fsimx6sx/ul defconfigs
+- Add xwayland defconfig for fsimx6sx/ul
+- Add fsimx6sx/ul Uboot building with Buildroot
+- Add building of emmc-sysimg for fsimx6sx/ul
+- Add all possible f&s device trees for platform fsimx6sx/ul
+- Improve package touch-firmware
+- Add package fs-freertos-sample
+- Improve target fsimx7ulp
+- Add error handling for the install script with eMMC
+- Merge tag 'fsimx6-B2020.04.1'
+- Original buildroot-2021.02.10
+- Merge branch 'orig'
+- Update busybox defconfig to 1.33.2
+- Fix XWayland defconfigs
+- Add TSC2004 Touchscreen default calibration
+- Add wlan regulatory.db to imx6/7 defonfigs
+
+
+
 buildroot-2019.05.3-fsimx6-B2020.04.1 (31.01.2022)
 --------------------------------------------------
 Supported boards: armStoneA9, armStoneA9r2, efusA9, efusA9r2, PicoMODA9,

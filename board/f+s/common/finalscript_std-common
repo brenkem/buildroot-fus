@@ -49,6 +49,7 @@ if grep ^BR2_PACKAGE_WESTON=y $BR2_CONFIG > /dev/null; then
 		sed -i 's/#xwayland=true/xwayland=true/g' ${TARGET}/etc/xdg/weston/weston.ini
 	fi
 	install -m 0664 ${COMMON}/etc/udev/rules.d/SX8654-touchscreen.rules ${TARGET}/etc/udev/rules.d/
+	install -m 0664 ${COMMON}/etc/udev/rules.d/TSC2004-touchscreen.rules ${TARGET}/etc/udev/rules.d/
 fi
 
 if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then

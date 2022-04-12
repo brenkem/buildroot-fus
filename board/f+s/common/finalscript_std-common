@@ -26,7 +26,8 @@ ${CP} ${COMMON}/etc/profile.d/tslib.sh ${TARGET}/etc/profile.d
 mkdir -p ${TARGET}/var/lib/alsa
 ${CP} ${COMMON}/var/lib/alsa/asound.state ${TARGET}/var/lib/alsa
 
-
+# Install wpa_supplicant.conf with country=DE
+install -m 0664 ${COMMON}/etc/wpa_supplicant.conf ${TARGET}/etc/
 
 # Copy the weston start script
 if grep ^BR2_PACKAGE_WESTON=y $BR2_CONFIG > /dev/null; then

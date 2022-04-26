@@ -7,7 +7,7 @@
 #
 dtb_list()
 {
-	local DTB_LIST="$(sed -n 's/^BR2_LINUX_KERNEL_INTREE_DTS_NAME="\([A-Z \+ | \/a-z0-9 \-]*\)"$/\1/p' ${BR2_CONFIG})"
+	local DTB_LIST="$(sed -n 's/^BR2_LINUX_KERNEL_INTREE_DTS_NAME="\([A-Z \+ | \. \+ | \/a-z0-9 \-]*\)"$/\1/p' ${BR2_CONFIG})"
 
 	for dt in $DTB_LIST; do
 		echo -n "\"`basename $dt`.dtb\", "
@@ -25,6 +25,8 @@ linux_image()
 		echo "\"uImage\""
 	elif grep -Eq "^BR2_LINUX_KERNEL_IMAGE=y$" ${BR2_CONFIG}; then
 		echo "\"Image\""
+	elif grep -Eq "^BR2_LINUX_KERNEL_ZIMAGE=y$" ${BR2_CONFIG}; then
+		echo "\"zImage\""
 	else
 		echo "\"zImage\""
 	fi
@@ -55,14 +57,14 @@ genimage_type()
 
 main()
 {
-	local FILES="$(dtb_list) $(linux_image)"
-	local UBOOTBIN="u-boot-dtb.img"
+	local FILES="$(dtb_list) $(freertos_sample_list) $(linux_image)"
+	local UBOOTBIN="$(uboot_image)"
 	local GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
 	local GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
 	sed -e "s/%FILES%/${FILES}/" \
 		-e "s/%UBOOTBIN%/${UBOOTBIN}/" \
-		board/f+s/$5/$(genimage_type) > ${GENIMAGE_CFG}
+		board/f+s/$2/$(genimage_type) > ${GENIMAGE_CFG}
 
 	rm -rf "${GENIMAGE_TMP}"
 
@@ -88,7 +90,17 @@ main()
 		export DEPLOY_DIR_IMAGE=${BINARIES_DIR}
         export PYTHONPATH=${HOST_DIR}/
 
-		/usr/bin/python3 ${PWD}/board/f+s/common/rauc_create_update.py
+		# get linux kernel image name
+		local FSUP_LINUX_IMAGE="$(linux_image)"
+		# get device tree name for update image
+		local FSUP_DT_IMAGE="$(sed -n 's/^BR2_FSUP_IMAGE_DEVICE_TREE="\([A-Z \+ | \. \+ | \/a-z0-9 \-]*\)"$/\1/p' ${BR2_CONFIG})"
+		# get compatible string
+		local RAUC_CONFIG_COMPATIBLE="$(sed -n 's/^BR2_FSUP_RAUC_CONFIG_COMPATIBLE="\([A-Z \+ | \. \+ | \/a-z0-9 \-]*\)"$/\1/p' ${BR2_CONFIG})"
+		# get version string
+		local RAUC_CONFIG_VERSION="$(sed -n 's/^BR2_FSUP_RAUC_CONFIG_VERSION="\([A-Z \+ | \. \+ | \/a-z0-9 \-]*\)"$/\1/p' ${BR2_CONFIG})"
+
+		/usr/bin/python3 ${PWD}/board/f+s/common/rauc_create_update.py ${FSUP_LINUX_IMAGE} ${FSUP_DT_IMAGE} ${RAUC_CONFIG_COMPATIBLE} ${RAUC_CONFIG_VERSION}
+		rm -f ${BINARIES_DIR}/.stamp_fakeroot
 	fi;
 
 	exit $?

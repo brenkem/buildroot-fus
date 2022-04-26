@@ -32,6 +32,16 @@ linux_image()
 	fi
 }
 
+uboot_image()
+{
+	if grep -Eq "^BR2_TARGET_UBOOT_FORMAT_CUSTOM_NAME=\"uboot.nb0\"" ${BR2_CONFIG}; then
+		echo "uboot.nb0"
+	else
+		echo "u-boot-dtb.img"
+	fi
+}
+
+
 genimage_type()
 {
 	if grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M=y$" ${BR2_CONFIG}; then

@@ -57,7 +57,7 @@ genimage_type()
 
 main()
 {
-	local FILES="$(dtb_list) $(freertos_sample_list) $(linux_image)"
+	local FILES="$(dtb_list) $(linux_image)"
 	local UBOOTBIN="$(uboot_image)"
 	local GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
 	local GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"

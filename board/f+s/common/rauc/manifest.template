@@ -1,0 +1,14 @@
+[update]
+compatible=<compatible>
+version=<version>
+
+[hooks]
+filename=install-check
+
+[image.rootfs]
+filename=rootfs.squashfs
+hooks=post-install;
+
+[image.boot]
+filename=<bootimage>
+hooks=post-install;

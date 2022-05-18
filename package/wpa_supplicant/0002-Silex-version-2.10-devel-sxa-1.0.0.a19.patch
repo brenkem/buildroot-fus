@@ -1,0 +1,1809 @@
+From 8eadac45a0216fbc061e25f0e4bde5c74a920e9b Mon Sep 17 00:00:00 2001
+Message-Id: <8eadac45a0216fbc061e25f0e4bde5c74a920e9b.1651164999.git.keller@fs-net.de>
+In-Reply-To: <e78bc27055f77a98929bef67b4751b6a5b781ef8.1651164999.git.keller@fs-net.de>
+References: <e78bc27055f77a98929bef67b4751b6a5b781ef8.1651164999.git.keller@fs-net.de>
+From: Hartmut Keller <keller@fs-net.de>
+Date: Thu, 28 Apr 2022 16:51:48 +0200
+Subject: [PATCH 2/2] Silex version 2.10-devel sxa 1.0.0.a19
+
+Sile has added some features and fixed some bugs. Among them are:
+
+- Add events WPS_EV_AP_PIN_SUCCESS and WPS_EV_PIN_TIMEOUT to wps
+- Add PAC decapsulation functionality (new directory src/pacdecap)
+- Have different defconfigs for hostapd and wpa_supplicant
+---
+ hostapd/config_file.c           |   6 +-
+ hostapd/defconfig               |  67 ++---
+ src/Makefile                    |   2 +-
+ src/ap/ap_config.c              |  20 ++
+ src/ap/hostapd.c                |   7 +-
+ src/ap/wps_hostapd.c            |   5 +-
+ src/common/version.h            |   2 +-
+ src/crypto/tls_openssl.c        |   8 +-
+ src/eap_peer/eap_config.h       |   6 +
+ src/eap_peer/eap_fast.c         |  36 +++
+ src/eap_peer/eap_tls_common.c   |  12 +
+ src/pacdecap/Makefile           |  11 +
+ src/pacdecap/pacdecap.c         | 556 ++++++++++++++++++++++++++++++++++++++++
+ src/pacdecap/pacdecap.h         | 154 +++++++++++
+ src/pacdecap/pacdecap_bin.h     |  11 +
+ src/wps/wps.h                   |   7 +-
+ src/wps/wps_common.c            |   8 +
+ src/wps/wps_defs.h              |   4 +
+ src/wps/wps_i.h                 |   2 +
+ src/wps/wps_registrar.c         |   1 +
+ wpa_supplicant/Makefile         |   5 +
+ wpa_supplicant/config.c         |  14 +-
+ wpa_supplicant/config_file.c    |  46 ++++
+ wpa_supplicant/defconfig        |  68 ++---
+ wpa_supplicant/p2p_supplicant.c |   3 +
+ wpa_supplicant/wpa_cli.c        |   4 +
+ wpa_supplicant/wpa_supplicant.c |  22 +-
+ wpa_supplicant/wps_supplicant.c |   5 +-
+ 28 files changed, 1002 insertions(+), 90 deletions(-)
+
+diff --git a/hostapd/config_file.c b/hostapd/config_file.c
+index 1ef7d57..6ab52bb 100644
+--- a/hostapd/config_file.c
++++ b/hostapd/config_file.c
+@@ -3593,7 +3593,7 @@ static int hostapd_config_fill(struct hostapd_config *conf,
+ 		os_free(bss->wps_pin_requests);
+ 		bss->wps_pin_requests = os_strdup(pos);
+ 	} else if (os_strcmp(buf, "device_name") == 0) {
+-		if (os_strlen(pos) > WPS_DEV_NAME_MAX_LEN) {
++		if (os_strlen(pos) > SX_WPS_DEV_NAME_MAX_LEN) {
+ 			wpa_printf(MSG_ERROR, "Line %d: Too long "
+ 				   "device_name", line);
+ 			return 1;
+@@ -3601,7 +3601,7 @@ static int hostapd_config_fill(struct hostapd_config *conf,
+ 		os_free(bss->device_name);
+ 		bss->device_name = os_strdup(pos);
+ 	} else if (os_strcmp(buf, "manufacturer") == 0) {
+-		if (os_strlen(pos) > 64) {
++		if (os_strlen(pos) > SX_WPS_MANUFACTURER_MAX_LEN) {
+ 			wpa_printf(MSG_ERROR, "Line %d: Too long manufacturer",
+ 				   line);
+ 			return 1;
+@@ -3609,7 +3609,7 @@ static int hostapd_config_fill(struct hostapd_config *conf,
+ 		os_free(bss->manufacturer);
+ 		bss->manufacturer = os_strdup(pos);
+ 	} else if (os_strcmp(buf, "model_name") == 0) {
+-		if (os_strlen(pos) > 32) {
++		if (os_strlen(pos) > SX_WPS_MODEL_NAME_MAX_LEN) {
+ 			wpa_printf(MSG_ERROR, "Line %d: Too long model_name",
+ 				   line);
+ 			return 1;
+diff --git a/hostapd/defconfig b/hostapd/defconfig
+index 01871c9..8d879e0 100644
+--- a/hostapd/defconfig
++++ b/hostapd/defconfig
+@@ -19,7 +19,7 @@ CONFIG_DRIVER_HOSTAP=y
+ CONFIG_DRIVER_NL80211=y
+ 
+ # QCA vendor extensions to nl80211
+-#CONFIG_DRIVER_NL80211_QCA=y
++CONFIG_DRIVER_NL80211_QCA=y
+ 
+ # driver_nl80211.c requires libnl. If you are compiling it yourself
+ # you may need to point hostapd to your version of libnl.
+@@ -50,6 +50,9 @@ CONFIG_IAPP=y
+ # WPA2/IEEE 802.11i RSN pre-authentication
+ CONFIG_RSN_PREAUTH=y
+ 
++# PeerKey handshake for Station to Station Link (IEEE 802.11e DLS)
++#CONFIG_PEERKEY=y
++
+ # IEEE 802.11w (management frame protection)
+ CONFIG_IEEE80211W=y
+ 
+@@ -57,28 +60,28 @@ CONFIG_IEEE80211W=y
+ #CONFIG_OCV=y
+ 
+ # Integrated EAP server
+-CONFIG_EAP=y
++#CONFIG_EAP=y
+ 
+ # EAP Re-authentication Protocol (ERP) in integrated EAP server
+-CONFIG_ERP=y
++#CONFIG_ERP=y
+ 
+ # EAP-MD5 for the integrated EAP server
+-CONFIG_EAP_MD5=y
++#CONFIG_EAP_MD5=y
+ 
+ # EAP-TLS for the integrated EAP server
+-CONFIG_EAP_TLS=y
++#CONFIG_EAP_TLS=y
+ 
+ # EAP-MSCHAPv2 for the integrated EAP server
+-CONFIG_EAP_MSCHAPV2=y
++#CONFIG_EAP_MSCHAPV2=y
+ 
+ # EAP-PEAP for the integrated EAP server
+-CONFIG_EAP_PEAP=y
++#CONFIG_EAP_PEAP=y
+ 
+ # EAP-GTC for the integrated EAP server
+-CONFIG_EAP_GTC=y
++#CONFIG_EAP_GTC=y
+ 
+ # EAP-TTLS for the integrated EAP server
+-CONFIG_EAP_TTLS=y
++#CONFIG_EAP_TTLS=y
+ 
+ # EAP-SIM for the integrated EAP server
+ #CONFIG_EAP_SIM=y
+@@ -121,9 +124,9 @@ CONFIG_EAP_TTLS=y
+ #CONFIG_EAP_TEAP=y
+ 
+ # Wi-Fi Protected Setup (WPS)
+-#CONFIG_WPS=y
++CONFIG_WPS=y
+ # Enable UPnP support for external WPS Registrars
+-#CONFIG_WPS_UPNP=y
++CONFIG_WPS_UPNP=y
+ # Enable WPS support with NFC config method
+ #CONFIG_WPS_NFC=y
+ 
+@@ -138,7 +141,7 @@ CONFIG_EAP_TTLS=y
+ 
+ # PKCS#12 (PFX) support (used to read private key and certificate file from
+ # a file that usually has extension .p12 or .pfx)
+-CONFIG_PKCS12=y
++#CONFIG_PKCS12=y
+ 
+ # RADIUS authentication server. This provides access to the integrated EAP
+ # server from external hosts using RADIUS.
+@@ -148,21 +151,21 @@ CONFIG_PKCS12=y
+ CONFIG_IPV6=y
+ 
+ # IEEE Std 802.11r-2008 (Fast BSS Transition)
+-#CONFIG_IEEE80211R=y
++CONFIG_IEEE80211R=y
+ 
+ # Use the hostapd's IEEE 802.11 authentication (ACL), but without
+ # the IEEE 802.11 Management capability (e.g., FreeBSD/net80211)
+ #CONFIG_DRIVER_RADIUS_ACL=y
+ 
+ # IEEE 802.11n (High Throughput) support
+-#CONFIG_IEEE80211N=y
++CONFIG_IEEE80211N=y
+ 
+ # Wireless Network Management (IEEE Std 802.11v-2011)
+ # Note: This is experimental and not complete implementation.
+ #CONFIG_WNM=y
+ 
+ # IEEE 802.11ac (Very High Throughput) support
+-#CONFIG_IEEE80211AC=y
++CONFIG_IEEE80211AC=y
+ 
+ # IEEE 802.11ax HE support
+ # Note: This is experimental and work in progress. The definitions are still
+@@ -257,7 +260,7 @@ CONFIG_IPV6=y
+ # This will save some in binary size and CPU use. However, this should only be
+ # considered for builds that are known to be used on devices that meet the
+ # requirements described above.
+-#CONFIG_NO_RANDOM_POOL=y
++CONFIG_NO_RANDOM_POOL=y
+ 
+ # Should we attempt to use the getrandom(2) call that provides more reliable
+ # yet secure randomness source than /dev/random on Linux 3.17 and newer.
+@@ -279,7 +282,7 @@ CONFIG_IPV6=y
+ # internal = Internal TLSv1 implementation (experimental)
+ # linux = Linux kernel AF_ALG and internal TLSv1 implementation (experimental)
+ # none = Empty template
+-#CONFIG_TLS=openssl
++CONFIG_TLS=openssl
+ 
+ # TLS-based EAP methods require at least TLS v1.0. Newer version of TLS (v1.1)
+ # can be enabled to get a stronger construction of messages when block ciphers
+@@ -357,35 +360,11 @@ CONFIG_IPV6=y
+ # For more details refer to:
+ # http://wireless.kernel.org/en/users/Documentation/acs
+ #
+-#CONFIG_ACS=y
++CONFIG_ACS=y
+ 
++CONFIG_OWE=y
++CONFIG_SAE=y
+ # Multiband Operation support
+ # These extentions facilitate efficient use of multiple frequency bands
+ # available to the AP and the devices that may associate with it.
+ #CONFIG_MBO=y
+-
+-# Client Taxonomy
+-# Has the AP retain the Probe Request and (Re)Association Request frames from
+-# a client, from which a signature can be produced which can identify the model
+-# of client device like "Nexus 6P" or "iPhone 5s".
+-#CONFIG_TAXONOMY=y
+-
+-# Fast Initial Link Setup (FILS) (IEEE 802.11ai)
+-#CONFIG_FILS=y
+-# FILS shared key authentication with PFS
+-#CONFIG_FILS_SK_PFS=y
+-
+-# Include internal line edit mode in hostapd_cli. This can be used to provide
+-# limited command line editing and history support.
+-#CONFIG_WPA_CLI_EDIT=y
+-
+-# Opportunistic Wireless Encryption (OWE)
+-# Experimental implementation of draft-harkins-owe-07.txt
+-#CONFIG_OWE=y
+-
+-# Airtime policy support
+-#CONFIG_AIRTIME_POLICY=y
+-
+-# Override default value for the wpa_disable_eapol_key_retries configuration
+-# parameter. See that parameter in hostapd.conf for more details.
+-#CFLAGS += -DDEFAULT_WPA_DISABLE_EAPOL_KEY_RETRIES=1
+diff --git a/src/Makefile b/src/Makefile
+index c9e84c1..1ca08fc 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -1,4 +1,4 @@
+-SUBDIRS=ap common crypto drivers eapol_auth eapol_supp eap_common eap_peer eap_server l2_packet p2p pae radius rsn_supp tls utils wps
++SUBDIRS=ap common crypto drivers eapol_auth eapol_supp eap_common eap_peer eap_server l2_packet p2p pae radius rsn_supp tls utils wps pacdecap
+ SUBDIRS += fst
+ 
+ all:
+diff --git a/src/ap/ap_config.c b/src/ap/ap_config.c
+index 90348e1..1e7a471 100644
+--- a/src/ap/ap_config.c
++++ b/src/ap/ap_config.c
+@@ -1204,6 +1204,26 @@ static int hostapd_config_check_bss(struct hostapd_bss_config *bss,
+ 	}
+ #endif /* CONFIG_OCV */
+ 
++	/* silex add */
++#ifdef CONFIG_WPS
++	int wps_id_len = 0;
++
++	if(bss->device_name)
++		wps_id_len += os_strlen(bss->device_name);
++	if(bss->manufacturer)
++		wps_id_len += os_strlen(bss->manufacturer);
++	if(bss->model_name)
++		wps_id_len += os_strlen(bss->model_name);
++	if(bss->model_number)
++		wps_id_len += os_strlen(bss->model_number);
++	if(bss->serial_number)
++		wps_id_len += os_strlen(bss->serial_number);
++	if(wps_id_len > MAX_WPS_ID_LEN){
++		wpa_printf(MSG_ERROR, "Too Long WPS OUI");
++		return -1;
++	}
++#endif /* CONFIG_WPS */
++
+ 	return 0;
+ }
+ 
+diff --git a/src/ap/hostapd.c b/src/ap/hostapd.c
+index bf1975f..b949ab3 100644
+--- a/src/ap/hostapd.c
++++ b/src/ap/hostapd.c
+@@ -209,8 +209,10 @@ int hostapd_reload_config(struct hostapd_iface *iface)
+ 	if (iface->config_fname == NULL) {
+ 		/* Only in-memory config in use - assume it has been updated */
+ 		hostapd_clear_old(iface);
+-		for (j = 0; j < iface->num_bss; j++)
++		for (j = 0; j < iface->num_bss; j++){
++			hostapd_drv_stop_ap(iface->bss[j]); /* silex add */
+ 			hostapd_reload_bss(iface->bss[j]);
++		}
+ 		return 0;
+ 	}
+ 
+@@ -274,6 +276,9 @@ int hostapd_reload_config(struct hostapd_iface *iface)
+ 			hapd->iconf,
+ 			hostapd_get_oper_centr_freq_seg1_idx(oldconf));
+ 		hapd->conf = newconf->bss[j];
++
++		hostapd_drv_stop_ap(iface->bss[j]); /* silex add */
++
+ 		hostapd_reload_bss(hapd);
+ 	}
+ 
+diff --git a/src/ap/wps_hostapd.c b/src/ap/wps_hostapd.c
+index 6161cdb..4d64cf4 100644
+--- a/src/ap/wps_hostapd.c
++++ b/src/ap/wps_hostapd.c
+@@ -819,7 +819,7 @@ static void hostapd_wps_event_fail(struct hostapd_data *hapd,
+ 	if (fail->error_indication > 0 &&
+ 	    fail->error_indication < NUM_WPS_EI_VALUES) {
+ 		wpa_msg(hapd->msg_ctx, MSG_INFO,
+-			WPS_EVENT_FAIL "msg=%d config_error=%d reason=%d (%s)",
++			WPS_EVENT_FAIL "msg=%d config_error=%d reason=%d [%s]",
+ 			fail->msg, fail->config_error, fail->error_indication,
+ 			wps_ei_str(fail->error_indication));
+ 	} else {
+@@ -880,6 +880,9 @@ static void hostapd_wps_event_cb(void *ctx, enum wps_event event,
+ 	case WPS_EV_AP_PIN_SUCCESS:
+ 		hostapd_wps_ap_pin_success(hapd);
+ 		break;
++	case WPS_EV_PIN_TIMEOUT: /* add silex */
++		wpa_msg(hapd->msg_ctx, MSG_INFO, WPS_EVENT_TIMEOUT);
++		break;
+ 	}
+ 	if (hapd->wps_event_cb)
+ 		hapd->wps_event_cb(hapd->wps_event_cb_ctx, event, data);
+diff --git a/src/common/version.h b/src/common/version.h
+index 0235c9b..43a55a1 100644
+--- a/src/common/version.h
++++ b/src/common/version.h
+@@ -2,7 +2,7 @@
+ #define VERSION_H
+ 
+ #ifndef VERSION_STR_POSTFIX
+-#define VERSION_STR_POSTFIX ""
++#define VERSION_STR_POSTFIX " sxa 1.0.0.a19"
+ #endif /* VERSION_STR_POSTFIX */
+ 
+ #ifndef GIT_VERSION_STR_POSTFIX
+diff --git a/src/crypto/tls_openssl.c b/src/crypto/tls_openssl.c
+index 5661e42..8a69328 100644
+--- a/src/crypto/tls_openssl.c
++++ b/src/crypto/tls_openssl.c
+@@ -4960,9 +4960,13 @@ int tls_connection_set_params(void *tls_ctx, struct tls_connection *conn,
+ 	if (params->flags & TLS_CONN_EAP_FAST) {
+ 		/* Need to disable TLS v1.3 at least for now since OpenSSL 1.1.1
+ 		 * refuses to start the handshake with the modified ciphersuite
+-		 * list (no TLS v1.3 ciphersuites included) for EAP-FAST. */
+-		wpa_printf(MSG_DEBUG, "OpenSSL: Disable TLSv1.3 for EAP-FAST");
++		 * list (no TLS v1.3 ciphersuites included) for EAP-FAST.
++		 * Disabling TLS v1.2 and v1.1 as well, in order to maintain the backwards
++		 * compatibility with certain APs: E.G. Cisco 1260 series */
++		wpa_printf(MSG_DEBUG, "OpenSSL: Disable TLSv1.3, TLSv1.2, TLSv1.1 for EAP-FAST");
+ 		SSL_set_options(conn->ssl, SSL_OP_NO_TLSv1_3);
++		SSL_set_options(conn->ssl, SSL_OP_NO_TLSv1_2);
++		SSL_set_options(conn->ssl, SSL_OP_NO_TLSv1_1);
+ 	}
+ #endif /* SSL_OP_NO_TLSv1_3 */
+ #endif
+diff --git a/src/eap_peer/eap_config.h b/src/eap_peer/eap_config.h
+index 148c906..e60576a 100644
+--- a/src/eap_peer/eap_config.h
++++ b/src/eap_peer/eap_config.h
+@@ -716,6 +716,12 @@ struct eap_peer_config {
+ 	 */
+ 	char *pac_file;
+ 
++#ifdef PACBIN_DECAP
++	/* Added by silex for the PAC decapsulation functionality */
++	char *pac_bin;
++	char *pac_bin_passwd;
++#endif
++
+ 	/**
+ 	 * mschapv2_retry - MSCHAPv2 retry in progress
+ 	 *
+diff --git a/src/eap_peer/eap_fast.c b/src/eap_peer/eap_fast.c
+index 61d0a6b..5bc5b78 100644
+--- a/src/eap_peer/eap_fast.c
++++ b/src/eap_peer/eap_fast.c
+@@ -46,6 +46,7 @@ struct eap_fast_data {
+ 	struct eap_fast_key_block_provisioning *key_block_p;
+ #define EAP_FAST_PROV_UNAUTH 1
+ #define EAP_FAST_PROV_AUTH 2
++#define EAP_FAST_REMOVE_PAC 4 /*CHG004393: silex addition*/
+ 	int provisioning_allowed; /* Allowed PAC provisioning modes */
+ 	int provisioning; /* doing PAC provisioning (not the normal auth) */
+ 	int anon_provisioning; /* doing anonymous (unauthenticated)
+@@ -1523,6 +1524,24 @@ static int eap_fast_process_start(struct eap_sm *sm,
+ 		 * PAC found for the A-ID and we are not resuming an old
+ 		 * session, so add PAC-Opaque extension to ClientHello.
+ 		 */
++		#if 1 /* CHG006109 bug fix applied by silex. */
++		/* Certain RADIUS servers won't reply if a client hello message
++		 * has more than 2 EAP-Message Segments or has ECDH and ECDSA
++		 * as its Cipher Suites.
++		 * The fix below prevents aforementioned conditions by reducing
++		 * the Cipher Suites.
++		 */
++		{
++			int fast_provisioning;
++			fast_provisioning = data->provisioning_allowed;
++			data->provisioning_allowed = EAP_FAST_PROV_AUTH;
++			if (eap_fast_set_provisioning_ciphers(sm, data) < 0) {
++				wpa_printf(MSG_DEBUG, "EAP-FAST: Could not configure "
++					   "cipher suites");
++			}
++			data->provisioning_allowed = fast_provisioning;
++		}
++		#endif
+ 		if (eap_fast_use_pac_opaque(sm, data, data->current_pac) < 0)
+ 			return -1;
+ 	} else {
+@@ -1622,6 +1641,22 @@ static struct wpabuf * eap_fast_process(struct eap_sm *sm, void *priv,
+ 						  EAP_TYPE_FAST,
+ 						  data->fast_version, id, &msg,
+ 						  &resp);
++
++#ifndef NO_SILEX_CHANGED /* CHG004393 silex addition */
++		if (res == -1) {
++			if (data->provisioning_allowed & EAP_FAST_REMOVE_PAC) {
++				struct eap_peer_config *config = eap_get_config(sm);
++				/* Remove config PAC file */
++				if (config != NULL) {
++					if (config->pac_file != NULL)
++						remove(config->pac_file);
++					wpa_printf(MSG_INFO,
++					"EAP-FAST: Handshake is failed, delete pac_file!");
++				}
++			}
++			res = 1; /* Set original return value */
++		}
++#else
+ 		if (res < 0) {
+ 			wpa_printf(MSG_DEBUG,
+ 				   "EAP-FAST: TLS processing failed");
+@@ -1629,6 +1664,7 @@ static struct wpabuf * eap_fast_process(struct eap_sm *sm, void *priv,
+ 			ret->decision = DECISION_FAIL;
+ 			return resp;
+ 		}
++#endif
+ 
+ 		if (sm->waiting_ext_cert_check) {
+ 			wpa_printf(MSG_DEBUG,
+diff --git a/src/eap_peer/eap_tls_common.c b/src/eap_peer/eap_tls_common.c
+index f4053f8..87af8bf 100644
+--- a/src/eap_peer/eap_tls_common.c
++++ b/src/eap_peer/eap_tls_common.c
+@@ -186,6 +186,13 @@ static int eap_tls_params_from_conf(struct eap_sm *sm,
+ 		/* The current EAP peer implementation is not yet ready for the
+ 		 * TLS v1.3 changes, so disable this by default for now. */
+ 		params->flags |= TLS_CONN_DISABLE_TLSv1_3;
++
++		if (data->eap_type == EAP_TYPE_FAST) {
++			/* Disable other newer versions of TLS procols to help maintain
++			 * the compatibility of EAP-FAST connections with Cisco APs. */
++			params->flags |= TLS_CONN_DISABLE_TLSv1_1;
++			params->flags |= TLS_CONN_DISABLE_TLSv1_2;
++		}
+ 	}
+ 	if (data->eap_type == EAP_TYPE_TLS ||
+ 	    data->eap_type == EAP_UNAUTH_TLS_TYPE ||
+@@ -794,7 +801,12 @@ int eap_peer_tls_process_helper(struct eap_sm *sm, struct eap_ssl_data *data,
+ 		wpa_printf(MSG_DEBUG, "SSL: No data to be sent out");
+ 		wpabuf_free(data->tls_out);
+ 		data->tls_out = NULL;
++#ifndef NO_SILEX_CHANGED
++		/* CHG004393: silex addition for removing pac_file upon failure of TLS negotiation. */
++		return ((ret && eap_type == EAP_TYPE_FAST) ? ret : 1);
++#else
+ 		return 1;
++#endif
+ 	}
+ 
+ 	/* Send the pending message (in fragments, if needed). */
+diff --git a/src/pacdecap/Makefile b/src/pacdecap/Makefile
+new file mode 100644
+index 0000000..3651056
+--- /dev/null
++++ b/src/pacdecap/Makefile
+@@ -0,0 +1,11 @@
++all:
++	@echo Nothing to be made.
++
++clean:
++	rm -f *~ *.o *.so *.d
++
++install:
++	if ls *.so >/dev/null 2>&1; then \
++		install -d $(DESTDIR)$(LIBDIR)/wpa_supplicant && \
++		cp *.so $(DESTDIR)$(LIBDIR)/wpa_supplicant \
++	; fi
+diff --git a/src/pacdecap/pacdecap.c b/src/pacdecap/pacdecap.c
+new file mode 100644
+index 0000000..0e209d5
+--- /dev/null
++++ b/src/pacdecap/pacdecap.c
+@@ -0,0 +1,556 @@
++/*
++ *  pacdecap.c: PAC File decapsule
++ * 
++ *  ver       date      author     comment
++ *  0.0.0     10/06/03  Y.Imura    Sample Edition
++ *  0.0.1     10/07/29  E.Takata   First
++ *  -----
++ *  Linux     10/12/04  T.Inai     First
++ *  1.0.0     16/09/20  E.Takata   Support for ACS PAC.
++ */
++
++#include "pacdecap.h"
++#include "pacdecap_bin.h"
++#include <openssl/hmac.h>
++#include <arpa/inet.h>
++#include <sys/stat.h>
++
++
++#include "common.h"
++
++#define	FILESTR			__FILE__
++
++/* PAC file default key */
++static byte pacdefkey[17] = {
++	0xcc, 0xb8, 0xe0, 0x49, 0x05, 0x4a,	0xa3 ,0xbb,
++	0xe7, 0xeb, 0x9c, 0xd2, 0x98, 0x13,	0xa7, 0x8b,
++	0x00
++};
++static byte *pacdecap_decry_buff;
++PAC_file pacdata;
++byte pacfile_data[1024*4];
++
++#if 0 /* debug */
++static void sxdump(u_int8_t *ptr, int len)
++{
++	int i, j, k;
++	char buf[20];
++
++	memset(buf, 0x00, 20);
++	for(i = 0; i < len; i++) {
++		printf(" %.4x: ", i);
++		printf("%.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x",
++			 ptr[i], ptr[i+1], ptr[i+2], ptr[i+3], ptr[i+4], ptr[i+5], ptr[i+6], ptr[i+7]);
++		printf(" ");
++		printf("%.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x",
++			 ptr[i+8], ptr[i+9], ptr[i+10], ptr[i+11], ptr[i+12],
++			  ptr[i+13], ptr[i+14], ptr[i+15]);
++		printf(" / ");
++		for(j = 0, k = 0; j < 16; j++, k++) {
++			if(ptr[i+j] < 0x20 || ptr[i+j] > 0x7e)
++				buf[k] = '.';
++			else
++				buf[k] = (char)ptr[i+j];
++
++			if(k == 7) {
++				buf[k+1] = ' ';
++				buf[k+2] = ' ';
++				k += 2;
++				printf("  ");
++			}
++		}
++		printf("%s\n", buf);
++		memset(buf, 0x00, 20);
++		i = i+15;
++	}
++}
++#endif
++
++/* Parse PAC File ---------------------------------------------------------- */
++static int pacdecap_parse_pacfile(fast_pacfile_format *fpfp,
++                                  byte *pacfile, int pacfile_len)
++{
++	int ret = -1;
++	dword magnum;
++	byte *p = NULL;
++
++	if(pacfile_len < PACDECAP_DECRYPT_BUFFER_SIZE){
++
++		if(pacfile_len > PACFILE_OFFSET_BLOB){
++			fpfp->pacfile_len  = pacfile_len;
++			fpfp->blob_len     = pacfile_len - PACFILE_OFFSET_BLOB;
++
++			fpfp->version      = (char *)&pacfile[PACFILE_OFFSET_VERSION];
++			fpfp->defpasswd    = (char *)&pacfile[PACFILE_OFFSET_DEFPASS];
++			fpfp->magicNum     = (char *)&pacfile[PACFILE_OFFSET_MAGNUM];
++			fpfp->reserv       = (char *)&pacfile[PACFILE_OFFSET_RESERV];
++			fpfp->cipher       = (char *)&pacfile[PACFILE_OFFSET_CIPH];
++			fpfp->iv           = &pacfile[PACFILE_OFFSET_IV];
++			fpfp->integritymac = &pacfile[PACFILE_OFFSET_FIMAC];
++			fpfp->ciphermac    = &pacfile[PACFILE_OFFSET_ENMAC];
++			fpfp->blob         = &pacfile[PACFILE_OFFSET_BLOB];
++
++			p = fpfp->blob;
++			/* Magic number check */
++			magnum = get_dword(rntohl(fpfp->magicNum));
++			if(magnum == PACFILE_MAGNUM){
++				ret = 0;
++			}
++			else{
++				wpa_printf(MSG_ERROR, "%s: Illigal PAC File", FILESTR);
++			}
++		}
++	}
++	else{
++		wpa_printf(MSG_ERROR,"%s: PAC File too big", FILESTR);
++	}
++
++	return ret;
++}
++
++/* Check PAC File Integrity ------------------------------------------------ */
++static int check_pacfile_integrity(fast_pacfile_format *fpfp)
++{
++	int ret;
++	byte intmac_bkup[PACFILE_INTEGRITYMAC_LEN];
++	byte digest[SHA_DIGEST_SIZE];
++	jcHashContext ctx;
++
++	mem_cpy(intmac_bkup, fpfp->integritymac, PACFILE_INTEGRITYMAC_LEN);
++	mem_fill(fpfp->integritymac, 0x00, PACFILE_INTEGRITYMAC_LEN);
++
++	SHA1Init(&ctx);
++	SHA1Update(&ctx, fpfp->version, fpfp->pacfile_len);
++	SHA1Final(digest, &ctx);
++
++	ret = mem_cmp(digest, intmac_bkup, PACFILE_INTEGRITYMAC_LEN);
++
++	/* Writeback integritymac data*/
++	mem_cpy(fpfp->integritymac, intmac_bkup, PACFILE_INTEGRITYMAC_LEN);
++
++	if(ret != 0){
++		wpa_printf(MSG_ERROR, "%s: PAC File manipulated", FILESTR);
++	}
++
++	return (ret==0? ret: -1);
++}
++
++/* Check Decrypt PAC data -------------------------------------------------- */
++static int pacdecap_check_decrypt_blob(fast_pacfile_format *fpfp)
++{
++	jcHashContext ctx;
++	int pad_len, ret;
++	byte digest[SHA_DIGEST_SIZE];
++
++	/* padding length */
++	pad_len = *(fpfp->blob + (fpfp->blob_len-1));
++
++	SHA1Init(&ctx);
++	SHA1Update(&ctx, fpfp->blob, (fpfp->blob_len-pad_len));
++	SHA1Final(digest, &ctx);
++
++	ret = mem_cmp(fpfp->ciphermac, digest, PACFILE_CIPHERMAC_LEN);
++
++	if(ret != 0){
++		wpa_printf(MSG_ERROR, "%s: Blob decrypt error", FILESTR);
++	}
++
++	return (ret==0? ret: -1);
++}
++
++/* Blob Decrypt process sub(AES-CBC-128 decrypt) --------------------------- */
++static void pacdecap_decrypt_process_sub(fast_pacfile_format *fpfp,
++                                         byte *key, int key_len)
++{
++	AES_KEY enkey;
++
++	mem_fill(pacdecap_decry_buff, 0x00, PACDECAP_DECRYPT_BUFFER_SIZE);
++
++	/* Keylength (bit length) */
++	AES_set_decrypt_key(key, (key_len*8), &enkey);
++	AES_cbc_encrypt(fpfp->blob, pacdecap_decry_buff,
++	                fpfp->blob_len, &enkey, fpfp->iv, AES_DECRYPT);
++
++	/* Analyze data copy */
++	mem_cpy(fpfp->blob, pacdecap_decry_buff, fpfp->blob_len);
++
++}
++
++/* Blob Decrypt process(Create AES key) ------------------------------------ */
++static int pacdecap_decrypt_process(fast_pacfile_format *fpfp,
++                                    char *text, byte *key)
++{
++	int text_len, key_len, ret;
++	byte digest[SHA_DIGEST_SIZE];
++    size_t  reslen;
++    HMAC_CTX *ctx = HMAC_CTX_new();
++
++	text_len = str_len((char *)text);
++	key_len  = str_len((char *)key);
++	mem_fill(digest, 0x00, sizeof(digest));
++
++	/* AES key is created form password+key */
++	if (ctx == NULL)
++		return -1;
++    HMAC_Init(ctx, key, key_len, EVP_sha1 ());
++    HMAC_Update (ctx, (unsigned char *)text, text_len);
++    HMAC_Final (ctx, digest, &reslen);
++	pacdecap_decrypt_process_sub(fpfp, digest, PACFILE_CIPHERMAC_LEN);
++
++	ret = pacdecap_check_decrypt_blob(fpfp);
++	return ret;
++}
++
++/* Fill PAC Info ------------------------------------------------------------ */
++int pacdecap_fill_pac_info(PAC_info *pac_info, byte *pac_p, word pac_len)
++{
++	byte *info_p;
++	word info_len, tlv_len, tlv_type;
++	int ret=0;
++
++	if(pac_info && pac_p && pac_len){
++		pac_info->Info = pac_p;
++		pac_info->Info_len = pac_len;
++
++		info_p = pac_p;
++		info_len = pac_len;
++
++		/* Analyze PAC Info */
++		while(info_len > 0){
++			tlv_type = (ntohs(get_word(info_p + EAP_TLV_OFFSET_TLV_TYPE)) &
++						(~EAP_TLV_MASK_FLAGS));
++			tlv_len = ntohs(get_word(info_p + EAP_TLV_OFFSET_TLV_LENGTH));
++
++			switch(tlv_type){
++			case EAPFAST_PAC_TLV_TYPE_AID: /* PAC Info AID */
++				pac_info->A_ID = info_p + EAP_TLV_OFFSET_TLV_VALUE;
++				info_len = info_len - EAP_TLV_HEADER_SIZE - tlv_len;
++				info_p = info_p + EAP_TLV_HEADER_SIZE + tlv_len;
++				break;
++
++			case EAPFAST_PAC_TLV_TYPE_IID: /* PAC Info IID */
++				pac_info->I_ID = info_p + EAP_TLV_OFFSET_TLV_VALUE;
++				pac_info->I_ID_len = tlv_len;
++				info_len = info_len - EAP_TLV_HEADER_SIZE - tlv_len;
++				info_p = info_p + EAP_TLV_HEADER_SIZE + tlv_len;
++				break;
++
++			case EAPFAST_PAC_TLV_TYPE_AID_INFO: /* PAC Info AID Detail */
++				pac_info->A_ID_Info = info_p + EAP_TLV_OFFSET_TLV_VALUE;
++				pac_info->A_ID_Info_len = tlv_len;
++				info_len = info_len - EAP_TLV_HEADER_SIZE - tlv_len;
++				info_p = info_p + EAP_TLV_HEADER_SIZE + tlv_len;
++				break;
++
++			case EAPFAST_PAC_INFO_TLV_PAC_TYPE: /* PAC Info PAC TYPE */
++				pac_info->type = ntohs(get_word(info_p + EAP_TLV_OFFSET_TLV_VALUE));
++				info_len = info_len - EAP_TLV_HEADER_SIZE - tlv_len;
++				info_p = info_p + EAP_TLV_HEADER_SIZE + tlv_len;
++				break;
++			default:
++				wpa_printf(MSG_WARNING, "Unknown TLV TYPE %04x", tlv_type);
++				if(info_len < tlv_len){
++					wpa_printf(MSG_ERROR, "!FAST:Invalid PAC Info TLV!![%d]", tlv_len);
++					info_len = -1;
++					info_p = NULL;
++					ret = -1;
++				}
++				else{
++					info_len = info_len - EAP_TLV_HEADER_SIZE - tlv_len;
++					info_p = info_p + EAP_TLV_HEADER_SIZE + tlv_len;
++				}
++				break;
++			}
++		} /*  while() */
++	}
++	else{
++		wpa_printf(MSG_ERROR, "!FAST : Failed to fill PAC Info");
++		ret = -1;
++	}
++
++	return ret;
++}
++
++
++/* Fill PAC data from fast_pacfile_format struct --------------------------- */
++int pacdecap_fill_pacdata(PAC_file *pac_data, fast_pacfile_format *fpfp)
++{
++	byte *pac_p, *tmp;
++	word tlv_type, tlv_len;
++	int pac_len = 0, ret =0;
++
++	if(pac_data != NULL && fpfp != NULL){
++		pac_p = fpfp->blob;
++		pac_len = fpfp->blob_len;
++
++		/* Analyze PAC TLV */
++		while(pac_len > 0){
++			tmp = pac_p;
++			tlv_type = (ntohs(get_word(pac_p + EAP_TLV_OFFSET_TLV_TYPE)) &
++						(~EAP_TLV_MASK_FLAGS));
++			tlv_len = ntohs(get_word(pac_p + EAP_TLV_OFFSET_TLV_LENGTH));
++
++			switch(tlv_type){
++			case EAP_TLV_TYPE_PAC_TLV:
++				pac_len -= EAP_TLV_HEADER_SIZE;
++				/* Length Check */
++				if(tlv_len > pac_len){
++					wpa_printf(MSG_ERROR, "!FAST:No match the PAC Length!![%d] [%d]", tlv_len, pac_len);
++					pac_len = -1;
++					pac_p = NULL;
++					ret = -1;
++				}
++				else{
++					/* Adjustment of PAC Length */
++					pac_p += EAP_TLV_HEADER_SIZE;
++					pac_len = tlv_len;
++				}
++				break;
++
++			case EAPFAST_PAC_TLV_TYPE_PAC_KEY: /* 0x0001 PAC Key*/
++				/* Length Check */
++				if(tlv_len != EAPFAST_PAC_KEY_LENGTH){
++					wpa_printf(MSG_ERROR, "!FAST:Invalid  PAC Key Length!![%d]", tlv_len);
++					pac_len = -1;
++					pac_p = NULL;
++					ret = -1;
++				}
++				else{
++					pac_data->pac_key = pac_p + EAP_TLV_OFFSET_TLV_VALUE;
++					pac_len = pac_len - EAP_TLV_HEADER_SIZE - tlv_len;
++					pac_p = pac_p + EAP_TLV_HEADER_SIZE + tlv_len;
++				}
++				break;
++
++			case EAPFAST_PAC_TLV_TYPE_PAC_OPAQUE: /* 0x0002 PAC Opaque*/
++				pac_data->pac_opaque = pac_p + EAP_TLV_HEADER_SIZE;
++				pac_data->pac_opaque_len = tlv_len;
++				pac_len = pac_len - EAP_TLV_HEADER_SIZE - tlv_len;
++				/* Length Check */
++				if( pac_len < 0 ){
++					wpa_printf(MSG_ERROR, "!FAST:Invalid  PAC Opaque length!![%d]", tlv_len);
++					pac_len = -1;
++					pac_p = NULL;
++					ret = -1;
++				}
++				else{
++					pac_p = pac_p + EAP_TLV_HEADER_SIZE + tlv_len;
++				}
++				break;
++
++			case EAPFAST_PAC_TLV_TYPE_PAC_INFO: /* 0x0009 PAC Info */
++				pac_len -= EAP_TLV_HEADER_SIZE;
++				/* Length Check */
++				if(tlv_len > pac_len){
++					wpa_printf(MSG_ERROR, "!FAST:Invalid PAC Info Length!![%d]", tlv_len);
++					pac_len = -1;
++					pac_p = NULL;
++					ret = -1;
++				}
++				else{
++					pac_p += EAP_TLV_HEADER_SIZE;
++					ret = pacdecap_fill_pac_info(&pac_data->pac_info, pac_p, tlv_len);/**/
++					pac_len -= tlv_len;
++					pac_p += tlv_len;
++				}
++				break;
++
++			default:
++				wpa_printf(MSG_WARNING, "Unknown TLV TYPE %04x", tlv_type);
++				if(pac_len < tlv_len){
++					wpa_printf(MSG_ERROR, "!FAST:Invalid PAC TLV!![%d]", tlv_len);
++					pac_len = -1;
++					pac_p = NULL;
++					ret = -1;
++				}
++				else {
++					pac_len = pac_len - EAP_TLV_HEADER_SIZE - tlv_len;
++					pac_p = pac_p + EAP_TLV_HEADER_SIZE + tlv_len;
++				}
++				break;
++			}
++		} /* while() */
++	}
++	else{
++		wpa_printf(MSG_ERROR, "!FAST : Failed to fill PAC Data ");
++		ret = -1;
++	}
++
++	return ret;
++}
++
++static int pacdecap_puthex(FILE *fp, byte *data, int len)
++{
++	int i = 0;
++
++	for(i = 0; i < len; i++) {
++		fprintf(fp, "%02x", data[i]);
++	}
++
++	return 0;
++}
++
++static int pacdecap_putchar(FILE *fp, byte *data, int len)
++{
++	int i = 0;
++
++	for(i = 0; i < len; i++) {
++		fprintf(fp, "%c", data[i]);
++	}
++
++	return 0;
++}
++
++int pacdecap_ewrite_PACFile(PAC_file *pac_data, char *outputfile)
++{
++	int ret = 0;
++	FILE *fp = NULL;
++
++
++	fp = fopen(outputfile, "w");
++	if(!fp) {
++		return -1;
++	}
++
++	fprintf(fp, "wpa_supplicant EAP-FAST PAC file - version 1\n");
++	fprintf(fp, "START\n");
++	fprintf(fp, "PAC-Type=%d\n", pac_data->pac_info.type);
++
++	/* Key */
++	fprintf(fp, "PAC-Key=");
++	pacdecap_puthex(fp, pac_data->pac_key, EAPFAST_PAC_KEY_LENGTH);
++	fprintf(fp, "\n");
++
++	/* Opaque */
++	fprintf(fp, "PAC-Opaque=");
++	pacdecap_puthex(fp, pac_data->pac_opaque, pac_data->pac_opaque_len);
++	fprintf(fp, "\n");
++
++
++	/* Info */
++	fprintf(fp, "PAC-Info=");
++	pacdecap_puthex(fp, pac_data->pac_info.Info, pac_data->pac_info.Info_len);
++	fprintf(fp, "\n");
++
++	/* A-ID */
++	fprintf(fp, "A-ID=");
++	pacdecap_puthex(fp, pac_data->pac_info.A_ID, EAPFAST_PAC_INFO_AID_LENGTH);
++	fprintf(fp, "\n");
++
++	/* I-ID */
++	fprintf(fp, "I-ID=");
++	pacdecap_puthex(fp, pac_data->pac_info.I_ID, pac_data->pac_info.I_ID_len);
++	fprintf(fp, "\n");
++
++	/* I-ID text */
++	fprintf(fp, "I-ID-txt=");
++	pacdecap_putchar(fp, pac_data->pac_info.I_ID, pac_data->pac_info.I_ID_len);
++	fprintf(fp, "\n");
++
++	/* A-ID-Info */
++	fprintf(fp, "A-ID-Info=");
++	pacdecap_puthex(fp, pac_data->pac_info.A_ID_Info, pac_data->pac_info.A_ID_Info_len);
++	fprintf(fp, "\n");
++
++
++	/* A-ID-Info */
++	fprintf(fp, "A-ID-Info-txt=");
++	pacdecap_putchar(fp, pac_data->pac_info.A_ID_Info, pac_data->pac_info.A_ID_Info_len);
++	fprintf(fp, "\n");
++
++	fprintf(fp, "\n");
++	fprintf(fp, "END\n");
++
++	fclose(fp);
++
++	return ret;
++}
++
++/* Decapsule process ------------------------------------------------------- */
++int pacdecap_decapsule_process(byte *pacfile, int pacfile_len, char *passwd,
++                               PAC_file *pac_data)
++{
++	int ret = -1;
++	fast_pacfile_format fpf;
++	char *text = "ENC";
++
++	memset(&fpf, 0x00, sizeof(fpf));
++	/* If password is NULL, use default password */
++	if(passwd == NULL){
++	}
++
++	if(pacfile != NULL){
++
++		/* apply pacfile to fpf struct */
++		ret = pacdecap_parse_pacfile(&fpf, pacfile, pacfile_len);
++		if(ret == 0){
++			/* Default password use? */
++			if(*fpf.defpasswd == 1){
++				passwd = (char *)pacdefkey;
++			}
++			else if(passwd == NULL){
++				wpa_printf(MSG_INFO, "%s: need to password", FILESTR);
++				ret = -1;
++			}
++			pac_data->pac_info.type = fpf.version[0];
++
++		}
++
++		if(ret == 0){
++			/* manipulation check */
++			ret = check_pacfile_integrity(&fpf);
++			if(ret == 0){
++				/* Decrypt PAC body */
++				ret = pacdecap_decrypt_process(&fpf, text, (byte *)passwd);
++				if(ret == 0){
++					pacdecap_fill_pacdata(pac_data, &fpf);
++				}
++			}
++
++		}
++	}
++
++	return ret;
++}
++
++/* Initialize PAC Decap ---------------------------------------------------- */
++int pacdecap_init(char *passwd, char *inputfile, char *outputfile)
++{
++	int ret = 0;
++	FILE *fp = NULL;
++	struct stat      st;
++
++	wpa_printf(MSG_INFO, "PACDECAP Init\n");
++	 printf("PACDECAP Init\n");
++
++	pacdecap_decry_buff = (byte*)malloc(PACDECAP_DECRYPT_BUFFER_SIZE);
++	mem_fill(pacdecap_decry_buff, 0x00, PACDECAP_DECRYPT_BUFFER_SIZE);
++	mem_fill(&pacdata, 0x00, sizeof(PAC_file));
++	memset(pacfile_data, 0x00, sizeof(pacfile_data));
++
++	if(stat(inputfile, &st) < 0) {
++		wpa_printf(MSG_ERROR, "No Pacfile!(bin: %s)\n", inputfile);
++		return -1;
++	}
++
++	fp = fopen(inputfile, "rb");
++	if(!fp) {
++		wpa_printf(MSG_ERROR, "File Open error. (%d: %s)\n", -errno, inputfile);
++		return -1;
++	}
++
++	fread(pacfile_data, sizeof(byte), st.st_size, fp);
++	fclose(fp);
++	ret = pacdecap_decapsule_process(pacfile_data, st.st_size,
++	                                 passwd, &pacdata);
++	if(ret == 0) {
++		wpa_printf(MSG_INFO, "Analyze OK!\n");
++		pacdecap_ewrite_PACFile(&pacdata, outputfile);
++	}
++	else {
++		wpa_printf(MSG_ERROR, "Analyze error. (%d: %s)\n", ret, inputfile);
++		return -1;
++	}
++
++	return 0;
++}
+diff --git a/src/pacdecap/pacdecap.h b/src/pacdecap/pacdecap.h
+new file mode 100644
+index 0000000..fe1b98c
+--- /dev/null
++++ b/src/pacdecap/pacdecap.h
+@@ -0,0 +1,154 @@
++/*
++ *  pacdcap.h: PAC File decapsule header
++ * 
++ *  ver       date      author     comment
++ *  0.0.0     10/06/03  Y.Imura    Sample Edition
++ *  0.0.1     10/07/29  E.Takata   First
++ *  -----
++ *  Linux     10/12/04  T.Inai     First
++ */
++
++#ifndef _PACDECAP_DEF_
++#define	_PACDECAP_DEF_		1
++
++#include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <syslog.h>
++#include <errno.h>
++#include <sys/types.h>
++#include <openssl/aes.h>
++#include <openssl/sha.h>
++#include <openssl/hmac.h>
++
++#define EAP_TLV_TYPE_PAC_TLV                   11
++#define EAP_TLV_OFFSET_TLV_TYPE         0x00
++#define EAP_TLV_OFFSET_TLV_LENGTH       0x02
++#define EAP_TLV_OFFSET_TLV_VALUE        0x04
++#define EAP_TLV_MASK_FLAGS            0xC000
++#define EAP_TLV_MASK_TYPE             0x3FFF
++#define EAP_TLV_HEADER_SIZE                4
++
++//#include "eap_fast.h"
++
++typedef	unsigned char	byte;
++typedef	unsigned short	word;
++typedef	unsigned long	dword;
++typedef SHA_CTX jcHashContext;
++typedef HMAC_CTX HMAC_HashContext;
++
++#define get_word(src)		(*((word*)(src)))
++#define get_dword(src)		(*((dword*)(src)))
++#define rntohl(l)	(l)
++
++#define mem_cpy(a, b, c) memcpy(a, b, c)
++#define mem_fill(a, b, c) memset(a, b, c)
++#define mem_cmp(a, b, c) memcmp(a, b, c)
++#define str_len(a) strlen(a)
++
++
++#define SHA1Init(ctx) SHA1_Init(ctx)
++#define SHA1Update(ctx, version, pacfile_len) SHA1_Update(ctx, version, pacfile_len)
++#define SHA1Final(digest, ctx) SHA1_Final(digest, ctx)
++
++#define SHA_DIGEST_SIZE	20
++
++/* Authority ID Data ---------------------------*/
++
++
++#define EAPFAST_PAC_KEY_LENGTH         32
++#define EAPFAST_PAC_OPAQUE_MAX_SIZE   144
++#define EAPFAST_PAC_INFO_AID_LENGTH    16
++
++/* PAC TLV */ /* EAP_TLV_TYPE_PAC_TLV(11) */
++/* draft-cam-winget-eap-fast-provisioning-02 */
++#define EAPFAST_PAC_TLV_TYPE_PAC_KEY        0x01
++#define EAPFAST_PAC_TLV_TYPE_PAC_OPAQUE     0x02
++#define EAPFAST_PAC_TLV_TYPE_PAC_CRED_LIM   0x03
++#define EAPFAST_PAC_TLV_TYPE_AID            0x04
++#define EAPFAST_PAC_TLV_TYPE_IID            0x05
++#define EAPFAST_PAC_TLV_TYPE_RESERVED       0x06
++#define EAPFAST_PAC_TLV_TYPE_AID_INFO       0x07
++#define EAPFAST_PAC_TLV_TYPE_ACK            0x08
++#define EAPFAST_PAC_TLV_TYPE_PAC_INFO       0x09
++#define EAPFAST_PAC_TLV_TYPE_PAC_TYPE       0x0A
++
++#define EAPFAST_PAC_TLV_HEADER_SIZE         0x04
++
++/* PAC TLV OFFSET --------------------------------------------------------- */
++#define EAPFAST_PAC_TLV_OFFSET_TYPE         0x00
++#define EAPFAST_PAC_TLV_OFFSET_LENGTH       0x02
++#define EAPFAST_PAC_TLV_OFFSET_VALUE        0x04
++
++/* PAC INFO TLV ----------------------------------------------------------- */
++#define EAPFAST_PAC_INFO_TLV_PAC_LIFETIME   0x03
++#define EAPFAST_PAC_INFO_TLV_PAC_AID        0x04
++#define EAPFAST_PAC_INFO_TLV_PAC_IID        0x05
++#define EAPFAST_PAC_INFO_TLV_PAC_AIDINFO    0x07
++#define EAPFAST_PAC_INFO_TLV_PAC_TYPE       0x0A
++
++/* PAC ACKNOWLEDGEMENT TLV ------------------------------------------------ */
++#define EAPFAST_PAC_ACK_TLV_SUCCESS         0x01
++#define EAPFAST_PAC_ACK_TLV_FAILURE         0x02
++
++/* sx_eap_fast_get_pac() --------------------*/
++#define EAPFAST_PAC_AID                   1
++#define EAPFAST_PAC_KEY                   2
++#define EAPFAST_PAC_OPAQUE                3
++#define EAPFAST_PAC_OPAQUE_LEN            4
++
++
++typedef struct _tag_PAC_Info {
++	word type;
++	byte *Info;
++	byte Info_len;
++	byte *A_ID;
++	byte *I_ID;
++	byte I_ID_len;
++	byte *A_ID_Info;
++	byte A_ID_Info_len;
++} PAC_info;
++
++
++typedef struct _tag_PAC_file {
++	byte *pac_key;
++	byte *pac_opaque;
++	word pac_opaque_len;
++	PAC_info pac_info;
++} PAC_file;
++
++
++
++#define	PACDECAP_DECRYPT_BUFFER_SIZE		512
++
++#define	PACFILE_OFFSET_VERSION	0x00
++#define	PACFILE_OFFSET_DEFPASS	0x01
++#define	PACFILE_OFFSET_MAGNUM	0x02
++#define	PACFILE_OFFSET_RESERV	0x06
++#define	PACFILE_OFFSET_CIPH		0x07
++#define	PACFILE_OFFSET_IV		0x08
++#define	PACFILE_OFFSET_FIMAC	0x18
++#define	PACFILE_OFFSET_ENMAC	0x28
++#define	PACFILE_OFFSET_BLOB		0x38
++
++#define	PACFILE_IV_LEN				16
++#define PACFILE_INTEGRITYMAC_LEN	16
++#define	PACFILE_CIPHERMAC_LEN		16
++#define	PACFILE_MAGNUM				0x00050429
++
++typedef struct _tag_fast_pacfile_format {
++	char	*version;		/* 1byte */
++	char	*defpasswd;		/* 1byte */
++	char	*magicNum;		/* 4bytes */
++	char	*reserv;		/* 1byte */
++	char	*cipher;		/* 2bytes */
++	byte	*iv;			/* 16bytes */
++	byte	*integritymac;	/* 16bytes */
++	byte	*ciphermac;		/* 16bytes */
++	byte	*blob;			/* variable */
++	int		pacfile_len;
++	int		blob_len;
++} fast_pacfile_format;
++
++#endif /* _PACDECAP_DEF_ */
+diff --git a/src/pacdecap/pacdecap_bin.h b/src/pacdecap/pacdecap_bin.h
+new file mode 100644
+index 0000000..7049de8
+--- /dev/null
++++ b/src/pacdecap/pacdecap_bin.h
+@@ -0,0 +1,11 @@
++/*
++ *  pacdcap_bin.h: PAC File decapsule header
++ * 
++ */
++
++#ifndef _PACDECAP_BIN_DEF_
++#define	_PACDECAP_BIN_DEF_		1
++
++int pacdecap_init(char *passwd, char *inputfile, char *outputfile);
++
++#endif /* _PACDECAP_BIN_DEF_ */
+diff --git a/src/wps/wps.h b/src/wps/wps.h
+index 9963c46..41dedd1 100644
+--- a/src/wps/wps.h
++++ b/src/wps/wps.h
+@@ -513,7 +513,12 @@ enum wps_event {
+ 	/**
+ 	 * WPS_EV_AP_PIN_SUCCESS - External Registrar used correct AP PIN
+ 	 */
+-	WPS_EV_AP_PIN_SUCCESS
++	WPS_EV_AP_PIN_SUCCESS,
++
++	/** add silex
++	 * WPS_EV_PIN_TIMEOUT - PIN walktime expired before protocol run start
++	 */
++	WPS_EV_PIN_TIMEOUT
+ };
+ 
+ /**
+diff --git a/src/wps/wps_common.c b/src/wps/wps_common.c
+index 747dc47..de98aa5 100644
+--- a/src/wps/wps_common.c
++++ b/src/wps/wps_common.c
+@@ -350,6 +350,14 @@ void wps_pbc_disable_event(struct wps_context *wps)
+ 	wps->event_cb(wps->cb_ctx, WPS_EV_PBC_DISABLE, NULL);
+ }
+ 
++/* add silex */
++void wps_pin_timeout_event(struct wps_context *wps)
++{
++	if (wps->event_cb == NULL)
++		return;
++
++	wps->event_cb(wps->cb_ctx, WPS_EV_PIN_TIMEOUT, NULL);
++}
+ 
+ #ifdef CONFIG_WPS_OOB
+ 
+diff --git a/src/wps/wps_defs.h b/src/wps/wps_defs.h
+index 9fccb4e..4f72691 100644
+--- a/src/wps/wps_defs.h
++++ b/src/wps/wps_defs.h
+@@ -48,8 +48,12 @@ extern u16 wps_force_encr_types;
+ #define WPS_DEV_NAME_MAX_LEN 32
+ #define WPS_MANUFACTURER_MAX_LEN 64
+ #define WPS_MODEL_NAME_MAX_LEN 32
++#define SX_WPS_DEV_NAME_MAX_LEN 16      /* silex : Chenge the MAX length of device_name. (32->16)*/
++#define SX_WPS_MANUFACTURER_MAX_LEN 32  /* silex : Chenge the MAX length of manufacturer. (64->32)*/
++#define SX_WPS_MODEL_NAME_MAX_LEN 16    /* silex : Chenge the MAX length of model_name. (32->16)*/
+ #define WPS_MODEL_NUMBER_MAX_LEN 32
+ #define WPS_SERIAL_NUMBER_MAX_LEN 32
++#define MAX_WPS_ID_LEN 128
+ 
+ /* Attribute Types */
+ enum wps_attribute {
+diff --git a/src/wps/wps_i.h b/src/wps/wps_i.h
+index 2cf22d4..6218eaa 100644
+--- a/src/wps/wps_i.h
++++ b/src/wps/wps_i.h
+@@ -148,6 +148,8 @@ void wps_pbc_timeout_event(struct wps_context *wps);
+ void wps_pbc_active_event(struct wps_context *wps);
+ void wps_pbc_disable_event(struct wps_context *wps);
+ 
++void wps_pin_timeout_event(struct wps_context *wps);
++
+ struct wpabuf * wps_build_wsc_ack(struct wps_data *wps);
+ struct wpabuf * wps_build_wsc_nack(struct wps_data *wps);
+ 
+diff --git a/src/wps/wps_registrar.c b/src/wps/wps_registrar.c
+index 0ac5b28..1d15c6f 100644
+--- a/src/wps/wps_registrar.c
++++ b/src/wps/wps_registrar.c
+@@ -3479,6 +3479,7 @@ static void wps_registrar_set_selected_timeout(void *eloop_ctx,
+ 
+ 	wpa_printf(MSG_DEBUG, "WPS: Selected Registrar timeout - "
+ 		   "unselect internal Registrar");
++	wps_pin_timeout_event(reg->wps); /* add silex */
+ 	reg->selected_registrar = 0;
+ 	reg->pbc = 0;
+ 	wps_registrar_selected_registrar_changed(reg, 0);
+diff --git a/wpa_supplicant/Makefile b/wpa_supplicant/Makefile
+index a0106ab..045e459 100644
+--- a/wpa_supplicant/Makefile
++++ b/wpa_supplicant/Makefile
+@@ -669,6 +669,11 @@ endif
+ TLS_FUNCS=y
+ CONFIG_IEEE8021X_EAPOL=y
+ NEED_T_PRF=y
++ifeq ($(CONFIG_PACBIN_DECAP), y)
++# PAC decapsulation modules for EAP-FAST. Added by silex
++CFLAGS += -DPACBIN_DECAP
++OBJS += ../src/pacdecap/pacdecap.o
++endif
+ endif
+ 
+ ifdef CONFIG_EAP_TEAP
+diff --git a/wpa_supplicant/config.c b/wpa_supplicant/config.c
+index fc1ed4f..705c525 100644
+--- a/wpa_supplicant/config.c
++++ b/wpa_supplicant/config.c
+@@ -2301,6 +2301,10 @@ static const struct parse_data ssid_fields[] = {
+ #ifdef IEEE8021X_EAPOL
+ 	{ INT(eap_workaround) },
+ 	{ STRe(pac_file) },
++#ifdef PACBIN_DECAP
++    { STRe(pac_bin) },
++    { STRe(pac_bin_passwd) },
++#endif
+ 	{ INTe(fragment_size) },
+ 	{ INTe(ocsp) },
+ #endif /* IEEE8021X_EAPOL */
+@@ -2562,6 +2566,10 @@ static void eap_peer_config_free(struct eap_peer_config *eap)
+ 	bin_clear_free(eap->new_password, eap->new_password_len);
+ 	str_clear_free(eap->external_sim_resp);
+ 	os_free(eap->openssl_ciphers);
++#ifdef PACBIN_DECAP
++	os_free(eap->pac_bin);
++	os_free(eap->pac_bin_passwd);
++#endif
+ }
+ #endif /* IEEE8021X_EAPOL */
+ 
+@@ -4748,10 +4756,10 @@ static const struct global_parse_data global_fields[] = {
+ #ifdef CONFIG_WPS
+ 	{ FUNC(uuid), CFG_CHANGED_UUID },
+ 	{ INT_RANGE(auto_uuid, 0, 1), 0 },
+-	{ STR_RANGE(device_name, 0, WPS_DEV_NAME_MAX_LEN),
++	{ STR_RANGE(device_name, 0, SX_WPS_DEV_NAME_MAX_LEN),
+ 	  CFG_CHANGED_DEVICE_NAME },
+-	{ STR_RANGE(manufacturer, 0, 64), CFG_CHANGED_WPS_STRING },
+-	{ STR_RANGE(model_name, 0, 32), CFG_CHANGED_WPS_STRING },
++	{ STR_RANGE(manufacturer, 0, SX_WPS_MANUFACTURER_MAX_LEN), CFG_CHANGED_WPS_STRING },
++	{ STR_RANGE(model_name, 0, SX_WPS_MODEL_NAME_MAX_LEN), CFG_CHANGED_WPS_STRING },
+ 	{ STR_RANGE(model_number, 0, 32), CFG_CHANGED_WPS_STRING },
+ 	{ STR_RANGE(serial_number, 0, 32), CFG_CHANGED_WPS_STRING },
+ 	{ FUNC(device_type), CFG_CHANGED_DEVICE_TYPE },
+diff --git a/wpa_supplicant/config_file.c b/wpa_supplicant/config_file.c
+index 91d5caa..520c1f3 100644
+--- a/wpa_supplicant/config_file.c
++++ b/wpa_supplicant/config_file.c
+@@ -24,6 +24,10 @@
+ #include "eap_peer/eap_methods.h"
+ #include "eap_peer/eap.h"
+ 
++#ifdef PACBIN_DECAP
++#include "pacdecap/pacdecap_bin.h"
++#endif
++
+ 
+ static int newline_terminated(const char *buf, size_t buflen)
+ {
+@@ -128,6 +132,11 @@ static int wpa_config_validate_network(struct wpa_ssid *ssid, int line)
+ {
+ 	int errors = 0;
+ 
++#ifndef NO_SILEX_CHANGED
++	int i = 0;
++	struct eap_method_type *m = NULL;
++#endif
++
+ 	if (ssid->passphrase) {
+ 		if (ssid->psk_set) {
+ 			wpa_printf(MSG_ERROR, "Line %d: both PSK and "
+@@ -151,6 +160,39 @@ static int wpa_config_validate_network(struct wpa_ssid *ssid, int line)
+ 		ssid->group_cipher &= ~WPA_CIPHER_CCMP;
+ 	}
+ 
++#ifndef NO_SILEX_CHANGED
++	if( ssid->eap.eap_methods ) {
++		m = ssid->eap.eap_methods;
++		for(i=0; (m[i].vendor != EAP_VENDOR_IETF ||
++				m[i].method != EAP_TYPE_NONE); i++) {
++
++			switch(m[i].method){
++			case EAP_TYPE_FAST:
++				/* pac_file */
++				if( ssid->eap.pac_file == NULL) {
++					wpa_printf(MSG_ERROR, "Line %d: FAST accepted for "
++				"eap type, but no pac_file configured.", line);
++					errors++;
++				}
++#ifdef PACBIN_DECAP
++				else {
++					if(ssid->eap.pac_bin &&
++					pacdecap_init(ssid->eap.pac_bin_passwd, ssid->eap.pac_bin, ssid->eap.pac_file) < 0 ) {
++						wpa_printf(MSG_ERROR, "Line %d: FAST accepted for "
++								"eap type, but error pac_bin configured.",
++								line);
++						errors++;
++					}
++				}
++#endif
++				break;
++			default:
++				break;
++			}
++		}
++	}
++#endif
++
+ 	if (ssid->mode == WPAS_MODE_MESH &&
+ 	    (ssid->key_mgmt != WPA_KEY_MGMT_NONE &&
+ 	    ssid->key_mgmt != WPA_KEY_MGMT_SAE)) {
+@@ -823,6 +865,10 @@ static void wpa_config_write_network(FILE *f, struct wpa_ssid *ssid)
+ #ifdef IEEE8021X_EAPOL
+ 	INT_DEF(eap_workaround, DEFAULT_EAP_WORKAROUND);
+ 	STR(pac_file);
++#ifdef PACBIN_DECAP
++	STR(pac_bin);
++	STR(pac_bin_passwd);
++#endif
+ 	INT_DEFe(fragment_size, DEFAULT_FRAGMENT_SIZE);
+ 	INTe(ocsp);
+ 	INT_DEFe(sim_num, DEFAULT_USER_SELECTED_SIM);
+diff --git a/wpa_supplicant/defconfig b/wpa_supplicant/defconfig
+index cdfb197..264493c 100644
+--- a/wpa_supplicant/defconfig
++++ b/wpa_supplicant/defconfig
+@@ -26,13 +26,13 @@
+ # replacement for WEXT and its use allows wpa_supplicant to properly control
+ # the driver to improve existing functionality like roaming and to support new
+ # functionality.
+-CONFIG_DRIVER_WEXT=y
++#CONFIG_DRIVER_WEXT=y
+ 
+ # Driver interface for Linux drivers using the nl80211 kernel interface
+ CONFIG_DRIVER_NL80211=y
+ 
+ # QCA vendor extensions to nl80211
+-#CONFIG_DRIVER_NL80211_QCA=y
++CONFIG_DRIVER_NL80211_QCA=y
+ 
+ # driver_nl80211.c requires libnl. If you are compiling it yourself
+ # you may need to point hostapd to your version of libnl.
+@@ -71,7 +71,7 @@ CONFIG_LIBNL32=y
+ # CONFIG_USE_NDISUIO=y
+ 
+ # Driver interface for wired Ethernet drivers
+-CONFIG_DRIVER_WIRED=y
++#CONFIG_DRIVER_WIRED=y
+ 
+ # Driver interface for MACsec capable Qualcomm Atheros drivers
+ #CONFIG_DRIVER_MACSEC_QCA=y
+@@ -111,6 +111,9 @@ CONFIG_EAP_TTLS=y
+ # EAP-FAST
+ CONFIG_EAP_FAST=y
+ 
++# PAC File decapsulation function
++CONFIG_PACBIN_DECAP=y
++
+ # EAP-TEAP
+ # Note: The current EAP-TEAP implementation is experimental and should not be
+ # enabled for production use. The IETF RFC 7170 that defines EAP-TEAP has number
+@@ -137,10 +140,10 @@ CONFIG_EAP_OTP=y
+ #CONFIG_EAP_PSK=y
+ 
+ # EAP-pwd (secure authentication using only a password)
+-CONFIG_EAP_PWD=y
++#CONFIG_EAP_PWD=y
+ 
+ # EAP-PAX
+-CONFIG_EAP_PAX=y
++#CONFIG_EAP_PAX=y
+ 
+ # LEAP
+ CONFIG_EAP_LEAP=y
+@@ -156,20 +159,20 @@ CONFIG_EAP_LEAP=y
+ #CONFIG_USIM_SIMULATOR=y
+ 
+ # EAP-SAKE
+-CONFIG_EAP_SAKE=y
++#CONFIG_EAP_SAKE=y
+ 
+ # EAP-GPSK
+-CONFIG_EAP_GPSK=y
++#CONFIG_EAP_GPSK=y
+ # Include support for optional SHA256 cipher suite in EAP-GPSK
+-CONFIG_EAP_GPSK_SHA256=y
++#CONFIG_EAP_GPSK_SHA256=y
+ 
+ # EAP-TNC and related Trusted Network Connect support (experimental)
+-CONFIG_EAP_TNC=y
++#CONFIG_EAP_TNC=y
+ 
+ # Wi-Fi Protected Setup (WPS)
+ CONFIG_WPS=y
+ # Enable WPS external registrar functionality
+-#CONFIG_WPS_ER=y
++CONFIG_WPS_ER=y
+ # Disable credentials for an open network by default when acting as a WPS
+ # registrar.
+ #CONFIG_WPS_REG_DISABLE_OPEN=y
+@@ -177,7 +180,7 @@ CONFIG_WPS=y
+ #CONFIG_WPS_NFC=y
+ 
+ # EAP-IKEv2
+-CONFIG_EAP_IKEV2=y
++#CONFIG_EAP_IKEV2=y
+ 
+ # EAP-EKE
+ #CONFIG_EAP_EKE=y
+@@ -191,7 +194,7 @@ CONFIG_PKCS12=y
+ 
+ # Smartcard support (i.e., private key on a smartcard), e.g., with openssl
+ # engine.
+-CONFIG_SMARTCARD=y
++#CONFIG_SMARTCARD=y
+ 
+ # PC/SC interface for smartcards (USIM, GSM SIM)
+ # Enable this if EAP-SIM or EAP-AKA is included
+@@ -226,7 +229,7 @@ CONFIG_CTRL_IFACE=y
+ 
+ # Include internal line edit mode in wpa_cli. This can be used as a replacement
+ # for GNU Readline to provide limited command line editing and history support.
+-#CONFIG_WPA_CLI_EDIT=y
++CONFIG_WPA_CLI_EDIT=y
+ 
+ # Remove debugging code that is printing out debug message to stdout.
+ # This can be used to reduce the size of the wpa_supplicant considerably
+@@ -279,12 +282,12 @@ CONFIG_BACKEND=file
+ # unix = UNIX/POSIX like systems (default)
+ # win32 = Windows systems
+ # none = Empty template
+-#CONFIG_OS=unix
++CONFIG_OS=unix
+ 
+ # Select event loop implementation
+ # eloop = select() loop (default)
+ # eloop_win = Windows events and WaitForMultipleObject() loop
+-#CONFIG_ELOOP=eloop
++CONFIG_ELOOP=eloop
+ 
+ # Should we use poll instead of select? Select is used by default.
+ #CONFIG_ELOOP_POLL=y
+@@ -302,7 +305,7 @@ CONFIG_BACKEND=file
+ # winpcap = WinPcap with receive thread
+ # ndis = Windows NDISUIO (note: requires CONFIG_USE_NDISUIO=y)
+ # none = Empty template
+-#CONFIG_L2_PACKET=linux
++CONFIG_L2_PACKET=linux
+ 
+ # Disable Linux packet socket workaround applicable for station interface
+ # in a bridge for EAPOL frames. This should be uncommented only if the kernel
+@@ -323,7 +326,7 @@ CONFIG_IEEE80211W=y
+ # internal = Internal TLSv1 implementation (experimental)
+ # linux = Linux kernel AF_ALG and internal TLSv1 implementation (experimental)
+ # none = Empty template
+-#CONFIG_TLS=openssl
++CONFIG_TLS=openssl
+ 
+ # TLS-based EAP methods require at least TLS v1.0. Newer version of TLS (v1.1)
+ # can be enabled to get a stronger construction of messages when block ciphers
+@@ -367,10 +370,10 @@ CONFIG_IEEE80211W=y
+ 
+ # Add support for new DBus control interface
+ # (fi.w1.hostap.wpa_supplicant1)
+-CONFIG_CTRL_IFACE_DBUS_NEW=y
++#CONFIG_CTRL_IFACE_DBUS_NEW=y
+ 
+ # Add introspection support for new DBus control interface
+-CONFIG_CTRL_IFACE_DBUS_INTRO=y
++#CONFIG_CTRL_IFACE_DBUS_INTRO=y
+ 
+ # Add support for loading EAP methods dynamically as shared libraries.
+ # When this option is enabled, each EAP method can be either included
+@@ -397,10 +400,10 @@ CONFIG_CTRL_IFACE_DBUS_INTRO=y
+ CONFIG_IEEE80211R=y
+ 
+ # Add support for writing debug log to a file (/tmp/wpa_supplicant-log-#.txt)
+-CONFIG_DEBUG_FILE=y
++#CONFIG_DEBUG_FILE=y
+ 
+ # Send debug messages to syslog instead of stdout
+-CONFIG_DEBUG_SYSLOG=y
++#CONFIG_DEBUG_SYSLOG=y
+ # Set syslog facility for debug messages
+ #CONFIG_DEBUG_SYSLOG_FACILITY=LOG_DAEMON
+ 
+@@ -468,7 +471,7 @@ CONFIG_DEBUG_SYSLOG=y
+ # disabled. This will save some in binary size and CPU use. However, this
+ # should only be considered for builds that are known to be used on devices
+ # that meet the requirements described above.
+-#CONFIG_NO_RANDOM_POOL=y
++CONFIG_NO_RANDOM_POOL=y
+ 
+ # Should we attempt to use the getrandom(2) call that provides more reliable
+ # yet secure randomness source than /dev/random on Linux 3.17 and newer.
+@@ -499,7 +502,7 @@ CONFIG_HS20=y
+ #CONFIG_MATCH_IFACE=y
+ 
+ # Disable roaming in wpa_supplicant
+-#CONFIG_NO_ROAMING=y
++CONFIG_NO_ROAMING=y
+ 
+ # AP mode operations with wpa_supplicant
+ # This can be used for controlling AP mode operations with wpa_supplicant. It
+@@ -514,7 +517,7 @@ CONFIG_AP=y
+ CONFIG_P2P=y
+ 
+ # Enable TDLS support
+-#CONFIG_TDLS=y
++CONFIG_TDLS=y
+ 
+ # Wi-Fi Display
+ # This can be used to enable Wi-Fi Display extensions for P2P using an external
+@@ -540,7 +543,7 @@ CONFIG_WIFI_DISPLAY=y
+ #CONFIG_EXT_PASSWORD_TEST=y
+ 
+ # Enable Fast Session Transfer (FST)
+-#CONFIG_FST=y
++CONFIG_FST=y
+ 
+ # Enable CLI commands for FST testing
+ #CONFIG_FST_TEST=y
+@@ -572,13 +575,13 @@ CONFIG_WIFI_DISPLAY=y
+ #
+ # For more details refer to:
+ # http://wireless.kernel.org/en/users/Documentation/acs
+-#CONFIG_ACS=y
++CONFIG_ACS=y
+ 
+ # Support Multi Band Operation
+ #CONFIG_MBO=y
+ 
+ # Fast Initial Link Setup (FILS) (IEEE 802.11ai)
+-#CONFIG_FILS=y
++CONFIG_FILS=y
+ # FILS shared key authentication with PFS
+ #CONFIG_FILS_SK_PFS=y
+ 
+@@ -607,9 +610,16 @@ CONFIG_BGSCAN_SIMPLE=y
+ 
+ # Opportunistic Wireless Encryption (OWE)
+ # Experimental implementation of draft-harkins-owe-07.txt
+-#CONFIG_OWE=y
++CONFIG_OWE=y
+ 
+ # Device Provisioning Protocol (DPP)
+ # This requires CONFIG_IEEE80211W=y to be enabled, too. (see
+ # wpa_supplicant/README-DPP for details)
+-CONFIG_DPP=y
++#CONFIG_DPP=y
++
++# Parameters recommended by QCA LEA3 release notes
++CONFIG_INTERWORKING=y
++CONFIG_WAPI=y
++
++CONFIG_ERP=y
++
+diff --git a/wpa_supplicant/p2p_supplicant.c b/wpa_supplicant/p2p_supplicant.c
+index 55b3b08..6719bde 100644
+--- a/wpa_supplicant/p2p_supplicant.c
++++ b/wpa_supplicant/p2p_supplicant.c
+@@ -1993,6 +1993,7 @@ do {                                    \
+ 	C(serial_number);
+ 	C(config_methods);
+ #undef C
++    os_memcpy(d->os_version, s->os_version, 4);
+ 
+ 	os_memcpy(d->device_type, s->device_type, WPS_DEV_TYPE_LEN);
+ 	os_memcpy(d->sec_device_type, s->sec_device_type,
+@@ -5836,6 +5837,7 @@ static int wpas_p2p_select_go_freq(struct wpa_supplicant *wpa_s, int freq)
+ 	}
+ 
+ 	if (freq > 0 && !p2p_supported_freq_go(wpa_s->global->p2p, freq)) {
++#if 0 /* SHQ: not allowed DFS GO */
+ 		if ((wpa_s->drv_flags & WPA_DRIVER_FLAGS_DFS_OFFLOAD) &&
+ 		    ieee80211_is_dfs(freq, wpa_s->hw.modes,
+ 				     wpa_s->hw.num_modes)) {
+@@ -5848,6 +5850,7 @@ static int wpas_p2p_select_go_freq(struct wpa_supplicant *wpa_s, int freq)
+ 				   __func__, freq);
+ 			return freq;
+ 		}
++#endif
+ 		wpa_printf(MSG_DEBUG, "P2P: The forced channel for GO "
+ 			   "(%u MHz) is not supported for P2P uses",
+ 			   freq);
+diff --git a/wpa_supplicant/wpa_cli.c b/wpa_supplicant/wpa_cli.c
+index 43ac427..c2d9a77 100644
+--- a/wpa_supplicant/wpa_cli.c
++++ b/wpa_supplicant/wpa_cli.c
+@@ -4007,6 +4007,10 @@ static void wpa_cli_action_process(const char *msg)
+ 		wpa_cli_exec(action_file, ifname, pos);
+ 	} else if (str_starts(pos, WPS_EVENT_TIMEOUT)) {
+ 		wpa_cli_exec(action_file, ifname, pos);
++#if 1 /* silex add for WPS Overlap event notifications. */
++	} else if (str_starts(pos, WPS_EVENT_OVERLAP)) {
++		wpa_cli_exec(action_file, ctrl_ifname, pos);
++#endif
+ 	} else if (str_starts(pos, WPS_EVENT_FAIL)) {
+ 		wpa_cli_exec(action_file, ifname, pos);
+ 	} else if (str_starts(pos, AP_STA_CONNECTED)) {
+diff --git a/wpa_supplicant/wpa_supplicant.c b/wpa_supplicant/wpa_supplicant.c
+index e7a24fc..b7bf815 100644
+--- a/wpa_supplicant/wpa_supplicant.c
++++ b/wpa_supplicant/wpa_supplicant.c
+@@ -135,14 +135,22 @@ int wpa_set_wep_keys(struct wpa_supplicant *wpa_s, struct wpa_ssid *ssid)
+ {
+ 	int i, set = 0;
+ 
++	/* First, Set TX key. This change is nessesary for QCA9377 driver */
++	if (ssid->wep_key_len[ssid->wep_tx_keyidx] != 0){
++		wpa_drv_set_key(wpa_s, WPA_ALG_WEP, NULL, ssid->wep_tx_keyidx, 1, NULL, 0,
++			ssid->wep_key[ssid->wep_tx_keyidx], ssid->wep_key_len[ssid->wep_tx_keyidx]);
++		set = 1;
++	}
++
+ 	for (i = 0; i < NUM_WEP_KEYS; i++) {
+ 		if (ssid->wep_key_len[i] == 0)
+ 			continue;
+ 
+ 		set = 1;
++
++		/* Set Broadcast Key */
+ 		wpa_drv_set_key(wpa_s, WPA_ALG_WEP, NULL,
+-				i, i == ssid->wep_tx_keyidx, NULL, 0,
+-				ssid->wep_key[i], ssid->wep_key_len[i]);
++			i, 0, NULL, 0, ssid->wep_key[i], ssid->wep_key_len[i]);
+ 	}
+ 
+ 	return set;
+@@ -407,6 +415,7 @@ void wpa_supplicant_set_non_wpa_policy(struct wpa_supplicant *wpa_s,
+ 	wpa_s->group_cipher = WPA_CIPHER_NONE;
+ 	wpa_s->mgmt_group_cipher = 0;
+ 
++#if 0
+ 	for (i = 0; i < NUM_WEP_KEYS; i++) {
+ 		if (ssid->wep_key_len[i] > 5) {
+ 			wpa_s->pairwise_cipher = WPA_CIPHER_WEP104;
+@@ -418,6 +427,15 @@ void wpa_supplicant_set_non_wpa_policy(struct wpa_supplicant *wpa_s,
+ 			break;
+ 		}
+ 	}
++#else
++	if (ssid->wep_key_len[ssid->wep_tx_keyidx] > 5) {
++		wpa_s->pairwise_cipher = WPA_CIPHER_WEP104;
++		wpa_s->group_cipher = WPA_CIPHER_WEP104;
++	} else if (ssid->wep_key_len[ssid->wep_tx_keyidx] > 0) {
++		wpa_s->pairwise_cipher = WPA_CIPHER_WEP40;
++		wpa_s->group_cipher = WPA_CIPHER_WEP40;
++	}
++#endif
+ 
+ 	wpa_sm_set_param(wpa_s->wpa, WPA_PARAM_RSN_ENABLED, 0);
+ 	wpa_sm_set_param(wpa_s->wpa, WPA_PARAM_KEY_MGMT, wpa_s->key_mgmt);
+diff --git a/wpa_supplicant/wps_supplicant.c b/wpa_supplicant/wps_supplicant.c
+old mode 100644
+new mode 100755
+index 0579274..1cd0ccc
+--- a/wpa_supplicant/wps_supplicant.c
++++ b/wpa_supplicant/wps_supplicant.c
+@@ -634,12 +634,12 @@ static void wpa_supplicant_wps_event_fail(struct wpa_supplicant *wpa_s,
+ 	if (fail->error_indication > 0 &&
+ 	    fail->error_indication < NUM_WPS_EI_VALUES) {
+ 		wpa_msg(wpa_s, MSG_INFO,
+-			WPS_EVENT_FAIL "msg=%d config_error=%d reason=%d (%s)",
++			WPS_EVENT_FAIL "msg=%d config_error=%d reason=%d [%s]",
+ 			fail->msg, fail->config_error, fail->error_indication,
+ 			wps_ei_str(fail->error_indication));
+ 		if (wpa_s->p2pdev && wpa_s->p2pdev != wpa_s)
+ 			wpa_msg(wpa_s->p2pdev, MSG_INFO, WPS_EVENT_FAIL
+-				"msg=%d config_error=%d reason=%d (%s)",
++				"msg=%d config_error=%d reason=%d [%s]",
+ 				fail->msg, fail->config_error,
+ 				fail->error_indication,
+ 				wps_ei_str(fail->error_indication));
+@@ -691,6 +691,7 @@ static void wpas_wps_reenable_networks(struct wpa_supplicant *wpa_s)
+ 				   "configuration");
+ 		}
+ #endif /* CONFIG_NO_CONFIG_WRITE */
++		wpa_supplicant_req_scan(wpa_s, 5, 0);
+ 	}
+ }
+ 
+-- 
+2.14.5
+

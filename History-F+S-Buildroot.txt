@@ -1,5 +1,41 @@
 BuildRoot History for F&S boards
+
 --------------------------------
+buildroot-2019.05.1-picocoremx6sx-B2019.11 (21.08.2020)
+---------------------------------------------------
+Supported boards: PicoCoreMX6SX, VC600
+Not tested:       armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+                  QBlissA9, QBlissA9r2, efusA9X, PicoCOMA9X,PicoCoreMX6UL
+                  CONT1, CUBEA5, armStoneA5, NetDCUA5, PicoCOMA5, AGATEWAY,
+                  HGATEWAY, efusA7UL, PicoCOM1.2, GAR1, GAR2,
+                  CubeA7UL, Cube2.0, PicoCOMA7
+
+
+
+--------------------------------
+buildroot-2019.05.1-picocoremx6ul-B2019.11 (14.08.2020)
+---------------------------------------------------
+Supported boards: PicoCoreMX6UL
+Not tested:       armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+                  QBlissA9, QBlissA9r2, efusA9X, PicoCOMA9X,PicoCoreMX6SX
+                  CONT1, CUBEA5, armStoneA5, NetDCUA5, PicoCOMA5, AGATEWAY,
+                  HGATEWAY, efusA7UL, PicoCOM1.2, GAR1, GAR2,
+                  CubeA7UL, Cube2.0, PicoCOMA7
+
+
+
+buildroot-2019.05.1-picocoma7-B2019.11 (21.07.2020)
+---------------------------------------------------
+Supported boards: PicoCOMA7
+Not tested:       armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+                  QBlissA9, QBlissA9r2, efusA9X, PicoCOMA9X, PicoCoreMX6SX,
+                  CONT1, CUBEA5, armStoneA5, NetDCUA5, PicoCOMA5, AGATEWAY,
+                  HGATEWAY, efusA7UL, PicoCOM1.2, PicoCoreMX6UL, GAR1, GAR2,
+                  CubeA7UL, Cube2.0
+
+- Add PicoCOMA7 support
+
+
 
 buildroot-2019.05.1-fsimx6sx-B2019.11 (29.11.2019)
 --------------------------------------------------

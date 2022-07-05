@@ -1,0 +1,51 @@
+#!/bin/sh
+
+TARGET="$1"
+COMMON=board/f+s/common
+BOARD=board/f+s/cube
+MKIMAGE=mkimage
+CP="/bin/cp -f"
+MKDIR="/bin/mkdir -p"
+platform=cube
+
+tput smso
+echo ">>>   Doing final CUBE setup"
+tput rmso
+
+# Create additional mountpoints /data and /export
+${MKDIR} ${TARGET}/data
+${MKDIR} ${TARGET}/export
+
+# Copy the modified fstab file
+${CP} ${COMMON}/etc/fstab-${platform} ${TARGET}/etc/fstab
+
+# Copy the modified inittab file with mdev support
+${CP} ${COMMON}/etc/inittab-${platform} ${TARGET}/etc/inittab
+
+# Copy the enhanced mdev configuration file
+${CP} ${COMMON}/etc/mdev.conf ${TARGET}/etc
+
+# Copy the CubeA5/CubeA7UL/Cube2.0 specific start scripts
+${CP} ${COMMON}/etc/init.d/S01${platform} ${TARGET}/etc/init.d
+${CP} ${COMMON}/etc/init.d/S02leds ${TARGET}/etc/init.d
+
+# Copy the wrapper script fsgetty
+mkdir -p ${TARGET}/sbin
+${CP} ${COMMON}/sbin/fsgetty ${TARGET}/sbin
+
+# Copy the F&S aliases file
+mkdir -p ${TARGET}/etc/profile.d
+${CP} ${COMMON}/etc/profile.d/fsalias.sh ${TARGET}/etc/profile.d
+
+# Newer toolchains create ld-linux-armhf.so.3, but we also need ld-linux.so.3
+if [ -L "${TARGET}/lib/ld-linux-armhf.so.3" ] && [ ! -e "${TARGET}/lib/ld-linux.so.3" ];
+then
+    ld=`readlink ${TARGET}/lib/ld-linux-armhf.so.3`
+    ln -s "${ld}" ${TARGET}/lib/ld-linux.so.3
+fi
+
+# Create update.scr and recover.scr from source texts
+${MKIMAGE} -A arm -O u-boot -T script -C none -n "$platform update script" \
+    -d ${BOARD}/update-$platform.txt ${TARGET}/update.scr
+${MKIMAGE} -A arm -O u-boot -T script -C none -n "$platform recover script" \
+    -d ${BOARD}/recover-$platform.txt ${TARGET}/recover.scr

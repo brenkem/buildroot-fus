@@ -1,6 +1,34 @@
-BuildRoot History for F&S boards
-
+Buildroot History for F&S boards
 --------------------------------
+
+buildroot-2019.05.3-fsimx6-B2020.04.1 (31.01.2022)
+--------------------------------------------------
+Supported boards: armStoneA9, armStoneA9r2, efusA9, efusA9r2, PicoMODA9,
+                  NetDCUA9, QBlissA9, QBlissA9r2, armStoneA5, Cube2.0, CubeA5,
+                  AGATEWAY
+Not tested:       efusA9X, PicoCOMA9X, PicoCoreMX6SX, PicoCoreMX7ULP,
+                  CONT1, efusA7UL, PicoCOM1.2, PicoCoreMX6UL, GAR1, GAR2,
+                  CubeA7UL, NetDCUA5, PicoCOMA5, HGATEWAY
+
+Changes since buildroot-2019.05.3-fsimx6-B2020.04:
+- Add support for efusA9r2
+
+
+
+buildroot-2019.05.1-fsimx6ul-B2019.11.1 (03.08.2021)
+----------------------------------------------------
+Supported boards: efusA7UL, PicoCOM1.2, PicoCoreMX6UL, PicoCoreMX6UL100,
+                  PicoCOMA7
+Not tested:       armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+                  QBlissA9, QBlissA9r2, efusA9X, PicoCOMA9X, PicoCoreMX6SX,
+                  CONT1, CUBEA5, armStoneA5, NetDCUA5, PicoCOMA5, AGATEWAY,
+                  HGATEWAY, GAR1, GAR2, CubeA7UL, Cube2.0
+
+Changes since buildroot-2019.05.1-fsimx6ul-B2019.11:
+- Improve support for fsimx6ul* defconfigs
+
+
+
 buildroot-2019.05.1-picocoremx6sx-B2019.11 (21.08.2020)
 ---------------------------------------------------
 Supported boards: PicoCoreMX6SX, VC600
@@ -10,9 +38,10 @@ Not tested:       armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
                   HGATEWAY, efusA7UL, PicoCOM1.2, GAR1, GAR2,
                   CubeA7UL, Cube2.0, PicoCOMA7
 
+(No changes)
 
 
---------------------------------
+
 buildroot-2019.05.1-picocoremx6ul-B2019.11 (14.08.2020)
 ---------------------------------------------------
 Supported boards: PicoCoreMX6UL
@@ -21,6 +50,8 @@ Not tested:       armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
                   CONT1, CUBEA5, armStoneA5, NetDCUA5, PicoCOMA5, AGATEWAY,
                   HGATEWAY, efusA7UL, PicoCOM1.2, GAR1, GAR2,
                   CubeA7UL, Cube2.0, PicoCOMA7
+
+(No changes)
 
 
 
@@ -34,19 +65,6 @@ Not tested:       armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
                   CubeA7UL, Cube2.0
 
 - Add PicoCOMA7 support
-
-
-
-buildroot-2019.05.3-fsimx6-B2020.04.1 (31.01.2022)
---------------------------------------------------
-Supported boards: armStoneA9, armStoneA9r2, efusA9, efusA9r2, PicoMODA9,
-                  NetDCUA9, QBlissA9, QBlissA9r2, armStoneA5, Cube2.0, CubeA5,
-                  AGATEWAY
-Not tested:       efusA9X, PicoCOMA9X, PicoCoreMX6SX, PicoCoreMX7ULP,
-                  CONT1, efusA7UL, PicoCOM1.2, PicoCoreMX6UL, GAR1, GAR2,
-                  CubeA7UL, NetDCUA5, PicoCOMA5, HGATEWAY
-
-- Add support for efusA9r2
 
 
 
@@ -95,19 +113,6 @@ Not tested:       armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
                   PicoCOMA5, AGATEWAY, HGATEWAY
 
 - Add support for device-tree gar2 in fsimx6ul_wayland_defconfig
-
-
-
-buildroot-2019.05.1-fsimx6ul-B2019.11.1 (03.08.2021)
-----------------------------------------------------
-Supported boards: efusA7UL, PicoCOM1.2, PicoCoreMX6UL, PicoCoreMX6UL100,
-                  PicoCOMA7
-Not tested:       armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
-                  QBlissA9, QBlissA9r2, efusA9X, PicoCOMA9X, PicoCoreMX6SX,
-                  CONT1, CUBEA5, armStoneA5, NetDCUA5, PicoCOMA5, AGATEWAY,
-                  HGATEWAY, GAR1, GAR2, CubeA7UL, Cube2.0
-
-- Improve support for fsimx6ul* defconfigs
 
 
 

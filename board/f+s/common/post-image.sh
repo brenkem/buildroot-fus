@@ -22,11 +22,11 @@ dtb_list()
 linux_image()
 {
 	if grep -Eq "^BR2_LINUX_KERNEL_UIMAGE=y$" ${BR2_CONFIG}; then
-		echo "\"uImage\""
+		echo "uImage"
 	elif grep -Eq "^BR2_LINUX_KERNEL_IMAGE=y$" ${BR2_CONFIG}; then
-		echo "\"Image\""
-	else
-		echo "\"zImage\""
+		echo "Image"
+	elif grep -Eq "^BR2_LINUX_KERNEL_ZIMAGE=y$" ${BR2_CONFIG}; then
+		echo "zImage"
 	fi
 }
 
@@ -83,24 +83,6 @@ main()
 		--outputpath "${BINARIES_DIR}" \
 		--config "${GENIMAGE_CFG}"
 
-	if grep -Eq "^BR2_PACKAGE_FS_UPDATE_LIB=y$" ${BR2_CONFIG}; then
-
-		# Generate RAUC Update
-		export RAUC_TEMPLATE_MMC=${PWD}"/board/f+s/common/rauc/rauc_mmc_template"
-		export RAUC_TEMPLATE_NAND=${PWD}"/board/f+s/common/rauc/rauc_nand_template"
-
-		export RAUC_BINARY=${HOST_DIR}/usr/bin/rauc
-		export RAUC_PATH_TO_OUTPUT=${BINARIES_DIR}
-
-		export RAUC_CERT=${PWD}"/board/f+s/common/rauc/rauc.cert.pem"
-		export RAUC_KEY=${PWD}"/board/f+s/common/rauc/rauc.key.pem"
-
-		export DEPLOY_DIR_IMAGE=${BINARIES_DIR}
-        export PYTHONPATH=${HOST_DIR}/
-
-		/usr/bin/python3 ${PWD}/board/f+s/common/rauc_create_update.py
-	fi;
-
-	exit $?
+	return $?
 }
 main $@

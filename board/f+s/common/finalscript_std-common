@@ -51,37 +51,3 @@ if grep ^BR2_PACKAGE_WESTON=y $BR2_CONFIG > /dev/null; then
     mkdir -p ${TARGET}/etc/xdg/weston
     ${CP} ${COMMON}/etc/xdg/weston/weston.ini ${TARGET}/etc/xdg/weston
 fi
-
-# Prepare firmware image
-if grep ^BR2_PACKAGE_FS_UPDATE_LIB=y $BR2_CONFIG > /dev/null; then
-
-	mkdir -p ${TARGET}/rw_fs/root
-    if [[ -z "${FIRMWARE_VERSION}" ]]; then
-        echo "Environment FIRMWARE_VERSION is not set"
-        exit 3
-	fi
-	echo -n ${FIRMWARE_VERSION} > ${TARGET}/etc/fw_version
-
-	mkdir -p ${TARGET}/etc/rauc
-    mkdir -p ${TARGET}/mnt/rauc
-
-	install -m 0444 ${COMMON}/rauc/rauc.cert.pem ${TARGET}/etc/rauc
-
-	install -m 0444 ${COMMON}/etc/udev/rules.d/99-fus-updater-usb-auto-mount.rules ${TARGET}/etc/udev/rules.d/
-	install -m 0444 ${COMMON}/usr/libexec/usb_fs_updater.sh ${TARGET}/usr/libexec/usb_fs_updater.sh
-	install -m 0555 ${COMMON}/sbin/preinit.sh ${TARGET}/sbin
-
-	install -m 0444 ${COMMON}/etc/rauc/system.conf.nand ${TARGET}/etc/rauc/
-	install -m 0444  ${COMMON}/etc/fw_env.config.nand ${TARGET}/etc/
-
-	install -m 0444  ${COMMON}/etc/rauc/system.conf.mmc ${TARGET}/etc/rauc/
-	install -m 0444  ${COMMON}/etc/fw_env.config.mmc ${TARGET}/etc/
-
-	# Mandatory for application
-	mkdir -p ${TARGET}/app/etc
-	mkdir -p ${TARGET}/rw_fs
-	rm -rf ${BINARIES_DIR}/app_dir
-	mkdir -p ${BINARIES_DIR}/app_dir/application/current
-
-	install -m 0444 ${COMMON}/app/overlay.ini ${TARGET}/app/
-fi

@@ -1,0 +1,6 @@
+config BR2_PACKAGE_FS_FREERTOS_SAMPLE
+	bool "FS FreeRTOS sample for CM4 on i.MX7ULP"
+	default n
+	help
+	  Add FS FreeRTOS Sample files to add it for sdcard image on F&S
+	  boards and modules.

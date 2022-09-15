@@ -27,18 +27,8 @@ ${CP} ${COMMON}/etc/profile.d/tslib.sh ${TARGET}/etc/profile.d
 mkdir -p ${TARGET}/var/lib/alsa
 ${CP} ${COMMON}/var/lib/alsa/asound.state ${TARGET}/var/lib/alsa
 
-# Copy the x11 start script and configuration files
-if grep ^BR2_PACKAGE_XSERVER_XORG_SERVER=y $BR2_CONFIG > /dev/null; then
-    # Copy X server configuration
-    mkdir -p ${TARGET}/etc/X11
-    ${CP} $XORG_CONF ${TARGET}/etc/X11/xorg.conf
-    mkdir -p ${TARGET}/${XORG_CONF_D}
-    ${CP} ${COMMON}/${XORG_CONF_D}/10-tslib.conf.off ${TARGET}/${XORG_CONF_D}
-    # Copy enhanced profile (with DISPLAY and XAUTHORITY)
-    ${CP} ${COMMON}/etc/profile.d/xserver.sh ${TARGET}/etc/profile.d
-    # Copy start script for XServer
-    ${CP} ${COMMON}/etc/init.d/S40xorg ${TARGET}/etc/init.d
-fi
+# Install wpa_supplicant.conf with country=DE
+install -m 0664 ${COMMON}/etc/wpa_supplicant.conf ${TARGET}/etc/
 
 # Copy the weston start script
 if grep ^BR2_PACKAGE_WESTON=y $BR2_CONFIG > /dev/null; then
@@ -50,4 +40,43 @@ if grep ^BR2_PACKAGE_WESTON=y $BR2_CONFIG > /dev/null; then
     # Install weston.ini
     mkdir -p ${TARGET}/etc/xdg/weston
     ${CP} ${COMMON}/etc/xdg/weston/weston.ini ${TARGET}/etc/xdg/weston
+
+	if [ $USE_G2D -eq 1 ];then
+		sed -i 's/#use-g2d=1/use-g2d=1/g' ${TARGET}/etc/xdg/weston/weston.ini
+	fi
+	# Activate xwayland if XSERVER is installed
+	if grep ^BR2_PACKAGE_WESTON_XWAYLAND=y $BR2_CONFIG > /dev/null; then
+	    # Copy enhanced profile (with DISPLAY and XAUTHORITY)
+	    ${CP} ${COMMON}/etc/profile.d/xserver.sh ${TARGET}/etc/profile.d
+		sed -i 's/#xwayland=true/xwayland=true/g' ${TARGET}/etc/xdg/weston/weston.ini
+	fi
+	install -m 0664 ${COMMON}/etc/udev/rules.d/SX8654-touchscreen.rules ${TARGET}/etc/udev/rules.d/
+	install -m 0664 ${COMMON}/etc/udev/rules.d/TSC2004-touchscreen.rules ${TARGET}/etc/udev/rules.d/
+fi
+
+if grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION=y $BR2_CONFIG > /dev/null; then
+	${CP} ${COMMON}/sbin/preinit.sh ${TARGET}/sbin/preinit.sh
+
+	mkdir -p ${TARGET}/rw_fs/root/application/current
+
+	${CP} ${COMMON}/dynamic_mounting.py ${TARGET_DIR}/rw_fs/
+
+	${CP} ${COMMON}/etc/fw_version ${TARGET}/etc/
+
+	mkdir -p ${TARGET}/etc/rauc
+    mkdir -p ${TARGET}/mnt/rauc/bundle
+
+	${CP} ${COMMON}/rauc/rauc.cert.pem ${TARGET}/etc/rauc
+
+	install -m 0444 ${COMMON}/etc/udev/rules.d/99-fus-updater-usb-auto-mount.rules ${TARGET}/etc/udev/rules.d/
+	install -m 0444 ${COMMON}/usr/libexec/usb_fs_updater.sh ${TARGET}/usr/libexec/usb_fs_updater.sh
+	install -m 0555 ${COMMON}/sbin/preinit.sh ${TARGET}/sbin
+
+	if grep	^BR2_PACKAGE_FS_UPDATE_SOLUTION_NAND=y $BR2_CONFIG > /dev/null; then
+		${CP}  ${COMMON}/etc/rauc/system.conf.nand ${TARGET}/etc/rauc/system.conf
+		${CP}  ${COMMON}/etc/fw_env.config.nand ${TARGET}/etc/fw_env.config
+	elif grep ^BR2_PACKAGE_FS_UPDATE_SOLUTION_MMC=y $BR2_CONFIG > /dev/null; then
+		${CP}  ${COMMON}/etc/rauc/system.conf.mmc ${TARGET}/etc/rauc/system.conf
+		${CP}  ${COMMON}/etc/fw_env.config.mmc ${TARGET}/etc/fw_env.config
+	fi
 fi

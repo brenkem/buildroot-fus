@@ -1,0 +1,34 @@
+# Default SD card image for the F&S iMX7ULP boards
+#
+# We mimic the .sdcard Freescale's image format:
+# * U-Boot is integrated into uboot.nb0 and is dumped as is,
+# * a FAT partition at offset 8MB is containing Image and DTB files
+# * a single root filesystem partition is required (ext2, ext3 or ext4)
+#
+
+image boot.vfat {
+  vfat {
+    files = {
+      %FILES%
+    }
+  }
+  size = 88M
+}
+
+image emmc-fsimx7ulp.sysimg {
+
+  hdimage {
+  }
+
+  partition boot {
+    partition-type = 0xC
+    bootable = "true"
+    image = "boot.vfat"
+    offset = 8M
+  }
+
+  partition rootfs {
+    partition-type = 0x83
+    image = "rootfs.ext4"
+  }
+}

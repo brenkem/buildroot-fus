@@ -4,15 +4,15 @@
 #
 ################################################################################
 
-ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL),y)
+ifeq ($(BR2_PACKAGE_FREESCALE_IMX),y)
 WAYLAND_PROTOCOLS_VERSION = rel_imx_5.4.70_2.3.2
 WAYLAND_PROTOCOLS_SITE = https://source.codeaurora.org/external/imx/wayland-protocols-imx
 WAYLAND_PROTOCOLS_SITE_METHOD = git
 WAYLAND_PROTOCOLS_AUTORECONF = YES
 WAYLAND_PROTOCOLS_DEPENDENCIES = host-pkgconf
 else
-WAYLAND_PROTOCOLS_VERSION = 1.18
-WAYLAND_PROTOCOLS_SITE = http://wayland.freedesktop.org/releases
+WAYLAND_PROTOCOLS_VERSION = 1.20
+WAYLAND_PROTOCOLS_SITE = https://wayland.freedesktop.org/releases
 WAYLAND_PROTOCOLS_SOURCE = wayland-protocols-$(WAYLAND_PROTOCOLS_VERSION).tar.xz
 endif
 

@@ -1,7 +1,8 @@
-# From https://lists.freedesktop.org/archives/wayland-devel/2019-March/040356.html
-md5 7c634e262f8a464a076c97fd50ad36b3  weston-6.0.0.tar.xz
-sha1 feac9d9a77037580f39c0085a08a3c17a62dced0  weston-6.0.0.tar.xz
-sha256 546323a90607b3bd7f48809ea9d76e64cd09718102f2deca6d95aa59a882e612  weston-6.0.0.tar.xz
-sha512 127ab64b689f202acca4d9461e4decfd42357e4bbb63493af257b3b20b693a8ab4207b3c6b97663cefeed200505aad5f32b6a064db2e53fa1e201877613b394f  weston-6.0.0.tar.xz
+# From https://lists.freedesktop.org/archives/wayland-devel/2020-September/041595.html
+md5  b406da0fe9139fd39653238fde22a6cf  weston-9.0.0.tar.xz
+sha1  90b9540a0bd6d6f7a465817f1c696d4d393183c9  weston-9.0.0.tar.xz
+sha256  5cf5d6ce192e0eb15c1fc861a436bf21b5bb3b91dbdabbdebe83e1f83aa098fe  weston-9.0.0.tar.xz
+sha512  ccc263f8279b7b23e5c593b4a8a023de2c3dc178b1b8d6593599171770bcfe97608de9fcb77aa1cab39255451d289d323e51c317dae190c7641282e085b84f90  weston-9.0.0.tar.xz
+sha256  fdb65868f65d0fbdb05c2d3b779e10ce9969fa0c4b9262ba4f260e87086ab860  COPYING
 # locally computed
 sha256 bc1d62f03da701cf8433cb5c5844eb1dfde3d692b760f10ffe5a3984129c6ba3 weston-rel_imx_5.4.70_2.3.2-br1.tar.gz

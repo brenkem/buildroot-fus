@@ -1,6 +1,17 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2019.05.3-fsimx6-B2020.04.2 (09.09.2022)
+--------------------------------------------------
+Supported boards: armStoneA9, armStoneA9r2, armStoneA9r3, efusA9, efusA9r2,
+PicoMODA9, PicoMODA9.2, NetDCUA9, QBlissA9, QBlissA9r2
+
+- Add support for armStoneA9r3 and armStoneA9r4
+- Add support for eMMC sysimg
+- Move generation of install script to Buildroot
+
+
+
 buildroot-2019.05.3-fsimx6-B2020.04.1 (31.01.2022)
 --------------------------------------------------
 Supported boards: armStoneA9, armStoneA9r2, efusA9, efusA9r2, PicoMODA9,

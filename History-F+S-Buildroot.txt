@@ -1,6 +1,15 @@
 BuildRoot History for F&S boards
 --------------------------------
 
+buildroot-2021.02.2-fsimx8mm-B2021.06.1 (26.09.2022)
+----------------------------------------------------
+Supported boards: PicoCoreMX8MM PicoCoreMX8MMr2 PicoCoreMX8MX
+
+- Add picocoremx8mmr2 device trees
+- Improve fsimx8mm install script
+
+
+
 buildroot-2021.02.2-fsimx8mm-B2021.06 (23.06.2021)
 ------------------------------------------------
 Supported boards: PicoCoreMX8MM

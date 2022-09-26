@@ -1,22 +1,29 @@
+# Error handling functions for the load command. Aborts execution of the script if load returns an error or filesize is greater than the load chunk.
+setenv do_check 'itest $? != 0 || itest $filesize -gt $update_chunk_size'
+setenv do_message 'echo "Loading from "$updatedev" failed! Aborting installation.."'
+setenv do_cleanup 'env delete update_chunk_size update_chunk_pos update_image_size_rest u_c_size_blk u_c_pos_blk updatedev do_check do_message do_cleanup is_error; true'
+setenv is_error 'run do_check && run do_message do_cleanup'
+
 if test $bd_kernel = "nand";
 then
 
 # NANDBOOT
 # Load kernel image and store in partition Kernel
-load ${updatedev} . zImage-${arch}
+load ${updatedev} ${loadaddr} ${bootfile}-${arch}
 nand erase.part Kernel
-nand write . Kernel ${filesize}
+nand write ${loadaddr} Kernel ${filesize}
 # Load device tree blob and store in partition FDT
-load ${updatedev} . ${bootfdt}
+load ${updatedev} ${loadaddr} ${bootfdt}
 nand erase.part FDT
-nand write . FDT ${filesize}
+nand write ${loadaddr} FDT ${filesize}
+# Load root filesystem
+load ${updatedev} ${loadaddr} rootfs-${arch}.ubifs
 # Create UBI with volume rootfs on partition TargetFS
 nand erase.part TargetFS
 ubi part TargetFS
 ubi create rootfs
-# Load root filesystem and store in UBI volume rootfs
-load ${updatedev} . rootfs-${arch}.ubifs
-ubi write . rootfs ${filesize}
+# Store root filesystem in UBI volume rootfs
+ubi write ${loadaddr} rootfs ${filesize}
 # Set default configuration: kernel and fdt from NAND, rootfs from ubifs
 run .kernel_nand
 run .fdt_nand
@@ -25,8 +32,8 @@ run .rootfs_ubifs
 else
 
 # MMC BOOT
-# Set Chunk size to 128 MiB
-setenv update_chunk_size 8000000
+# Set Chunk size to 14 MiB to support more USB sticks
+setenv update_chunk_size E00000
 setenv update_chunk_pos 0
 
 # Set to mmc User partition
@@ -35,11 +42,14 @@ mmc dev ${mmcdev} 0
 size ${updatedev} emmc-${arch}.sysimg
 setenv update_image_size_rest $filesize
 
-while test ${update_image_size_rest} != 0 ; do
+while itest ${update_image_size_rest} != 0 ; do
 
-load ${updatedev} . emmc-${arch}.sysimg ${update_chunk_size} ${update_chunk_pos}
+if itest ${update_image_size_rest} -lt ${update_chunk_size}; then
+setenv update_chunk_size $update_image_size_rest
+fi
 
-setenv update_chunk_size $filesize
+load ${updatedev} ${loadaddr} emmc-${arch}.sysimg ${update_chunk_size} ${update_chunk_pos}
+run is_error && exit 1
 
 setexpr update_image_size_rest ${update_image_size_rest} - ${update_chunk_size}
 
@@ -49,7 +59,7 @@ setexpr u_c_size_blk ${update_chunk_size} + 0x1ff
 setexpr u_c_size_blk ${u_c_size_blk} / 0x200
 setexpr u_c_pos_blk ${update_chunk_pos} / 0x200
 
-mmc write . ${u_c_pos_blk} ${u_c_size_blk}
+mmc write ${loadaddr} ${u_c_pos_blk} ${u_c_size_blk}
 
 setexpr update_chunk_pos ${update_chunk_pos} + ${update_chunk_size}
 
@@ -58,17 +68,10 @@ done
 run .kernel_mmc
 run .fdt_mmc
 run .rootfs_mmc
-
-# Remove unnecessary variables
-setenv update_chunk_size
-setenv update_chunk_pos
-setenv update_image_size_rest
-setenv u_c_size_blk
-setenv u_c_pos_blk
 fi;
 
-# Remove update variable and save environment
-setenv updatedev
+# Clean environment and save environment
+run do_cleanup
 saveenv
 # Done
 echo "Installation complete"

@@ -6,6 +6,3 @@ MKIMAGE=mkimage
 
 # Source-in common F+S setup for standard configuration
 . $COMMON/finalscript_min-common
-
-${MKIMAGE} -A arm64 -O u-boot -T script -C none -n "$platform install script" \
-    -d ${BOARD}/install-${FS_ARCH}.txt ${BINARIES_DIR}/install-${FS_ARCH}.scr

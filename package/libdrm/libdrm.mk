@@ -4,21 +4,25 @@
 #
 ################################################################################
 
-#LIBDRM_VERSION = 2.4.98
-#LIBDRM_SOURCE = libdrm-$(LIBDRM_VERSION).tar.bz2
-#LIBDRM_SITE = https://dri.freedesktop.org/libdrm
+ifeq ($(BR2_PACKAGE_FREESCALE_IMX),y)
 # IMX needs special variant from NXP
 LIBDRM_VERSION = rel_imx_5.4.70_2.3.2
-# LIBDRM_SOURCE = libdrm-imx-2.4.99.tar.gz
 LIBDRM_SITE = https://source.codeaurora.org/external/imx/libdrm-imx
 LIBDRM_SITE_METHOD = git
 LIBDRM_LICENSE = MIT
 LIBDRM_LICENSE_FILES = COPYING
 LIBDRM_INSTALL_STAGING = YES
-
 # patch 0003-configure-Makefile.am-use-pkg-config-to-discover-lib.patch
 # touching configure.ac/Makefile.am (and host-xutil_util-macros dependency)
 LIBDRM_AUTORECONF = YES
+else
+LIBDRM_VERSION = 2.4.104
+LIBDRM_SOURCE = libdrm-$(LIBDRM_VERSION).tar.xz
+LIBDRM_SITE = https://dri.freedesktop.org/libdrm
+LIBDRM_LICENSE = MIT
+LIBDRM_LICENSE_FILES = xf86drm.c
+LIBDRM_INSTALL_STAGING = YES
+endif
 
 LIBDRM_DEPENDENCIES = \
 	libpthread-stubs \

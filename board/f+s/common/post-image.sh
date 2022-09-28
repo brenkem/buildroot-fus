@@ -1,13 +1,29 @@
 #!/usr/bin/env bash
 
 #
+# freertos_sample_list extracts the list of files from folder
+# "output/images/fs-freertos-samples/"", then prints the corresponding list of
+# file names for the genimage configuration file
+#
+freertos_sample_list()
+{
+	if grep -Eq "^BR2_PACKAGE_FS_FREERTOS_SAMPLE=y$" ${BR2_CONFIG}; then
+		for img in ${BINARIES_DIR}/fs-freertos-samples/*; do
+			echo -n "\"fs-freertos-samples\/`basename $img`\", "
+		done
+	else
+		echo -n ""
+	fi
+}
+
+#
 # dtb_list extracts the list of DTB files from BR2_LINUX_KERNEL_INTREE_DTS_NAME
 # in ${BR_CONFIG}, then prints the corresponding list of file names for the
 # genimage configuration file
 #
 dtb_list()
 {
-	local DTB_LIST="$(sed -n 's/^BR2_LINUX_KERNEL_INTREE_DTS_NAME="\([A-Z \+ | \/a-z0-9 \-]*\)"$/\1/p' ${BR2_CONFIG})"
+	local DTB_LIST="$(sed -n 's/^BR2_LINUX_KERNEL_INTREE_DTS_NAME="\([A-Z \+ | \. \+ | \/a-z0-9 \-]*\)"$/\1/p' ${BR2_CONFIG})"
 
 	for dt in $DTB_LIST; do
 		echo -n "\"`basename $dt`.dtb\", "
@@ -29,6 +45,16 @@ linux_image()
 		echo "\"zImage\""
 	fi
 }
+
+uboot_image()
+{
+	if grep -Eq "^BR2_TARGET_UBOOT_FORMAT_CUSTOM_NAME=\"uboot.nb0\"" ${BR2_CONFIG}; then
+		echo "uboot.nb0"
+	else
+		echo "u-boot-dtb.img"
+	fi
+}
+
 
 genimage_type()
 {
@@ -55,8 +81,8 @@ genimage_type()
 
 main()
 {
-	local FILES="$(dtb_list) $(linux_image)"
-	local UBOOTBIN="u-boot-dtb.img"
+	local FILES="$(dtb_list) $(freertos_sample_list) $(linux_image)"
+	local UBOOTBIN="$(uboot_image)"
 	local GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
 	local GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 
@@ -70,7 +96,7 @@ main()
 	sed -e "s/%FILES%/${FILES}/" \
 		-e "s/%IMXOFFSET%/${IMXOFFSET}/" \
 		-e "s/%UBOOTBIN%/${UBOOTBIN}/" \
-		board/f+s/$5/$(genimage_type) > ${GENIMAGE_CFG}
+		board/f+s/$2/$(genimage_type) > ${GENIMAGE_CFG}
 
 	rm -rf "${GENIMAGE_TMP}"
 

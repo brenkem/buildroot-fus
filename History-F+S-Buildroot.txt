@@ -10,6 +10,73 @@ Supported boards: PicoCoreMX8MM PicoCoreMX8MMr2 PicoCoreMX8MX
 
 
 
+buildroot-2021.02.10-fsimx6ul-B2022.04 (12.04.2022)
+---------------------------------------------------
+Supported boards: efusA7UL PicoCOM1.2 PicoCoreMX6UL PicoCoreMX6UL100 PicoCOMA7
+
+- Improve post-image.sh dtb list recognition
+- Improve package libdrm, wayland-protocols and weston
+- Improve fsimx6sx/ul defconfigs
+- Add xwayland defconfig for fsimx6sx/ul
+- Add fsimx6sx/ul Uboot building with Buildroot
+- Add building of emmc-sysimg for fsimx6sx/ul
+- Add all possible f&s device trees for platform fsimx6sx/ul
+- Improve package touch-firmware
+- Add package fs-freertos-sample
+- Improve target fsimx7ulp
+- Add error handling for the install script with eMMC
+- Merge tag 'fsimx6-B2020.04.1'
+- Original buildroot-2021.02.10
+- Merge branch 'orig'
+- Update busybox defconfig to 1.33.2
+- Fix XWayland defconfigs
+- Add TSC2004 Touchscreen default calibration
+- Add wlan regulatory.db to imx6/7 defonfigs
+
+
+
+buildroot-2019.05.3-fsimx6-B2020.04.1 (31.01.2022)
+--------------------------------------------------
+Supported boards: armStoneA9, armStoneA9r2, efusA9, efusA9r2, PicoMODA9,
+                  NetDCUA9, QBlissA9, QBlissA9r2, armStoneA5, Cube2.0, CubeA5,
+                  AGATEWAY
+Not tested:       efusA9X, PicoCOMA9X, PicoCoreMX6SX, PicoCoreMX7ULP,
+                  CONT1, efusA7UL, PicoCOM1.2, PicoCoreMX6UL, GAR1, GAR2,
+                  CubeA7UL, NetDCUA5, PicoCOMA5, HGATEWAY
+
+- Add support for efusA9r2
+
+
+
+buildroot-2021.02.2-fsimx6-B2021.10.1 (19.10.2021)
+--------------------------------------------------
+Supported boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+QBlissA9, QBlissA9r2
+
+
+
+
+buildroot-2021.02.2-fsimx6-B2021.10 (15.10.2021)
+------------------------------------------------
+Supported boards: armStoneA9, armStoneA9r2, efusA9, PicoMODA9, NetDCUA9,
+QBlissA9, QBlissA9r2
+
+- Improve fsimx6ul* defconfigs to support new device tree gar3
+- Improve fsimx6sx* defconfigs to support new device tree vand3
+- Add BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIEUSB8997 for fsimx6* configs
+- Improve imx6 defconfigs
+- Improve imx-gpu arm32 packages
+- Add xwayland defconfig
+- Add g2d support to weston
+- Add fsimx6 Uboot building with Buildroot
+- Add building of emmc-sysimg for fsimx6
+- Add experimental fsimx6 etnaviv defconfig
+- Add default touchscreen calibration SX8654
+- Fix imx6 alsa sound
+- Add bulding of install.scr script with buildroot
+
+
+
 buildroot-2021.02.2-fsimx8mm-B2021.06 (23.06.2021)
 ------------------------------------------------
 Supported boards: PicoCoreMX8MM

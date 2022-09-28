@@ -11,13 +11,24 @@ case "$1" in
 	# Create folder and setup access privileges
 	mkdir -p /var/run/weston
 	chmod 0700 /var/run/weston
-
+    if grep ^xwayland=true /etc/xdg/weston/weston.ini > /dev/null; then
+        mkdir -p /tmp/.X11-unix/
+		# Remove DISPLAY environment variable or else weston will try to start with X11 backend
+		unset DISPLAY
+    fi
 	# Setup environment variable
 	source /etc/profile.d/weston.sh
 
 	# Start weston client
 	start-stop-daemon -S -q -m -b -p /var/run/weston.pid \
 	-x /usr/bin/weston -- --tty=1 --log=/var/log/weston.log
+
+	# We need to set the X11 environment variables AFTER weston is started
+	# or else weston will try to start with X11 backend
+    if grep ^xwayland=true /etc/xdg/weston/weston.ini > /dev/null; then
+		source /etc/profile.d/xserver.sh
+    fi
+
 	;;
 
     stop)
@@ -34,6 +45,7 @@ case "$1" in
     restart|reload)
 	# Simply stop and start the service
 	$0 stop
+	sleep 1
 	$0 start
 	;;
 

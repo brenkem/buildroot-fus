@@ -474,6 +474,7 @@ endmenu
 	source "package/freescale-imx/Config.in"
 	source "package/silex-wlanbt-fs/Config.in"
 	source "package/silex-wlanbt-fs-firmware/Config.in"
+	source "package/mxm-wifiex-fs/Config.in"
 	source "package/sterling-wlan-fs/Config.in"
 	source "package/fxload/Config.in"
 	source "package/gcnano-binaries/Config.in"

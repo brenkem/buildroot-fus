@@ -1,0 +1,54 @@
+comment "F&S board support for AW-CM276NF needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_MXM_WIFIEX_FS
+	bool "F&S board support for AW-CM276NF WLAN"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Add kernel modules to support NXP (ex-Marvell) WLAN devices on
+	  F&S boards and modules, e.g. the Azurewave AW CM276NF.
+
+if BR2_PACKAGE_MXM_WIFIEX_FS
+
+config BR2_PACKAGE_MXM_WIFIEX_FS_MLANUTL
+	bool "Install the mlanutl program"
+	help
+	  Say Y if you want to have the mlanutl program on the target device.
+	  This tool helps to show an configure WLAN specific settings, e.g.
+	  set test modes when certifying the device.
+
+config BR2_PACKAGE_MXM_WIFIEX_FS_SD8801
+	bool "Add support for SD8801 (SDIO)"
+	help
+	  Add support for 8801 via SDIO. Needs SDIO support in the kernel.
+
+config BR2_PACKAGE_MXM_WIFIEX_FS_SD8978
+	bool "Add support for SD8978 (SDIO)"
+	help
+	  Add support for 8978 via SDIO. Needs SDIO support in the kernel.
+
+config BR2_PACKAGE_MXM_WIFIEX_FS_SD8997
+	bool "Add support for SD8997 (SDIO)"
+	default y
+	select BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_SDSD8997
+	help
+	  Add support for 8997 via SDIO. Needs SDIO support in the kernel.
+
+config BR2_PACKAGE_MXM_WIFIEX_FS_PCIE8997
+	bool "Add support for PCIE8997 (PCIE)"
+	select BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_PCIEUSB8997
+	help
+	  Add support for 8997 via PCIE. Needs PCIE support in the kernel.
+
+config BR2_PACKAGE_MXM_WIFIEX_FS_SD9098
+	bool "Add support for SD9098 (SDIO)"
+	help
+	  Add support for 9098 via SDIO. Needs SDIO support in the kernel.
+
+config BR2_PACKAGE_MXM_WIFIEX_FS_PCIE9098
+	bool "Add support for PCIE9098 (PCIE)"
+	help
+	  Add support for 9098 via PCIE. Needs PCIE support in the kernel.
+
+endif
+

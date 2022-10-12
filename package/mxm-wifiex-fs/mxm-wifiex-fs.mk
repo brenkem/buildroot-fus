@@ -93,6 +93,8 @@ define MXM_WIFIEX_FS_INSTALL_LIB_FIRMWARE
 	$(INSTALL) -m 0644 -D \
 		package/mxm-wifiex-fs/WlanCalData_AW_CM276NF.conf \
 		$(TARGET_DIR)/lib/firmware/nxp/
+	$(INSTALL) -m 0644 -D package/mxm-wifiex-fs/mxm-wifiex.conf \
+		$(TARGET_DIR)/etc/modprobe.d/mxm-wifiex.conf
 endef
 
 MXM_WIFIEX_FS_POST_INSTALL_TARGET_HOOKS += MXM_WIFIEX_FS_INSTALL_LIB_FIRMWARE

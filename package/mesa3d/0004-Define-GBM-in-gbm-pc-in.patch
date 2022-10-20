@@ -1,0 +1,9 @@
+diff -Naur mesa-19.0.3-old/src/gbm/main/gbm.pc.in mesa-19.0.3-new/src/gbm/main/gbm.pc.in
+--- mesa-19.0.3-old/src/gbm/main/gbm.pc.in	2019-04-24 19:40:00.000000000 +0200
++++ mesa-19.0.3-new/src/gbm/main/gbm.pc.in	2022-10-14 12:45:23.011334781 +0200
+@@ -9,4 +9,4 @@
+ Version: @VERSION@
+ Libs: -L${libdir} -lgbm
+ Libs.private: @GBM_PC_LIB_PRIV@
+-Cflags: -I${includedir}
++Cflags: -D__GBM__ -I${includedir}

@@ -1,6 +1,16 @@
 Buildroot History for F&S boards
 --------------------------------
 
+buildroot-2019.05.3-fsimx6sx-B2019.11.1 (07.10.2022)
+----------------------------------------------------
+Supported boards: efusA9X, efusA9Xr2, PicoCOMA9X, PicoCoreMX6SX
+
+- Merge tag 'fsimx6-B2020.04.2' into fus-4.9.x
+- Add support for efusA9Xr2 and PicoCoreMX6SXr2
+- Fix ext4 size for fsimx6sx_qt5_defconfig
+
+
+
 buildroot-2019.05.3-??? (not yet released)
 ------------------------------------------
 This is a version that collects all loose ends from releases based on

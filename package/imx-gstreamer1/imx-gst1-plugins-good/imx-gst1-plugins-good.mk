@@ -6,7 +6,7 @@
 
 IMX_GST1_PLUGINS_GOOD_VERSION = rel_imx_5.4.70_2.3.2
 IMX_GST1_PLUGINS_GOOD_SOURCE = imx-gst-plugins-good-1.16.2.tar.gz
-IMX_GST1_PLUGINS_GOOD_SITE = https://source.codeaurora.org/external/imx/gst-plugins-good
+IMX_GST1_PLUGINS_GOOD_SITE = https://github.com/nxp-imx/gst-plugins-good.git
 IMX_GST1_PLUGINS_GOOD_SITE_METHOD = git
 IMX_GST1_PLUGINS_GOOD_GIT_SUBMODULES = YES
 IMX_GST1_PLUGINS_GOOD_LICENSE_FILES = COPYING

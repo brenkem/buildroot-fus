@@ -6,7 +6,7 @@
 
 IMX_GST1_PLUGINS_BASE_VERSION = rel_imx_5.4.70_2.3.2
 IMX_GST1_PLUGINS_BASE_SOURCE = imx-gst-plugins-base-1.16.2.tar.gz
-IMX_GST1_PLUGINS_BASE_SITE = https://source.codeaurora.org/external/imx/gst-plugins-base
+IMX_GST1_PLUGINS_BASE_SITE = https://github.com/nxp-imx/gst-plugins-base.git
 IMX_GST1_PLUGINS_BASE_SITE_METHOD = git
 IMX_GST1_PLUGINS_BASE_GIT_SUBMODULES = YES
 IMX_GST1_PLUGINS_BASE_INSTALL_STAGING = YES

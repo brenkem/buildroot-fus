@@ -6,10 +6,10 @@
 #
 ################################################################################
 
-SILEX_WLANBT_FS_VERSION = 4.0.11.213V
-SILEX_WLANBT_FS_SITE = http://source.codeaurora.org/external/wlan/qcacld-2.0/snapshot
-SILEX_WLANBT_FS_SOURCE = $(SILEX_WLANBT_FS_VERSION).tar.gz
-#SILEX_WLANBT_FS_SITE_METHOD = wget
+# Version 4.0.11.213V
+SILEX_WLANBT_FS_VERSION = cb52696f9eadd8212c3ebccdeeb63f5ea814a954
+SILEX_WLANBT_FS_SITE = https://github.com/nxp-imx/qcacld-2.0-imx.git
+SILEX_WLANBT_FS_SITE_METHOD = git
 SILEX_WLANBT_FS_LICENSE = GPL-2.0 or BSD
 
 # Options (taken from LEA.3.0, config.te-f30) necessary for selecting the

@@ -5,7 +5,7 @@
 ################################################################################
 ifeq ($(BR2_PACKAGE_FREESCALE_IMX),y)
 WESTON_VERSION = rel_imx_5.4.70_2.3.2
-WESTON_SITE = https://source.codeaurora.org/external/imx/weston-imx
+WESTON_SITE = https://github.com/nxp-imx/weston-imx.git
 WESTON_SITE_METHOD = git
 WESTON_AUTORECONF = YES
 else

@@ -5,7 +5,7 @@
 ################################################################################
 
 FMC_VERSION = fsl-sdk-v2.0
-FMC_SITE = https://source.codeaurora.org/external/qoriq/qoriq-yocto-sdk/fmc
+FMC_SITE = $(call github,nxp-qoriq,fmc,$(FMC_VERSION))
 FMC_SITE_METHOD = git
 FMC_LICENSE = MIT
 FMC_LICENSE_FILES = COPYING

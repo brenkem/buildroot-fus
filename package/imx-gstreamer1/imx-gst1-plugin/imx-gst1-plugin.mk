@@ -6,7 +6,7 @@
 
 IMX_GST1_PLUGIN_VERSION = rel_imx_5.4.70_2.3.2
 IMX_GST1_PLUGIN_SOURCE = imx-gst1.0-plugin-4.5.6.tar.gz
-IMX_GST1_PLUGIN_SITE = https://source.codeaurora.org/external/imx/imx-gst1.0-plugin
+IMX_GST1_PLUGIN_SITE = https://github.com/nxp-imx/imx-gst1.0-plugin.git
 IMX_GST1_PLUGIN_SITE_METHOD = git
 
 # Most is LGPLv2+, but some sources are copied from upstream and are

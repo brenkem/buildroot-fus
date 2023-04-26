@@ -6,7 +6,7 @@
 
 IMX_GSTREAMER1_VERSION = rel_imx_4.9.88_2.0.0_ga
 IMX_GSTREAMER1_SOURCE = imx-gstreamer-1.12.2.tar.gz
-IMX_GSTREAMER1_SITE = https://source.codeaurora.org/external/imx/gstreamer
+IMX_GSTREAMER1_SITE = https://github.com/nxp-imx/gstreamer.git
 IMX_GSTREAMER1_SITE_METHOD = git
 IMX_GSTREAMER1_GIT_SUBMODULES = YES
 

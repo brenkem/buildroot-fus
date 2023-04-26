@@ -12,7 +12,7 @@
 # 100b2edb2806c35de8f941859e212b86d1658382. Download this version and apply the
 # remaining Silex modifications, e.g. with a different defconfig for building.
 HOSTAPD_VERSION = 100b2edb2806c35de8f941859e212b86d1658382
-HOSTAPD_SITE = git://w1.fi/srv/git/hostap.git
+HOSTAPD_SITE = git://w1.fi/hostap.git
 HOSTAPD_METHOD = git
 #HOSTAPD_VERSION = 2.9
 #HOSTAPD_SITE = http://w1.fi/releases

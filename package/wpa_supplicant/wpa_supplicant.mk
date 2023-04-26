@@ -12,7 +12,7 @@
 # 100b2edb2806c35de8f941859e212b86d1658382. Download this version and apply the
 # remaining Silex modifications, e.g. with a different defconfig for building.
 WPA_SUPPLICANT_VERSION = 100b2edb2806c35de8f941859e212b86d1658382
-WPA_SUPPLICANT_SITE = git://w1.fi/srv/git/hostap.git
+WPA_SUPPLICANT_SITE = git://w1.fi/hostap.git
 WPA_SUPPLICANT_METHOD = git
 #WPA_SUPPLICANT_VERSION = 2.9
 #WPA_SUPPLICANT_SITE = http://w1.fi/releases

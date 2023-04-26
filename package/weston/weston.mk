@@ -6,7 +6,7 @@
 
 ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL),y)
 WESTON_VERSION = rel_imx_4.9.88_2.0.0_ga
-WESTON_SITE = https://source.codeaurora.org/external/imx/weston-imx
+WESTON_SITE = https://github.com/nxp-imx/weston-imx.git
 WESTON_SITE_METHOD = git
 WESTON_AUTORECONF = YES
 else

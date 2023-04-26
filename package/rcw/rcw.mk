@@ -5,7 +5,7 @@
 ################################################################################
 
 RCW_VERSION = LSDK-18.12
-RCW_SITE = https://source.codeaurora.org/external/qoriq/qoriq-components/rcw
+RCW_SITE = $(call github,nxp-qoriq,rcw,$(QORIQ_RCW_VERSION))
 RCW_SITE_METHOD = git
 RCW_LICENSE = BSD-3-Clause
 RCW_LICENSE_FILES = LICENSE

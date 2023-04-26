@@ -10,7 +10,7 @@
 # IMX needs special variant from NXP
 LIBDRM_VERSION = rel_imx_4.14.78_1.0.0_ga
 LIBDRM_SOURCE = libdrm-imx-2.4.91.tar.gz
-LIBDRM_SITE = https://source.codeaurora.org/external/imx/libdrm-imx
+LIBDRM_SITE = https://github.com/nxp-imx/libdrm-imx.git
 LIBDRM_SITE_METHOD = git
 LIBDRM_LICENSE = MIT
 LIBDRM_INSTALL_STAGING = YES

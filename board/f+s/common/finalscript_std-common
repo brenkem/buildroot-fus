@@ -25,6 +25,7 @@ ${CP} ${COMMON}/etc/profile.d/tslib.sh ${TARGET}/etc/profile.d
 # setup sound configuration
 mkdir -p ${TARGET}/var/lib/alsa
 ${CP} ${COMMON}/var/lib/alsa/asound.state ${TARGET}/var/lib/alsa
+${CP} ${COMMON}/etc/asound.conf ${TARGET}/etc
 
 # Install wpa_supplicant.conf with country=DE
 install -m 0664 ${COMMON}/etc/wpa_supplicant.conf ${TARGET}/etc/

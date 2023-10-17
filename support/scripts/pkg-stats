@@ -132,7 +132,15 @@ class Package:
 
     @property
     def has_valid_infra(self):
+        if self.infras is None:
+            return False
+        return len(self.infras) > 0
+
+    @property
+    def is_actual_package(self):
         try:
+            if not self.has_valid_infra:
+                return False
             if self.infras[0][1] == 'virtual':
                 return False
         except IndexError:
@@ -160,7 +168,7 @@ class Package:
         """
         Fills in the .status['license'] and .status['license-files'] fields
         """
-        if not self.has_valid_infra:
+        if not self.is_actual_package:
             self.status['license'] = ("na", "no valid package infra")
             self.status['license-files'] = ("na", "no valid package infra")
             return
@@ -178,7 +186,7 @@ class Package:
         """
         Fills in the .status['hash'] field
         """
-        if not self.has_valid_infra:
+        if not self.is_actual_package:
             self.status['hash'] = ("na", "no valid package infra")
             self.status['hash-license'] = ("na", "no valid package infra")
             return
@@ -193,7 +201,7 @@ class Package:
         """
         Fills in the .patch_count, .patch_files and .status['patches'] fields
         """
-        if not self.has_valid_infra:
+        if not self.is_actual_package:
             self.status['patches'] = ("na", "no valid package infra")
             return
 
@@ -221,8 +229,11 @@ class Package:
         Fills in the .cpeid field
         """
         var = self.pkgvar()
-        if not self.has_valid_infra:
-            self.status['cpe'] = ("na", "no valid package infra")
+        if not self.is_actual_package:
+            self.status['cpe'] = ("na", "N/A - virtual pkg")
+            return
+        if not self.current_version:
+            self.status['cpe'] = ("na", "no version information available")
             return
 
         if var in self.all_cpeids:
@@ -360,7 +371,7 @@ def get_pkglist(npackages, package_list):
 def get_config_packages():
     cmd = ["make", "--no-print-directory", "show-info"]
     js = json.loads(subprocess.check_output(cmd))
-    return set([v["name"] for v in js.values()])
+    return set([v["name"] for v in js.values() if 'name' in v])
 
 
 def package_init_make_info():
@@ -553,13 +564,13 @@ async def check_package_latest_version(packages):
       package, as known by release-monitoring.org
     """
 
-    for pkg in [p for p in packages if not p.has_valid_infra]:
+    for pkg in [p for p in packages if not p.is_actual_package]:
         pkg.status['version'] = ("na", "no valid package infra")
 
     tasks = []
     connector = aiohttp.TCPConnector(limit_per_host=5)
     async with aiohttp.ClientSession(connector=connector, trust_env=True) as sess:
-        packages = [p for p in packages if p.has_valid_infra]
+        packages = [p for p in packages if p.is_actual_package]
         for pkg in packages:
             tasks.append(asyncio.ensure_future(check_package_latest_version_get(sess, pkg, len(packages))))
         await asyncio.wait(tasks)
@@ -583,8 +594,8 @@ def check_package_cves(nvd_path, packages):
 
     cpe_product_pkgs = defaultdict(list)
     for pkg in packages:
-        if not pkg.has_valid_infra:
-            pkg.status['cve'] = ("na", "no valid package infra")
+        if not pkg.is_actual_package:
+            pkg.status['cve'] = ("na", "N/A")
             continue
         if not pkg.current_version:
             pkg.status['cve'] = ("na", "no version information available")
@@ -615,7 +626,7 @@ def check_package_cpes(nvd_path, packages):
         if cpedb.find(p.cpeid):
             p.status['cpe'] = ("ok", "verified CPE identifier")
         else:
-            p.status['cpe'] = ("error", "CPE identifier unknown in CPE database")
+            p.status['cpe'] = ("error", "CPE version unknown in CPE database")
 
 
 def calculate_stats(packages):
@@ -741,6 +752,10 @@ td.cve-nok {
 
 td.cve-unknown {
  background: #ffd870;
+}
+
+td.cve_ignored {
+ background: #ccc;
 }
 
 </style>
@@ -905,6 +920,8 @@ def dump_html_pkg(f, pkg):
         td_class.append("cve-ok")
     elif pkg.is_status_error("cve"):
         td_class.append("cve-nok")
+    elif pkg.is_status_na("cve") and not pkg.is_actual_package:
+        td_class.append("cve-ok")
     else:
         td_class.append("cve-unknown")
     f.write("  <td class=\"%s\">\n" % " ".join(td_class))
@@ -919,19 +936,39 @@ def dump_html_pkg(f, pkg):
         f.write("    N/A\n")
     f.write("  </td>\n")
 
+    # CVEs Ignored
+    td_class = ["centered"]
+    if pkg.ignored_cves:
+        td_class.append("cve_ignored")
+    f.write("  <td class=\"%s\">\n" % " ".join(td_class))
+    for ignored_cve in pkg.ignored_cves:
+        f.write("    <a href=\"https://security-tracker.debian.org/tracker/%s\">%s<br/>\n" % (ignored_cve, ignored_cve))
+    f.write("  </td>\n")
+
     # CPE ID
     td_class = ["left"]
     if pkg.is_status_ok("cpe"):
         td_class.append("cpe-ok")
     elif pkg.is_status_error("cpe"):
         td_class.append("cpe-nok")
+    elif pkg.is_status_na("cpe") and not pkg.is_actual_package:
+        td_class.append("cpe-ok")
     else:
         td_class.append("cpe-unknown")
     f.write("  <td class=\"%s\">\n" % " ".join(td_class))
     if pkg.cpeid:
         f.write("  <code>%s</code>\n" % pkg.cpeid)
     if not pkg.is_status_ok("cpe"):
-        f.write("  %s%s\n" % ("<br/>" if pkg.cpeid else "", pkg.status['cpe'][1]))
+        if pkg.is_actual_package and pkg.current_version:
+            if pkg.cpeid:
+                f.write("  <br/>%s <a href=\"https://nvd.nist.gov/products/cpe/search/results?namingFormat=2.3&keyword=%s\">(Search)</a>\n" %  # noqa: E501
+                        (pkg.status['cpe'][1], ":".join(pkg.cpeid.split(":")[0:5])))
+            else:
+                f.write("  %s <a href=\"https://nvd.nist.gov/products/cpe/search/results?namingFormat=2.3&keyword=%s\">(Search)</a>\n" %  # noqa: E501
+                        (pkg.status['cpe'][1], pkg.name))
+        else:
+            f.write("  %s\n" % pkg.status['cpe'][1])
+
     f.write("  </td>\n")
 
     f.write(" </tr>\n")
@@ -952,6 +989,7 @@ def dump_html_all_pkgs(f, packages):
 <td class=\"centered\">Warnings</td>
 <td class=\"centered\">Upstream URL</td>
 <td class=\"centered\">CVEs</td>
+<td class=\"centered\">CVEs Ignored</td>
 <td class=\"centered\">CPE ID</td>
 </tr>
 """)

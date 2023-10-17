@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-QT5BASE_VERSION = $(QT5_VERSION)
-QT5BASE_SITE = $(QT5_SITE)
-QT5BASE_SOURCE = qtbase-$(QT5_SOURCE_TARBALL_PREFIX)-$(QT5BASE_VERSION).tar.xz
+QT5BASE_VERSION = 53a047c212af7fbded6505651f648172f9d7a34d
+QT5BASE_SITE = $(QT5_SITE)/qtbase/-/archive/$(QT5BASE_VERSION)
+QT5BASE_SOURCE = qtbase-$(QT5BASE_VERSION).tar.bz2
 
 QT5BASE_DEPENDENCIES = host-pkgconf pcre2 zlib
 QT5BASE_INSTALL_STAGING = YES
+QT5BASE_SYNC_QT_HEADERS = YES
 
 # 0010-Avoid-processing-intensive-painting-of-high-number-o.patch
 # 0011-Improve-fix-for-avoiding-huge-number-of-tiny-dashes.patch
@@ -73,24 +74,14 @@ else
 QT5BASE_CONFIGURE_OPTS += -no-kms
 endif
 
-# Uses libgbm from mesa3d
-ifeq ($(BR2_PACKAGE_MESA3D_OPENGL_EGL),y)
+ifeq ($(BR2_PACKAGE_HAS_LIBGBM),y)
 QT5BASE_CONFIGURE_OPTS += -gbm
-QT5BASE_DEPENDENCIES += mesa3d
-else ifeq ($(BR2_PACKAGE_GCNANO_BINARIES),y)
-QT5BASE_CONFIGURE_OPTS += -gbm
-QT5BASE_DEPENDENCIES += gcnano-binaries
-else ifeq ($(BR2_PACKAGE_TI_SGX_UM),y)
-QT5BASE_CONFIGURE_OPTS += -gbm
-QT5BASE_DEPENDENCIES += ti-sgx-um
-else ifeq ($(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT_WL),y)
-QT5BASE_CONFIGURE_OPTS += -gbm
-QT5BASE_DEPENDENCIES += imx-gpu-viv
+QT5BASE_DEPENDENCIES += libgbm
 else
 QT5BASE_CONFIGURE_OPTS += -no-gbm
 endif
 
-ifeq ($(BR2_ENABLE_DEBUG),y)
+ifeq ($(BR2_ENABLE_RUNTIME_DEBUG),y)
 QT5BASE_CONFIGURE_OPTS += -debug
 else
 QT5BASE_CONFIGURE_OPTS += -release
@@ -118,6 +109,13 @@ QT5BASE_DEPENDENCIES += cups
 QT5BASE_CONFIGURE_OPTS += -cups
 else
 QT5BASE_CONFIGURE_OPTS += -no-cups
+endif
+
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+QT5BASE_DEPENDENCIES += zstd
+QT5BASE_CONFIGURE_OPTS += -zstd
+else
+QT5BASE_CONFIGURE_OPTS += -no-zstd
 endif
 
 # Qt5 SQL Plugins
@@ -230,10 +228,20 @@ QT5BASE_DEPENDENCIES   += $(if $(BR2_PACKAGE_QT5BASE_TSLIB),tslib)
 QT5BASE_CONFIGURE_OPTS += $(if $(BR2_PACKAGE_LIBGLIB2),-glib,-no-glib)
 QT5BASE_DEPENDENCIES   += $(if $(BR2_PACKAGE_LIBGLIB2),libglib2)
 
+QT5BASE_DEPENDENCIES   += $(if $(BR2_PACKAGE_LIBKRB5),libkrb5)
+
 QT5BASE_CONFIGURE_OPTS += $(if $(BR2_PACKAGE_QT5BASE_ICU),-icu,-no-icu)
 QT5BASE_DEPENDENCIES   += $(if $(BR2_PACKAGE_QT5BASE_ICU),icu)
 
 QT5BASE_CONFIGURE_OPTS += $(if $(BR2_PACKAGE_QT5BASE_EXAMPLES),-make,-nomake) examples
+
+# see qt5base-5.15.2/src/corelib/global/qlogging.cpp:110 - __has_include(<execinfo.h>)
+ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
+QT5BASE_DEPENDENCIES += libexecinfo
+define QT5BASE_CONFIGURE_ARCH_CONFIG_LIBEXECINFO
+	printf '!host_build { \n LIBS += -lexecinfo\n }' >$(QT5BASE_ARCH_CONFIG_FILE)
+endef
+endif
 
 ifeq ($(BR2_PACKAGE_LIBINPUT),y)
 QT5BASE_CONFIGURE_OPTS += -libinput
@@ -266,9 +274,12 @@ endif
 ifeq ($(BR2_PACKAGE_IMX_GPU_VIV),y)
 # use vivante backend
 QT5BASE_EGLFS_DEVICE = EGLFS_DEVICE_INTEGRATION = eglfs_viv
-else ifeq ($(BR2_PACKAGE_SUNXI_MALI_MAINLINE),y)
+else ifeq ($(BR2_PACKAGE_SUNXI_MALI_UTGARD),y)
 # use mali backend
 QT5BASE_EGLFS_DEVICE = EGLFS_DEVICE_INTEGRATION = eglfs_mali
+else ifeq ($(BR2_PACKAGE_ROCKCHIP_MALI),y)
+# use kms backend
+QT5BASE_EGLFS_DEVICE = EGLFS_DEVICE_INTEGRATION = eglfs_kms
 endif
 
 ifneq ($(QT5BASE_CONFIG_FILE),)
@@ -280,7 +291,7 @@ endif
 QT5BASE_ARCH_CONFIG_FILE = $(@D)/mkspecs/devices/linux-buildroot-g++/arch.conf
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 # Qt 5.8 needs atomics, which on various architectures are in -latomic
-define QT5BASE_CONFIGURE_ARCH_CONFIG
+define QT5BASE_CONFIGURE_ARCH_CONFIG_LIBATOMIC
 	printf '!host_build { \n LIBS += -latomic\n }' >$(QT5BASE_ARCH_CONFIG_FILE)
 endef
 endif
@@ -303,7 +314,8 @@ define QT5BASE_CONFIGURE_CMDS
 		$(@D)/mkspecs/devices/linux-buildroot-g++/qplatformdefs.h
 	$(QT5BASE_CONFIGURE_CONFIG_FILE)
 	touch $(QT5BASE_ARCH_CONFIG_FILE)
-	$(QT5BASE_CONFIGURE_ARCH_CONFIG)
+	$(QT5BASE_CONFIGURE_ARCH_CONFIG_LIBATOMIC)
+	$(QT5BASE_CONFIGURE_ARCH_CONFIG_LIBEXECINFO)
 	$(QT5BASE_CONFIGURE_HOSTCC)
 	(cd $(@D); \
 		$(TARGET_MAKE_ENV) \

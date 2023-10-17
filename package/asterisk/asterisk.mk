@@ -23,6 +23,7 @@ ASTERISK_LICENSE_FILES = \
 
 ASTERISK_CPE_ID_VENDOR = asterisk
 ASTERISK_CPE_ID_PRODUCT = open_source
+ASTERISK_SELINUX_MODULES = asterisk
 
 # For patches 0002, 0003 and 0005
 ASTERISK_AUTORECONF = YES
@@ -242,7 +243,7 @@ ifeq ($(BR2_PACKAGE_SPEEX)$(BR2_PACKAGE_SPEEXDSP),yy)
 ASTERISK_DEPENDENCIES += speex
 ASTERISK_CONF_OPTS += --with-speex --with-speexdsp
 else
-ASTERISK_CONF_OPTS += --without-speex  --without-speexdsp
+ASTERISK_CONF_OPTS += --without-speex --without-speexdsp
 endif
 
 # asterisk needs an openssl-enabled libsrtp

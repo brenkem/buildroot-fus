@@ -4,9 +4,9 @@
 #   docker push registry.gitlab.com/buildroot.org/buildroot/base:YYYYMMDD.HHMM
 
 # We use a specific tag for the base image *and* the corresponding date
-# for the repository, so do not forget to update the apt-sources.list
+# for the repository., so do not forget to update the apt-sources.list
 # file that is shipped next to this Dockerfile.
-FROM debian:stretch-20211115
+FROM debian:bullseye-20210902
 
 LABEL maintainer="Buildroot mailing list <buildroot@buildroot.org>" \
       vendor="Buildroot" \
@@ -36,13 +36,16 @@ RUN apt-get install -y --no-install-recommends \
         libncurses5-dev \
         locales \
         mercurial \
+        openssh-server \
         python3 \
         python3-flake8 \
         python3-nose2 \
         python3-pexpect \
+        python3-pytest \
         qemu-system-arm \
         qemu-system-x86 \
         rsync \
+        shellcheck \
         subversion \
         unzip \
         wget \

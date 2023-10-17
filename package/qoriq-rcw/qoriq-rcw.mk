@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-QORIQ_RCW_VERSION = LSDK-20.12
+QORIQ_RCW_VERSION = LSDK-21.08
 QORIQ_RCW_SITE = $(call github,nxp-qoriq,rcw,$(QORIQ_RCW_VERSION))
-QORIQ_RCW_SITE_METHOD = git
 QORIQ_RCW_LICENSE = BSD-3-Clause
 QORIQ_RCW_LICENSE_FILES = LICENSE
 

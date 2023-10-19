@@ -1,4 +1,4 @@
 # From Yocto
-sha256 8b68f0ce7fb8af87dcf024cfd317dca38a97692031d8a90a059fa561dea725c1 imx-gstreamer-1.16.2.tar.gz
-sha256 f445dc78b88496f7e20c7a2a461b95baba5865c8919b8289ac24ac0a80c6ce7a COPYING
+sha256 031cfce05018912ba2a30ca3b851539dda17ef6ab90d08ec2a1600d61c727c11 imx-gstreamer-1.20.3.tar.gz
+sha256 ad2eec519ebd4b5df86ea84dff24ae3bfa2edea846a703b58902dd221ae375db COPYING
 

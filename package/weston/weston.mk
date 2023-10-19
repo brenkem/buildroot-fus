@@ -3,18 +3,18 @@
 # weston
 #
 ################################################################################
+
 ifeq ($(BR2_PACKAGE_FREESCALE_IMX),y)
-WESTON_VERSION = rel_imx_5.4.70_2.3.2
+WESTON_VERSION = lf-5.15.71-2.2.1
 WESTON_SITE = https://github.com/nxp-imx/weston-imx.git
 WESTON_SITE_METHOD = git
-WESTON_AUTORECONF = YES
 else
 WESTON_VERSION = 10.0.1
 WESTON_SITE = https://gitlab.freedesktop.org/wayland/weston/-/releases/$(WESTON_VERSION)/downloads
 WESTON_SOURCE = weston-$(WESTON_VERSION).tar.xz
 endif
 WESTON_LICENSE = MIT
-WESTON_LICENSE_FILES = COPYING
+WESTON_LICENSE_FILES = LICENSE
 WESTON_CPE_ID_VENDOR = wayland
 WESTON_INSTALL_STAGING = YES
 
@@ -22,7 +22,6 @@ WESTON_DEPENDENCIES = host-pkgconf wayland wayland-protocols \
 	libxkbcommon pixman libpng udev cairo libinput libdrm
 
 WESTON_CONF_OPTS = \
-	-Dbuild.pkg_config_path=$(HOST_DIR)/lib/pkgconfig \
 	-Dbackend-headless=false \
 	-Dcolor-management-colord=false \
 	-Ddoc=false \

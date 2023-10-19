@@ -6,15 +6,109 @@
 
 ifeq ($(BR2_PACKAGE_FREESCALE_IMX),y)
 # IMX needs special variant from NXP
-LIBDRM_VERSION = rel_imx_5.4.70_2.3.2
+LIBDRM_VERSION = lf-5.15.71-2.2.1
 LIBDRM_SITE = https://github.com/nxp-imx/libdrm-imx.git
 LIBDRM_SITE_METHOD = git
 LIBDRM_LICENSE = MIT
 LIBDRM_LICENSE_FILES = COPYING
 LIBDRM_INSTALL_STAGING = YES
-# patch 0003-configure-Makefile.am-use-pkg-config-to-discover-lib.patch
-# touching configure.ac/Makefile.am (and host-xutil_util-macros dependency)
 LIBDRM_AUTORECONF = YES
+
+ifeq ($(BR2_PACKAGE_LIBATOMIC_OPS),y)
+LIBDRM_DEPENDENCIES += libatomic_ops
+ifeq ($(BR2_sparc_v8)$(BR2_sparc_leon3),y)
+LIBDRM_CFLAGS = $(TARGET_CFLAGS) -DAO_NO_SPARC_V9
+endif
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_INTEL),y)
+LIBDRM_CONF_OPTS += -Dintel=true
+LIBDRM_DEPENDENCIES += libpciaccess
+else
+LIBDRM_CONF_OPTS += -Dintel=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_RADEON),y)
+LIBDRM_CONF_OPTS += -Dradeon=true
+else
+LIBDRM_CONF_OPTS += -Dradeon=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_AMDGPU),y)
+LIBDRM_CONF_OPTS += -Damdgpu=true
+else
+LIBDRM_CONF_OPTS += -Damdgpu=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_NOUVEAU),y)
+LIBDRM_CONF_OPTS += -Dnouveau=true
+else
+LIBDRM_CONF_OPTS += -Dnouveau=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_VMWGFX),y)
+LIBDRM_CONF_OPTS += -Dvmwgfx=true
+else
+LIBDRM_CONF_OPTS += -Dvmwgfx=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_OMAP),y)
+LIBDRM_CONF_OPTS += -Domap=true
+else
+LIBDRM_CONF_OPTS += -Domap=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_ETNAVIV),y)
+LIBDRM_CONF_OPTS += -Detnaviv=true
+else
+LIBDRM_CONF_OPTS += -Detnaviv=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_EXYNOS),y)
+LIBDRM_CONF_OPTS += -Dexynos=true
+else
+LIBDRM_CONF_OPTS += -Dexynos=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_FREEDRENO),y)
+LIBDRM_CONF_OPTS += -Dfreedreno=true
+else
+LIBDRM_CONF_OPTS += -Dfreedreno=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_TEGRA),y)
+LIBDRM_CONF_OPTS += -Dtegra=true
+else
+LIBDRM_CONF_OPTS += -Dtegra=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_VC4),y)
+LIBDRM_CONF_OPTS += -Dvc4=true
+else
+LIBDRM_CONF_OPTS += -Dvc4=false
+endif
+
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+LIBDRM_CONF_OPTS += -Dudev=true
+LIBDRM_DEPENDENCIES += udev
+else
+LIBDRM_CONF_OPTS += -Dudev=false
+endif
+
+ifeq ($(BR2_PACKAGE_VALGRIND),y)
+LIBDRM_CONF_OPTS += -Dvalgrind=true
+LIBDRM_DEPENDENCIES += valgrind
+else
+LIBDRM_CONF_OPTS += -Dvalgrind=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDRM_INSTALL_TESTS),y)
+LIBDRM_CONF_OPTS += -Dinstall-test-programs=true
+ifeq ($(BR2_PACKAGE_CUNIT),y)
+LIBDRM_DEPENDENCIES += cunit
+endif
+endif
+
 else
 LIBDRM_VERSION = 2.4.115
 LIBDRM_SOURCE = libdrm-$(LIBDRM_VERSION).tar.xz
@@ -22,12 +116,6 @@ LIBDRM_SITE = https://dri.freedesktop.org/libdrm
 LIBDRM_LICENSE = MIT
 LIBDRM_LICENSE_FILES = data/meson.build
 LIBDRM_INSTALL_STAGING = YES
-endif
-
-LIBDRM_DEPENDENCIES = \
-	libpthread-stubs \
-	host-pkgconf \
-	host-xutil_util-macros
 
 LIBDRM_CONF_OPTS = \
 	-Dcairo-tests=disabled \
@@ -108,10 +196,10 @@ LIBDRM_CONF_OPTS += -Dvc4=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
-LIBDRM_CONF_OPTS += -Dudev=true
+LIBDRM_CONF_OPTS += -Dudev=enabled
 LIBDRM_DEPENDENCIES += udev
 else
-LIBDRM_CONF_OPTS += -Dudev=false
+LIBDRM_CONF_OPTS += -Dudev=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_VALGRIND),y)
@@ -122,10 +210,17 @@ LIBDRM_CONF_OPTS += -Dvalgrind=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDRM_INSTALL_TESTS),y)
-LIBDRM_CONF_OPTS += -Dinstall-test-programs=true
+LIBDRM_CONF_OPTS += -Dinstall-test-programs=enabled
 ifeq ($(BR2_PACKAGE_CUNIT),y)
 LIBDRM_DEPENDENCIES += cunit
 endif
 endif
+
+endif
+
+LIBDRM_DEPENDENCIES = \
+	libpthread-stubs \
+	host-pkgconf \
+	host-xutil_util-macros
 
 $(eval $(meson-package))

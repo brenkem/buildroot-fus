@@ -4,229 +4,311 @@
 #
 ################################################################################
 
-IMX_GST1_PLUGINS_BASE_VERSION = rel_imx_5.4.70_2.3.2
-IMX_GST1_PLUGINS_BASE_SOURCE = imx-gst-plugins-base-1.16.2.tar.gz
+IMX_GST1_PLUGINS_BASE_VERSION = lf-5.15.71-2.2.1
+IMX_GST1_PLUGINS_BASE_SOURCE = imx-gst-plugins-base-1.20.3.tar.gz
 IMX_GST1_PLUGINS_BASE_SITE = https://github.com/nxp-imx/gst-plugins-base.git
 IMX_GST1_PLUGINS_BASE_SITE_METHOD = git
 IMX_GST1_PLUGINS_BASE_GIT_SUBMODULES = YES
 IMX_GST1_PLUGINS_BASE_INSTALL_STAGING = YES
 IMX_GST1_PLUGINS_BASE_LICENSE_FILES = COPYING
-IMX_GST1_PLUGINS_BASE_LICENSE = LGPL-2.0+, LGPL-2.1+
+IMX_GST1_PLUGINS_BASE_LICENSE = LGPL-2.1+
 
 # needs access to imx-specific kernel headers
 IMX_GST1_PLUGINS_BASE_DEPENDENCIES += linux
-IMX_GST1_PLUGINS_BASE_CONF_ENV += CPPFLAGS="$(TARGET_CPPFLAGS) -idirafter $(LINUX_DIR)/include/uapi -I$(@D)/libs"
-
-# gio_unix_2_0 is only used for tests
-IMX_GST1_PLUGINS_BASE_CONF_OPTS = \
-	--disable-examples \
-	--disable-valgrind \
-	--disable-introspection
-
-# Options which require currently unpackaged libraries
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += \
-	--disable-cdparanoia \
-	--disable-libvisual \
-	--disable-iso-codes
-
-# configure is missing but autogen.sh script is available
-define IMX_GST1_PLUGINS_BASE_RUN_AUTOGEN
-        cd $(@D) && PATH=$(BR_PATH) ./autogen.sh --noconfigure
-endef
-IMX_GST1_PLUGINS_BASE_POST_PATCH_HOOKS += IMX_GST1_PLUGINS_BASE_RUN_AUTOGEN
-
-IMX_GST1_PLUGINS_BASE_DEPENDENCIES = imx-gstreamer1
-
-# These plugins are listed in the order from ./configure --help
-ifeq ($(BR2_PACKAGE_ORC),y)
-IMX_GST1_PLUGINS_BASE_DEPENDENCIES += orc
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-orc
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_ADDER),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-adder
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-adder
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_APP),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-app
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-app
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_AUDIOCONVERT),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-audioconvert
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-audioconvert
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_AUDIORATE),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-audiorate
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-audiorate
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_AUDIOTESTSRC),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-audiotestsrc
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-audiotestsrc
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_ENCODING),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-encoding
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-encoding
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_VIDEOCONVERT),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-videoconvert
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-videoconvert
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_GIO),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-gio
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-gio
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_PLAYBACK),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-playback
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-playback
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_AUDIORESAMPLE),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-audioresample
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-audioresample
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_RAWPARSE),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-rawparse
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-rawparse
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_SUBPARSE),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-subparse
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-subparse
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_TCP),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-tcp
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-tcp
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_TYPEFIND),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-typefind
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-typefind
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_VIDEOTESTSRC),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-videotestsrc
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-videotestsrc
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_VIDEORATE),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-videorate
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-videorate
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_VIDEOSCALE),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-videoscale
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-videoscale
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_VOLUME),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-volume
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-volume
-endif
-
-ifeq ($(BR2_PACKAGE_ZLIB),y)
-IMX_GST1_PLUGINS_BASE_DEPENDENCIES += zlib
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-zlib
-endif
-
-ifeq ($(BR2_PACKAGE_XORG7),y)
-IMX_GST1_PLUGINS_BASE_DEPENDENCIES += xlib_libX11 xlib_libXext xlib_libXv
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += \
-	--enable-x \
-	--enable-xshm \
-	--enable-xvideo
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += \
-	--disable-x \
-	--disable-xshm \
-	--disable-xvideo
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_ALSA),y)
-IMX_GST1_PLUGINS_BASE_DEPENDENCIES += alsa-lib
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-alsa
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_TREMOR),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-ivorbis
-IMX_GST1_PLUGINS_BASE_DEPENDENCIES += tremor
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-ivorbis
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_OPUS),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-opus
-IMX_GST1_PLUGINS_BASE_DEPENDENCIES += opus
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-opus
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_OGG),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-ogg
-IMX_GST1_PLUGINS_BASE_DEPENDENCIES += libogg
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-ogg
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_PANGO),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-pango
-IMX_GST1_PLUGINS_BASE_DEPENDENCIES += pango
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-pango
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_THEORA),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-theora
-IMX_GST1_PLUGINS_BASE_DEPENDENCIES += libtheora
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-theora
-endif
-
-ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_VORBIS),y)
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --enable-vorbis
-IMX_GST1_PLUGINS_BASE_DEPENDENCIES += libvorbis
-else
-IMX_GST1_PLUGINS_BASE_CONF_OPTS += --disable-vorbis
-endif
+#IMX_GST1_PLUGINS_BASE_CPPFLAGS = "$(TARGET_CPPFLAGS) -idirafter $(LINUX_DIR)/include/uapi -I$(@D)/libs -std=gnu99"
+IMX_GST1_PLUGINS_BASE_CFLAGS = $(TARGET_CFLAGS) -std=gnu99 -idirafter $(LINUX_DIR)/include/uapi -I$(@D)/libs/
 
 define IMX_GST1_PLUGINS_BASE_IMX_HEADERS
 	mkdir -p $(@D)/libs/linux
-	# We need the ion header so ion support will be added to the build
-	# or else we run into segfaults when playing videos
-	cp $(LINUX_DIR)/drivers/staging/android/uapi/ion.h $(@D)/libs/linux
 	# We need the imx version of dma-buf.h for DMA_BUF_IOCTL_PHYS
 	cp $(LINUX_DIR)/include/uapi/linux/dma-buf.h $(@D)/libs/linux
 endef
 
 IMX_GST1_PLUGINS_BASE_POST_PATCH_HOOKS += IMX_GST1_PLUGINS_BASE_IMX_HEADERS
 
-$(eval $(autotools-package))
+IMX_GST1_PLUGINS_BASE_CONF_OPTS = \
+	-Dexamples=disabled \
+	-Dtests=disabled \
+	-Dgobject-cast-checks=disabled \
+	-Dglib-asserts=disabled \
+	-Dglib-checks=disabled \
+	-Dqt5=disabled \
+	-Ddoc=disabled
+
+# Options which require currently unpackaged libraries
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += \
+	-Dcdparanoia=disabled \
+	-Dlibvisual=disabled \
+	-Diso-codes=disabled
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_INSTALL_TOOLS),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dtools=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dtools=disabled
+endif
+
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES = imx-gstreamer1 $(TARGET_NLS_DEPENDENCIES)
+
+IMX_GST1_PLUGINS_BASE_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
+
+# These plugins are listed in the order from ./configure --help
+
+ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dintrospection=enabled
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += gobject-introspection
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dintrospection=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_ORC),y)
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += orc
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dorc=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dorc=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_LIB_OPENGL_HAS_API)$(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_LIB_OPENGL_HAS_PLATFORM)$(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_LIB_OPENGL_HAS_WINDOW),yyy)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dgl=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dgl=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_LIB_OPENGL_OPENGL),y)
+IMX_GST1_PLUGINS_BASE_GL_API_LIST = opengl
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += libgl libglu
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_LIB_OPENGL_GLES2),y)
+IMX_GST1_PLUGINS_BASE_GL_API_LIST += gles2
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += libgles
+endif
+
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dgl_api='$(subst $(space),$(comma),$(IMX_GST1_PLUGINS_BASE_GL_API_LIST))'
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_LIB_OPENGL_GLX),y)
+IMX_GST1_PLUGINS_BASE_GL_PLATFORM_LIST += glx
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += xorgproto xlib_libXrender
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_LIB_OPENGL_EGL),y)
+IMX_GST1_PLUGINS_BASE_GL_PLATFORM_LIST += egl
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += libegl
+endif
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dgl_platform='$(subst $(space),$(comma),$(IMX_GST1_PLUGINS_BASE_GL_PLATFORM_LIST))'
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_LIB_OPENGL_X11),y)
+IMX_GST1_PLUGINS_BASE_WINSYS_LIST += x11
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += xlib_libX11 xlib_libXext
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_LIB_OPENGL_WAYLAND),y)
+IMX_GST1_PLUGINS_BASE_WINSYS_LIST += wayland
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += wayland wayland-protocols
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_LIB_OPENGL_DISPMANX),y)
+IMX_GST1_PLUGINS_BASE_WINSYS_LIST += dispmanx
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += rpi-userland
+endif
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dgl_winsys='$(subst $(space),$(comma),$(IMX_GST1_PLUGINS_BASE_WINSYS_LIST))'
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_ADDER),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dadder=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dadder=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_APP),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dapp=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dapp=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_AUDIOCONVERT),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Daudioconvert=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Daudioconvert=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_AUDIOMIXER),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Daudiomixer=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Daudiomixer=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_AUDIORATE),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Daudiorate=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Daudiorate=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_AUDIOTESTSRC),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Daudiotestsrc=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Daudiotestsrc=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_COMPOSITOR),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dcompositor=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dcompositor=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_ENCODING),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dencoding=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dencoding=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_VIDEOCONVERT),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvideoconvert=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvideoconvert=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_GIO),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dgio=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dgio=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_GIO_TYPEFINDER),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dgio-typefinder=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dgio-typefinder=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_OVERLAYCOMPOSITION),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Doverlaycomposition=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Doverlaycomposition=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_PLAYBACK),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dplayback=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dplayback=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_AUDIORESAMPLE),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Daudioresample=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Daudioresample=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_RAWPARSE),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Drawparse=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Drawparse=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_SUBPARSE),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dsubparse=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dsubparse=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_TCP),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dtcp=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dtcp=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_TYPEFIND),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dtypefind=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dtypefind=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_VIDEOTESTSRC),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvideotestsrc=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvideotestsrc=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_VIDEORATE),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvideorate=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvideorate=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_VIDEOSCALE),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvideoscale=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvideoscale=disabled
+endif
+
+ifeq ($(IMX_BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_VOLUME),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvolume=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvolume=disabled
+endif
+
+# Zlib is checked for headers and is not an option.
+ifeq ($(BR2_PACKAGE_ZLIB),y)
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += zlib
+endif
+
+ifeq ($(BR2_PACKAGE_XORG7),y)
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += xlib_libX11 xlib_libXext xlib_libXv
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += \
+	-Dx11=enabled \
+	-Dxshm=enabled \
+	-Dxvideo=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += \
+	-Dx11=disabled \
+	-Dxshm=disabled \
+	-Dxvideo=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_ALSA),y)
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += alsa-lib
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dalsa=enabled
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dalsa=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_TREMOR),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dtremor=enabled
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += tremor
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dtremor=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_OPUS),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dopus=enabled
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += opus
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dopus=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_OGG),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dogg=enabled
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += libogg
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dogg=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_PANGO),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dpango=enabled
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += pango
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dpango=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_THEORA),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dtheora=enabled
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += libtheora
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dtheora=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_IMX_GST1_PLUGINS_BASE_PLUGIN_VORBIS),y)
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvorbis=enabled
+IMX_GST1_PLUGINS_BASE_DEPENDENCIES += libvorbis
+else
+IMX_GST1_PLUGINS_BASE_CONF_OPTS += -Dvorbis=disabled
+endif
+
+$(eval $(meson-package))

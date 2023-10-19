@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-IMX_GST1_PLUGIN_VERSION = rel_imx_5.4.70_2.3.2
-IMX_GST1_PLUGIN_SOURCE = imx-gst1.0-plugin-4.5.6.tar.gz
+IMX_GST1_PLUGIN_VERSION = lf-5.15.71-2.2.1
+IMX_GST1_PLUGIN_SOURCE = imx-gst1.0-plugin-4.7.2.tar.gz
 IMX_GST1_PLUGIN_SITE = https://github.com/nxp-imx/imx-gst1.0-plugin.git
 IMX_GST1_PLUGIN_SITE_METHOD = git
 
@@ -27,21 +27,25 @@ ifeq ($(BR2_arm),y)
 IMX_GST1_PLUGIN_DEPENDENCIES += imx-lib
 endif
 
-IMX_GST1_PLUGIN_CONF_ENV = \
-	PLATFORM=$(BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM) \
-	CROSS_ROOT="$(STAGING_DIR)"
+#IMX_GST1_PLUGIN_CONF_ENV = \
+#	PLATFORM=$(BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM) \
+#	CROSS_ROOT="$(STAGING_DIR)"
+
+IMX_GST1_PLUGINS_BAD_CONF_OPTS = \
+		-Dplatform=${BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM} \
+        -Dc_args="${CFLAGS} -I$(@D)/libs/ -idirafter $(STAGING_DIR)/usr/include" \
 
 # needs access to imx-specific kernel headers
 IMX_GST1_PLUGIN_DEPENDENCIES += linux
-IMX_GST1_PLUGIN_CONF_ENV += CPPFLAGS="$(TARGET_CPPFLAGS) -idirafter $(LINUX_DIR)/include/uapi -I$(@D)/libs"
+#IMX_GST1_PLUGIN_CONF_ENV += CPPFLAGS="$(TARGET_CPPFLAGS) -idirafter $(STAGING_DIR)/usr/include/linux"
 
-IMX_GST1_PLUGIN_CONF_OPTS = --disable-mp3enc
-ifeq ($(BR2_PACKAGE_XLIB_LIBX11),y)
-IMX_GST1_PLUGIN_DEPENDENCIES += xlib_libX11
-IMX_GST1_PLUGIN_CONF_OPTS += --enable-x11
-else
-IMX_GST1_PLUGIN_CONF_OPTS += --disable-x11
-endif
+#IMX_GST1_PLUGIN_CONF_OPTS = --disable-mp3enc
+#ifeq ($(BR2_PACKAGE_XLIB_LIBX11),y)
+#IMX_GST1_PLUGIN_DEPENDENCIES += xlib_libX11
+#IMX_GST1_PLUGIN_CONF_OPTS += --enable-x11
+#else
+#IMX_GST1_PLUGIN_CONF_OPTS += --disable-x11
+#endif
 
 # Autoreconf requires an m4 directory to exist
 define IMX_GST1_PLUGIN_PATCH_M4
@@ -51,15 +55,15 @@ endef
 
 define IMX_GST1_PLUGIN_IMX_HEADERS
 	mkdir -p $(@D)/libs/linux
+	mkdir -p $(@D)/libs/asm
 	# We need the newest videodev2.h, which in turn needs compiler.h
-	cp $(LINUX_DIR)/include/uapi/linux/videodev2.h $(@D)/libs/linux
-	cp $(LINUX_DIR)/include/linux/compiler.h $(@D)/libs/linux
-	cp $(LINUX_DIR)/include/linux/compiler_types.h $(@D)/libs/linux
-	# We need the ion header so ion support will be added to the build
-	# or else we run into segfaults when playing videos
-	cp $(LINUX_DIR)/drivers/staging/android/uapi/ion.h $(@D)/libs/linux
+	cp $(LINUX_DIR)/usr/include/linux/videodev2.h $(@D)/libs/linux
+	cp $(LINUX_DIR)/usr/include/linux/ipu.h $(@D)/libs/linux
+	cp $(LINUX_DIR)/usr/include/linux/mxcfb.h $(@D)/libs/linux
 	# We need the imx version of dma-buf.h for DMA_BUF_IOCTL_PHYS
-	cp $(LINUX_DIR)/include/uapi/linux/dma-buf.h $(@D)/libs/linux
+	cp $(LINUX_DIR)/usr/include/linux/dma-buf.h $(@D)/libs/linux
+	cp $(LINUX_DIR)/usr/include/linux/mxc_v4l2.h $(@D)/libs/linux
+
 
 endef
 
@@ -67,4 +71,5 @@ IMX_GST1_PLUGIN_POST_PATCH_HOOKS += IMX_GST1_PLUGIN_PATCH_M4 IMX_GST1_PLUGIN_IMX
 
 IMX_GST1_PLUGIN_CONF_ENV += PKG_CONFIG_SYSROOT_DIR="$(STAGING_DIR)"
 
-$(eval $(autotools-package))
+#$(eval $(autotools-package))
+$(eval $(meson-package))

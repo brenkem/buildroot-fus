@@ -1,27 +1,65 @@
 # Error handling functions for the load command. Aborts execution of the script if load returns an error or filesize is greater than the load chunk.
 setenv do_check 'itest $? != 0 || itest $filesize -gt $update_chunk_size'
 setenv do_message 'echo "Loading from "$updatedev" failed! Aborting installation.."'
-setenv do_cleanup 'env delete update_chunk_size update_chunk_pos update_image_size_rest u_c_size_blk u_c_pos_blk updatedev do_check do_message do_cleanup is_error; true'
+setenv do_cleanup 'env delete update_chunk_size update_chunk_pos update_image_size_rest u_c_size_blk u_c_pos_blk updatedev do_check do_message do_cleanup is_error update_state; true'
 setenv is_error 'run do_check && run do_message do_cleanup'
+
+if test -z "${update_state}";
+then
+setenv update_state uboot
+
+elif test ${update_state} = "uboot";
+then
+# Reset linux device tree name to default for the new kernel
+env default platform
+env default bootfdt
+setenv update_state nboot
+
+elif test ${update_state} = "nboot";
+then
+setenv update_state rootfs
+fi
+
+if test ${update_state} = "uboot" || test ${update_state} = "nboot";
+then
+# We need to call savenv befor saving the nboot so update_state will be transfered with the environment
+saveenv
+load ${updatedev} ${loadaddr} ${update_state}-${arch}.fs
+fsimage save || run do_message &&  run do_cleanup && && saveenv && exit 1
+reset
+fi
+
+# Update rootfs
+if test ${update_state} = "rootfs";
+then
 
 if test $bd_kernel = "nand";
 then
 
 # NANDBOOT
 # Load kernel image and store in partition Kernel
+size ${updatedev} ${bootfile}-${arch}; setenv update_chunk_size $filesize
 load ${updatedev} ${loadaddr} ${bootfile}-${arch}
+run is_error && exit 1
 nand erase.part Kernel
 nand write ${loadaddr} Kernel ${filesize}
+
 # Load device tree blob and store in partition FDT
+size ${updatedev} ${bootfdt}; setenv update_chunk_size $filesize
 load ${updatedev} ${loadaddr} ${bootfdt}
+run is_error && exit 1
 nand erase.part FDT
 nand write ${loadaddr} FDT ${filesize}
+
 # Load root filesystem
+size ${updatedev} rootfs-${arch}.ubifs; setenv update_chunk_size $filesize
 load ${updatedev} ${loadaddr} rootfs-${arch}.ubifs
+run is_error && exit 1
 # Create UBI with volume rootfs on partition TargetFS
-nand erase.part TargetFS
+# nand erase.part TargetFS is not needed if there is already ann rootfs
+# nand erase.part TargetFS
 ubi part TargetFS
-ubi create rootfs
+#ubi create rootfs
 # Store root filesystem in UBI volume rootfs
 ubi write ${loadaddr} rootfs ${filesize}
 # Set default configuration: kernel and fdt from NAND, rootfs from ubifs
@@ -68,7 +106,13 @@ done
 run .kernel_mmc
 run .fdt_mmc
 run .rootfs_mmc
-fi;
+
+fi # MMC BOOT
+
+else # Update rootfs
+echo "Error! Unknwon state: $update_state"
+exit 1
+fi # Update rootfs
 
 # Clean environment and save environment
 run do_cleanup
@@ -77,3 +121,4 @@ saveenv
 echo "Installation complete"
 echo
 echo "Please set/verify ethernet address(es) now and call saveenv"
+

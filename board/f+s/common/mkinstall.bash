@@ -20,3 +20,7 @@ fi
 $MKIMAGE -V
 echo $ARCH
 $MKIMAGE -A $ARCH -O u-boot -T script -C none -n "F&S install script" -d "$install_src" "$install_bin"
+
+install_src="$INSTALL_TXT_PATH/update_all.txt"
+install_bin="$OUTPUT/update_all.scr"
+$MKIMAGE -A $ARCH -O u-boot -T script -C none -n "F&S install script" -d "$install_src" "$install_bin"

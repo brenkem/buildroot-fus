@@ -21,12 +21,6 @@ image emmc-fsimx8mm.sysimg {
   hdimage {
   }
 
-  partition u-boot {
-    in-partition-table = "no"
-    image = "%UBOOTBIN%"
-    offset = 2M
-  }
-
   partition boot {
     partition-type = 0xC
     bootable = "true"

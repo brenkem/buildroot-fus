@@ -357,6 +357,7 @@ define BUSYBOX_INSTALL_TELNET_SERVICE
 		$(INSTALL) -D -m 0644 package/busybox/telnetd.service \
 			$(TARGET_DIR)/usr/lib/systemd/system/telnetd.service ; \
 	fi
+endef
 endif
 
 # Add /bin/{a,hu}sh to /etc/shells otherwise some login tools like dropbear

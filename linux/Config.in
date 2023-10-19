@@ -386,6 +386,12 @@ config BR2_LINUX_KERNEL_UIMAGE_LOADADDR
 
 	  If unsure, let this option empty.
 
+
+config BR2_LINUX_KERNEL_BUILD_HEADERS
+	bool "Build Kernel headers for userspace"
+	help
+	  Build Kernel headers for userspace.
+
 config BR2_LINUX_KERNEL_DTS_SUPPORT
 	bool "Build a Device Tree Blob (DTB)"
 	help

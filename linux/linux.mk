@@ -478,6 +478,12 @@ LINUX_APPEND_DTB += ; \
 endif
 endif
 
+ifeq ($(BR2_LINUX_KERNEL_BUILD_HEADERS),y)
+define LINUX_BUILD_HEADERS
+	$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) headers_install
+endef
+endif
+
 # Compilation. We make sure the kernel gets rebuilt when the
 # configuration has changed. We call the 'all' and
 # '$(LINUX_TARGET_NAME)' targets separately because calling them in
@@ -494,6 +500,7 @@ define LINUX_BUILD_CMDS
 	$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) $(LINUX_TARGET_NAME)
 	$(LINUX_BUILD_DTB)
 	$(LINUX_APPEND_DTB)
+	$(LINUX_BUILD_HEADERS)
 endef
 
 ifeq ($(BR2_LINUX_KERNEL_APPENDED_DTB),y)

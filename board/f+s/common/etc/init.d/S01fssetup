@@ -38,10 +38,5 @@ if [ $dostart -ne 0 ] ; then
     fi
     ln -s /dev/$default_tty $login_tty
 
-    # check if alsactl and file asound.state are available then load config
-    if [ -e /usr/sbin/alsactl ] && [ -e /var/lib/alsa/asound.state ] ; then
-	alsactl restore
-    fi
-
     echo "F&S environment started"
 fi

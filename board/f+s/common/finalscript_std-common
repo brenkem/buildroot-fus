@@ -23,6 +23,7 @@ XORG_CONF_D=usr/share/X11/xorg.conf.d
 mkdir -p ${TARGET}/etc/profile.d
 ${CP} ${COMMON}/etc/profile.d/tslib.sh ${TARGET}/etc/profile.d
 # setup sound configuration
+${CP} ${COMMON}/etc/init.d/S60alsa ${TARGET}/etc/init.d
 mkdir -p ${TARGET}/var/lib/alsa
 ${CP} ${COMMON}/var/lib/alsa/asound.state ${TARGET}/var/lib/alsa
 ${CP} ${COMMON}/etc/asound.conf ${TARGET}/etc

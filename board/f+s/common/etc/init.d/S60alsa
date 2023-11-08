@@ -1,0 +1,27 @@
+#!/bin/sh
+# Restore alsactl state
+
+dostart=0
+dostop=0
+
+case "$1" in
+    start)
+	dostart=1
+	;;
+    stop)
+	dostop=1
+	;;
+    restart|reload)
+	dostop=1
+	dostart=1
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|restart}"
+esac
+
+if [ $dostart -ne 0 ] ; then
+    # check if alsactl and file asound.state are available then load config
+    if [ -e /usr/sbin/alsactl ] && [ -e /var/lib/alsa/asound.state ] ; then
+	alsactl restore
+    fi
+fi

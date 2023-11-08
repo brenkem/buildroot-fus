@@ -35,7 +35,15 @@ config BR2_PACKAGE_PSPLASH_IMAGE
 	  Use a personalized png image as boot splash.
 	  Let it empty if you want to keep the psplash default image.
 
+config BR2_PACKAGE_CONFIG_PSPLASH
+	bool "config psplash"
+	help
+		Configure the colors, font and loading bar with the files
+		psplash-config.h psplash-colors.h and radeon-font.h.
+
 endif
+
+
 
 comment "psplash needs a toolchain w/ wchar"
 	depends on !BR2_USE_WCHAR

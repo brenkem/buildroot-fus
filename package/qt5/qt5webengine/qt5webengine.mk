@@ -87,7 +87,6 @@ QT5WEBENGINE_DEPENDENCIES += \
 QT5WEBENGINE_CONF_OPTS += \
 	-webengine-embedded-build \
 	-webengine-ffmpeg \
-	-webengine-icu \
 	-webengine-opus \
 	-webengine-webchannel \
 	-webengine-webp \

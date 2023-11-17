@@ -1,0 +1,72 @@
+From 82c9b1d3f4383cd8059690bd34c9d7fa86398b78 Mon Sep 17 00:00:00 2001
+From: Kadir Yilmaz <kadir.c.yilmaz@gmail.com>
+Date: Sat, 21 Oct 2023 22:45:03 +0200
+Subject: [PATCH] Fix build tools to run with python3.11
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream: N/A buildroot uses python3.11 which apparently is not yet
+supported by upstream
+
+- re error: global flags not at the start
+
+    https://docs.python.org/3/library/re.html#re-syntax
+    (?aiLmsux)
+    ....
+    Changed in version 3.11: This construction can only be used at the
+    start of the expression
+
+- ValueError: invalid mode: 'rU'
+
+    open(), io.open(), codecs.open() and fileinput.FileInput no longer
+    accept 'U' (“universal newline”) in the file mode. In Python 3,
+    “universal newline” mode is used by default whenever a file is
+    opened in text mode, and the 'U' flag has been deprecated since
+    Python 3.3. The newline parameter to these functions controls how
+    universal newlines work. (Contributed by Victor Stinner in bpo-37330.)
+
+Signed-off-by: Kadir Yilmaz <kadir.c.yilmaz@gmail.com>
+---
+ chromium/tools/grit/grit/util.py        | 2 +-
+ chromium/tools/metrics/ukm/ukm_model.py | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/chromium/tools/grit/grit/util.py b/chromium/tools/grit/grit/util.py
+index 528d766ad6b..6e8cdb0ebfa 100644
+--- a/chromium/tools/grit/grit/util.py
++++ b/chromium/tools/grit/grit/util.py
+@@ -211,7 +211,7 @@ def ReadFile(filename, encoding):
+     mode = 'rb'
+     encoding = None
+   else:
+-    mode = 'rU'
++    mode = 'r'
+ 
+   with io.open(abs(filename), mode, encoding=encoding) as f:
+     return f.read()
+diff --git a/chromium/tools/metrics/ukm/ukm_model.py b/chromium/tools/metrics/ukm/ukm_model.py
+index ec24dd57360..57decab3ccc 100644
+--- a/chromium/tools/metrics/ukm/ukm_model.py
++++ b/chromium/tools/metrics/ukm/ukm_model.py
+@@ -42,7 +42,7 @@ _INDEX_TYPE = models.ObjectNodeType(
+ _STATISTICS_TYPE =  models.ObjectNodeType(
+     'statistics',
+     attributes=[
+-      ('export', str, r'^(?i)(|true|false)$'),
++      ('export', str, r'(?i)^(|true|false)$'),
+     ],
+     children=[
+         models.ChildType(_QUANTILES_TYPE.tag, _QUANTILES_TYPE, multiple=False),
+@@ -94,7 +94,7 @@ _EVENT_TYPE =  models.ObjectNodeType(
+     'event',
+     attributes=[
+       ('name', str, r'^[A-Za-z0-9.]+$'),
+-      ('singular', str, r'^(?i)(|true|false)$'),
++      ('singular', str, r'(?i)^(|true|false)$'),
+     ],
+     alphabetization=[
+         (_OBSOLETE_TYPE.tag, _KEEP_ORDER),
+-- 
+2.25.1
+

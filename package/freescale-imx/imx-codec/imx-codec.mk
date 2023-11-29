@@ -46,6 +46,17 @@ define IMX_CODEC_FIXUP_TARGET_PATH
 	echo "IMX video codecs moved to /usr/lib" \
 		> $(TARGET_DIR)/usr/lib/imx-mm/video-codec/README.txt
 endef
-IMX_CODEC_POST_INSTALL_TARGET_HOOKS += IMX_CODEC_FIXUP_TARGET_PATH
+define IMX_CODEC_FIXUP_STAGING_PATH
+	find $(STAGING_DIR)/usr/lib/imx-mm/audio-codec -maxdepth 1 \
+		-not -type d -exec mv {} $(STAGING_DIR)/usr/lib \;
+	echo "IMX audio codecs moved to /usr/lib" \
+		> $(STAGING_DIR)/usr/lib/imx-mm/audio-codec/README.txt
+	find $(STAGING_DIR)/usr/lib/imx-mm/video-codec -maxdepth 1 \
+		-not -type d -exec mv {} $(STAGING_DIR)/usr/lib \;
+	echo "IMX video codecs moved to /usr/lib" \
+		> $(STAGING_DIR)/usr/lib/imx-mm/video-codec/README.txt
+endef
+
+IMX_CODEC_POST_INSTALL_TARGET_HOOKS += IMX_CODEC_FIXUP_TARGET_PATH IMX_CODEC_FIXUP_STAGING_PATH
 
 $(eval $(autotools-package))

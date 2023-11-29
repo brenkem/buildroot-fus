@@ -33,7 +33,7 @@ endif
 
 IMX_GST1_PLUGINS_BAD_CONF_OPTS = \
 		-Dplatform=${BR2_PACKAGE_IMX_GST1_PLUGIN_PLATFORM} \
-        -Dc_args="${CFLAGS} -I$(@D)/libs/ -idirafter $(STAGING_DIR)/usr/include" \
+        -Dc_args="${CFLAGS} -I$(@D)/libs/ -idirafter $(STAGING_DIR)/usr/include -L$(STAGING_DIR)/usr/lib" \
 
 # needs access to imx-specific kernel headers
 IMX_GST1_PLUGIN_DEPENDENCIES += linux
@@ -60,6 +60,8 @@ define IMX_GST1_PLUGIN_IMX_HEADERS
 	cp $(LINUX_DIR)/usr/include/linux/videodev2.h $(@D)/libs/linux
 	cp $(LINUX_DIR)/usr/include/linux/ipu.h $(@D)/libs/linux
 	cp $(LINUX_DIR)/usr/include/linux/mxcfb.h $(@D)/libs/linux
+	cp $(LINUX_DIR)/usr/include/linux/pxp_device.h $(@D)/libs/linux
+	cp $(LINUX_DIR)/usr/include/linux/pxp_dma.h $(@D)/libs/linux
 	# We need the imx version of dma-buf.h for DMA_BUF_IOCTL_PHYS
 	cp $(LINUX_DIR)/usr/include/linux/dma-buf.h $(@D)/libs/linux
 	cp $(LINUX_DIR)/usr/include/linux/mxc_v4l2.h $(@D)/libs/linux

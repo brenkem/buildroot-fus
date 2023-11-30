@@ -1,15 +1,11 @@
 #!/bin/bash
 
-INSTALL_TXT_PATH=$1
-
-if [ -z "$var" ];then
-	INSTALL_TXT_PATH=board/f+s/common
+# If build out of tree use other output path
+if [ -n $O ];then
+	OUTPUT=$O/images
+else
+	OUTPUT=output/images
 fi
-
-install_src="$INSTALL_TXT_PATH/install.txt"
-OUTPUT=output/images
-install_bin="$OUTPUT/install.scr"
-MKIMAGE=mkimage
 
 if grep -Eq "^BR2_aarch64=y$" ${BR2_CONFIG}; then
 	ARCH=arm64
@@ -17,10 +13,14 @@ else
 	ARCH=arm
 fi
 
+MKIMAGE=mkimage
 $MKIMAGE -V
-echo $ARCH
-$MKIMAGE -A $ARCH -O u-boot -T script -C none -n "F&S install script" -d "$install_src" "$install_bin"
+echo "Arch: $ARCH"
 
-install_src="$INSTALL_TXT_PATH/update_all.txt"
-install_bin="$OUTPUT/update_all.scr"
-$MKIMAGE -A $ARCH -O u-boot -T script -C none -n "F&S install script" -d "$install_src" "$install_bin"
+install_src="$1"
+echo "Scr TXT: $install_src"
+filename=$(basename ${install_src} .txt)
+install_bin="${OUTPUT}/${filename}.scr"
+echo "Ouput file: $install_bin"
+$MKIMAGE -A $ARCH -O u-boot -T script -C none -n "F&S $filename script" -d "$install_src" "$install_bin"
+

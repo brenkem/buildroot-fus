@@ -56,7 +56,13 @@ then
     ln -s "${ld}" ${TARGET}/lib/ld-linux.so.3
 fi
 
-# Build the install.scr script and copy it to output/images.
-# Set $INSTALL_TXT_PATH in the arch-specific final script to
-# use your own install.txt
-./board/f+s/common/mkinstall.bash $INSTALL_TXT_PATH
+# Always want an install script
+if [ -z "$INSTALL_TXT" ];then
+	INSTALL_TXT=board/f+s/common/install.txt
+fi
+./board/f+s/common/mkinstall.bash $INSTALL_TXT
+# Only build update script if path is given
+if [ -n "$UPDATE_TXT" ];then
+	./board/f+s/common/mkinstall.bash $UPDATE_TXT
+fi
+

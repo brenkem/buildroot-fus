@@ -3,6 +3,7 @@
 COMMON=board/f+s/common
 FS_ARCH=fsimx8mm
 USE_G2D=1
+UPDATE_TXT=board/f+s/fsimx8mm/update_all.txt
 
 # Source-in common F+S setup for standard configuration
 . $COMMON/finalscript_std-common

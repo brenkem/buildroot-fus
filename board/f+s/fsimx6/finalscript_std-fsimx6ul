@@ -2,5 +2,6 @@
 
 FS_ARCH=fsimx6ul
 
+USE_G2D=0
 # Source-in common F+S setup for standard configuration
 . board/f+s/common/finalscript_std-common

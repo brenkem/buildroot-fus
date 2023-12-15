@@ -2,6 +2,7 @@
 
 COMMON=board/f+s/common
 FS_ARCH=fsimx6sx
+USE_G2D=1
 XORG_CONF=$COMMON/etc/X11/xorg.conf-$FS_ARCH
 
 # Source-in common F+S setup for standard configuration

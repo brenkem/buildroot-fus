@@ -66,6 +66,12 @@ genimage_type()
 		else
 			echo "genimage.cfg.template.imx8mm.std"
 		fi
+	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MP=y$" ${BR2_CONFIG}; then
+		if grep -Eq "^BR2_PACKAGE_FS_UPDATE_SOLUTION=y$" ${BR2_CONFIG}; then
+			echo "genimage.cfg.template.imx8mp.update"
+		else
+			echo "genimage.cfg.template.imx8mp.std"
+		fi
 	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X=y$" ${BR2_CONFIG}; then
 		echo "genimage.cfg.template_imx8"
 	elif grep -Eq "^BR2_LINUX_KERNEL_INSTALL_TARGET=y$" ${BR2_CONFIG}; then
